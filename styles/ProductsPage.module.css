@@ -1,0 +1,6 @@
+/* ProductsPage.module.css */
+.container {
+  display: flex;
+  gap: 2rem;
+  padding: 1rem;
+}

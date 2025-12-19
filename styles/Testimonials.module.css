@@ -1,0 +1,89 @@
+.testimonialSection {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: #f9f9f9;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+}
+
+.title span {
+  color: #1abc9c;
+}
+
+.swiper {
+  padding-bottom: 2rem; /* space for pagination dots */
+}
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  text-align: left;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.avatar {
+  border-radius: 50%;
+}
+
+.name {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.role {
+  font-size: 0.85rem;
+  color: #777;
+}
+
+.rating {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  color: #f39c12;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.score {
+  font-weight: bold;
+  color: #333;
+}
+
+.text {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.5;
+}
+
+/* Swiper pagination customization */
+:global(.swiper-pagination-bullet) {
+  background: #1abc9c !important;
+  opacity: 0.6;
+}
+
+:global(.swiper-pagination-bullet-active) {
+  opacity: 1;
+}

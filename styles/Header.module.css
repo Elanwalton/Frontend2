@@ -1,0 +1,305 @@
+
+.navWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 40px;
+  background: linear-gradient(135deg, #0a2540 0%, #1a3a52 100%);
+  color: #f3f2f7;
+  border-radius: 0 0 20px 20px;
+  margin: 0 auto;
+  /* Keep navbar safely inside viewport width */
+  max-width: 100%;
+  height: 4rem;
+  position: fixed;
+  top: 0;
+  left: 22px;
+  right: 22px;
+  z-index: 1000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  transition: transform 0.3s ease;
+}
+
+.logoContainer:hover {
+  transform: scale(1.05);
+}
+
+.logoImage {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  transition: filter 0.3s ease;
+}
+
+.logoContainer:hover .logoImage {
+  filter: drop-shadow(0 4px 8px rgba(255, 255, 255, 0.3));
+}
+
+.logoText {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, #fc9607 0%, #57b500 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.desktop_nav {
+  display: flex;
+}
+
+.navList {
+  list-style: none;
+  display: flex;
+  gap: 30px;
+  padding-left: 0;
+  margin: 0;
+  align-items: center;
+}
+
+.navList li {
+  position: relative;
+}
+
+.navList li a {
+  color: #f2f2f3;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.navList li a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #a8dadc;
+  text-decoration: none;
+  transform: translateY(-2px);
+}
+.logout-button {
+  color: #ffffff;
+  background: linear-gradient(135deg, #457b9d 0%, #1d3557 100%);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 8px 20px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.logout-button:hover {
+  background: linear-gradient(135deg, #5a9bc4 0%, #2a4a6a 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+
+
+
+.menuToggle {
+  font-size: 28px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  display: none;
+  color: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.menuToggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+/* MOBILE STYLES */
+.mobile_nav {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 60vh;
+  width: 240px;
+  display: none; /* hidden by default to avoid sliver on desktop */
+  border-radius: 20px 0 0 20px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 2.5rem 1.5rem;
+  background: linear-gradient(135deg, rgba(10, 37, 64, 0.95) 0%, rgba(26, 58, 82, 0.95) 100%);
+  backdrop-filter: blur(12px);
+  box-shadow: -10px 0px 30px rgba(0, 0, 0, 0.4);
+  z-index: 2000;
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.mobile_nav.active {
+  transform: translateX(0); /* slide into view */
+}
+
+.mobile_nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.mobile_nav ul li a {
+  color: #ffffff;
+  font-weight: 500;
+  padding: 10px 15px;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  display: block;
+}
+
+.mobile_nav ul li a:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: translateX(-5px);
+}
+
+/* Overlay behind mobile drawer for click-outside close */
+.mobileOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  z-index: 1990;
+  display: none;
+}
+.mobileOverlay.active {
+  display: block;
+}
+
+/* MEDIA QUERIES */
+@media (max-width: 768px) {
+  .navWrapper {
+    padding: 8px 20px;
+    height: 3.5rem;
+  }
+
+  .desktop_nav {
+    display: none;
+  }
+
+  .logoText {
+    font-size: 1.1rem;
+  }
+
+  .logoImage {
+    width: 38px;
+    height: 38px;
+  }
+
+  .menuToggle {
+    display: block;
+  }
+
+  .searchContainer {
+    max-width: 120px;
+  }
+
+  .searchInput {
+    width: 80px;
+    font-size: 0.8rem;
+  }
+
+  /* Only on mobile should the drawer be displayed when active */
+  .mobile_nav.active {
+    display: flex;
+  }
+
+  .mobileOverlay.active {
+    display: block;
+  }
+}
+
+@media (max-width: 480px) {
+  .navWrapper {
+    padding: 6px 15px;
+    /* Use percentage-based width with side margins to avoid overflow */
+    left: 3%;
+    right: 3%;
+    max-width: 94%;
+  }
+
+  .logoText {
+    font-size: 1rem;
+  }
+
+  .logoImage {
+    width: 35px;
+    height: 35px;
+  }
+}
+
+
+.searchContainer {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 25px;
+  padding: 4px 12px;
+  transition: all 0.3s ease;
+  max-width: 180px;
+  flex-shrink: 0;
+}
+
+.searchContainer:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.searchInput {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  padding: 4px 8px;
+  font-size: 0.9rem;
+  width: 150px;
+  outline: none;
+  min-width: 0;
+}
+
+.searchInput::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.searchButton {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.searchButton:hover {
+  color: #ffffff;
+  transform: scale(1.1);
+}
+

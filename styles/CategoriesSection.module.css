@@ -1,0 +1,573 @@
+/* Main Section */
+.categorySection {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem;
+  position: relative;
+}
+
+/* Header */
+.header {
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.titleIcon {
+  color: #f7c843;
+  filter: drop-shadow(0 0 8px rgba(247, 200, 67, 0.5));
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(247, 200, 67, 0.5)); }
+  50% { filter: drop-shadow(0 0 16px rgba(247, 200, 67, 0.8)); }
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #081e31 0%, #1d3557 50%, #457b9d 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  letter-spacing: -1px;
+  position: relative;
+}
+
+.titleBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #059669 0%, #14b8a6 100%);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.subtitle {
+  font-size: 1.125rem;
+  color: #6c757d;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* Banner Row - Modern clickable promotional banners */
+.bannerRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 3.5rem;
+}
+
+.bannerCard {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.bannerCard:hover {
+  border-color: #f7c843;
+  box-shadow: 0 12px 32px rgba(247, 200, 67, 0.3);
+}
+
+.bannerGlow {
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(135deg, #f7c843, #059669, #2563eb);
+  border-radius: 20px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+  filter: blur(20px);
+}
+
+.bannerCard:hover .bannerGlow {
+  opacity: 0.6;
+}
+
+.bannerOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 0%, rgba(8, 30, 49, 0.7) 100%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 1.5rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 2;
+}
+
+.bannerCard:hover .bannerOverlay {
+  opacity: 1;
+}
+
+.bannerArrow {
+  color: white;
+  background: rgba(247, 200, 67, 0.9);
+  padding: 0.5rem;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.bannerImageWrapper {
+  position: relative;
+  width: 100%;
+  padding-top: 60%;
+  background: #f8f9fa;
+}
+
+.bannerImage {
+  object-fit: cover;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bannerCard:hover .bannerImage {
+  transform: scale(1.08);
+}
+
+/* Subheading */
+.subheadingWrapper {
+  margin-bottom: 2.5rem;
+  padding: 0 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  position: relative;
+}
+
+.subheadingIcon {
+  color: #f7c843;
+  flex-shrink: 0;
+}
+
+.subheading {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #081e31;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.subheadingLine {
+  flex: 1;
+  height: 3px;
+  background: linear-gradient(90deg, #f7c843 0%, transparent 100%);
+  border-radius: 2px;
+}
+
+/* Product Grid - Modern card design */
+.productGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.productCard {
+  position: relative;
+  background: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.productCard:hover {
+  border-color: rgba(247, 200, 67, 0.5);
+  box-shadow: 0 16px 40px rgba(8, 30, 49, 0.15);
+}
+
+.productGlow {
+  position: absolute;
+  inset: -4px;
+  background: linear-gradient(135deg, #f7c843, #059669);
+  border-radius: 20px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+  filter: blur(20px);
+}
+
+.productGlowActive {
+  opacity: 0.4;
+}
+
+.productTags {
+  position: absolute;
+  top: 0.875rem;
+  left: 0.875rem;
+  z-index: 10;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.tagHot {
+  background: linear-gradient(135deg, #e63946 0%, #d62828 100%);
+  color: #fff;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(230, 57, 70, 0.4);
+  backdrop-filter: blur(10px);
+}
+
+.tagDiscount {
+  background: linear-gradient(135deg, #f7c843 0%, #f77f00 100%);
+  color: #081e31;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(247, 200, 67, 0.4);
+  backdrop-filter: blur(10px);
+}
+
+.productImageWrapper {
+  position: relative;
+  width: 100%;
+  padding-top: 100%;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  overflow: hidden;
+}
+
+.productImage {
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.productCard:hover .productImage {
+  transform: scale(1.15) rotate(2deg);
+}
+
+.imageOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 0%, rgba(8, 30, 49, 0.8) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.productCard:hover .imageOverlay {
+  opacity: 1;
+}
+
+.quickViewBtn {
+  background: linear-gradient(135deg, #f7c843 0%, #f77f00 100%);
+  color: #081e31;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  box-shadow: 0 8px 20px rgba(247, 200, 67, 0.4);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quickViewBtn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 28px rgba(247, 200, 67, 0.6);
+}
+
+.productInfo {
+  padding: 1.25rem;
+}
+
+.productTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #081e31;
+  margin: 0 0 0.875rem 0;
+  line-height: 1.5;
+  height: 3em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  letter-spacing: -0.3px;
+  transition: color 0.2s ease;
+}
+
+.productCard:hover .productTitle {
+  color: #f7c843;
+}
+
+.priceWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.price {
+  font-size: 1.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #081e31 0%, #1d3557 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+}
+
+.oldPrice {
+  font-size: 1rem;
+  color: #adb5bd;
+  text-decoration: line-through;
+  font-weight: 500;
+}
+
+.soldInfo {
+  font-size: 0.875rem;
+  color: #059669;
+  margin: 0;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.soldIcon {
+  color: #059669;
+}
+
+/* View All Button - Modern with icon */
+.viewAllWrapper {
+  display: flex;
+  justify-content: center;
+  padding: 0 0.25rem;
+}
+
+.viewAllButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: linear-gradient(135deg, #081e31 0%, #1d3557 100%);
+  color: #fff;
+  padding: 1.25rem 2.5rem;
+  border-radius: 50px;
+  font-size: 1.125rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 24px rgba(8, 30, 49, 0.3);
+  letter-spacing: 0.3px;
+  position: relative;
+  overflow: hidden;
+}
+
+.viewAllButton::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #f7c843 0%, #f77f00 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.viewAllButton:hover::before {
+  opacity: 1;
+}
+
+.viewAllButton span,
+.viewAllButton .arrowIcon {
+  position: relative;
+  z-index: 1;
+}
+
+.viewAllButton:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 12px 32px rgba(247, 200, 67, 0.4);
+  color: #081e31;
+}
+
+.arrowIcon {
+  transition: transform 0.3s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .categorySection {
+    padding: 3rem 1.25rem;
+  }
+
+  .productGrid {
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .categorySection {
+    padding: 2.5rem 1rem;
+  }
+
+  .header {
+    text-align: left;
+  }
+
+  .titleWrapper {
+    justify-content: flex-start;
+  }
+
+  .title {
+    font-size: 1.875rem;
+  }
+
+  .titleIcon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .titleBadge {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.75rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+
+  /* Banner Row - Show only 2 columns on mobile */
+  .bannerRow {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  /* Hide third banner on mobile */
+  .hideMobile {
+    display: none;
+  }
+
+  .bannerImageWrapper {
+    padding-top: 70%;
+  }
+
+  .subheading {
+    font-size: 1.25rem;
+  }
+
+  .productGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .productInfo {
+    padding: 1rem;
+  }
+
+  .productTitle {
+    font-size: 0.9rem;
+    height: 2.7em;
+  }
+
+  .price {
+    font-size: 1.25rem;
+  }
+
+  .oldPrice {
+    font-size: 0.9rem;
+  }
+
+  .viewAllButton {
+    padding: 0.875rem 1.75rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .categorySection {
+    padding: 2rem 0.875rem;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .title::after {
+    width: 40px;
+  }
+
+  .bannerRow {
+    gap: 0.75rem;
+  }
+
+  .subheading {
+    font-size: 1.125rem;
+  }
+
+  .productGrid {
+    gap: 0.875rem;
+  }
+
+  .productTags {
+    top: 0.625rem;
+    left: 0.625rem;
+  }
+
+  .tagHot,
+  .tagDiscount {
+    padding: 0.25rem 0.625rem;
+    font-size: 0.7rem;
+  }
+
+  .productInfo {
+    padding: 0.875rem;
+  }
+
+  .productTitle {
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .price {
+    font-size: 1.125rem;
+  }
+
+  .oldPrice {
+    font-size: 0.85rem;
+  }
+
+  .soldInfo {
+    font-size: 0.8rem;
+  }
+
+  .viewAllButton {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.875rem;
+  }
+}

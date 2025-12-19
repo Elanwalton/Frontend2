@@ -1,0 +1,126 @@
+/* ---------- Layout wrappers ---------- */
+.wrapper {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+.subtitle {
+  font-size: 14px;
+  color: #6b7280;               /* gray-500 */
+  margin: 4px 0 0;
+}
+
+/* ---------- Toolbar ---------- */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.searchWrapper {
+  position: relative;
+  flex: 1;
+}
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;               /* gray-400 */
+}
+.searchInput {
+  width: 100%;
+  border: 1px solid #d1d5db;    /* gray-300 */
+  border-radius: 8px;
+  padding: 8px 12px 8px 36px;   /* leave room for icon */
+  font-size: 14px;
+}
+.select {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+}
+.addButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #2563eb;          /* blue-600 */
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.addButton:hover {
+  background: #1d4ed8;          /* blue-700 */
+}
+
+/* ---------- Table ---------- */
+.tableWrapper {
+  overflow-x: auto;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.thead {
+  background: #f9fafb;          /* gray-50 */
+}
+.th,
+.td {
+  padding: 12px 24px;
+  text-align: left;
+}
+.th {
+  font-weight: 500;
+  color: #374151;               /* gray-700 */
+}
+.tr:not(:last-child) .td {
+  border-bottom: 1px solid #f3f4f6; /* gray-100 */
+}
+.tr:hover {
+  background: #f9fafb;
+}
+
+/* ---------- Status badge ---------- */
+.statusBadge {
+  display: inline-block;
+  border-radius: 9999px;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.statusActive {
+  background: #dcfce7;          /* green-100 */
+  color: #15803d;               /* green-700 */
+}
+.statusSuspended {
+  background: #fee2e2;          /* red-100 */
+  color: #b91c1c;               /* red-700 */
+}
+
+/* ---------- Edit button ---------- */
+.editButton {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 4px 12px;
+  font-size: 12px;
+  background: #ffffff;
+  cursor: pointer;
+}
+.editButton:hover {
+  background: #f3f4f6;
+}

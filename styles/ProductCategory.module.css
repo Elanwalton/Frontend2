@@ -1,0 +1,361 @@
+.categoriesSection {
+  padding: 5rem 1.5rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #f8f9fa 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.categoriesSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #f7c843, #059669, #2563eb, #7c3aed);
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.sparkleIcon {
+  color: #f7c843;
+  filter: drop-shadow(0 0 12px rgba(247, 200, 67, 0.6));
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+  0%, 100% { 
+    transform: rotate(0deg) scale(1);
+    filter: drop-shadow(0 0 12px rgba(247, 200, 67, 0.6));
+  }
+  50% { 
+    transform: rotate(180deg) scale(1.1);
+    filter: drop-shadow(0 0 20px rgba(247, 200, 67, 0.9));
+  }
+}
+
+.title {
+  font-size: 2.75rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #081e31 0%, #1d3557 50%, #457b9d 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  letter-spacing: -1px;
+}
+
+.subtitle {
+  font-size: 1.125rem;
+  color: #6c757d;
+  margin: 0;
+  font-weight: 400;
+}
+
+.categoriesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 3rem;
+  justify-items: center;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.categoryCard {
+  cursor: pointer;
+  text-align: center;
+  position: relative;
+  padding: 1rem;
+  border-radius: 24px;
+  background: white;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.categoryCard:hover {
+  border-color: rgba(247, 200, 67, 0.3);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+}
+
+/* Glow Effect */
+.cardGlow {
+  position: absolute;
+  inset: -6px;
+  border-radius: 24px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+  filter: blur(24px);
+}
+
+.categoryCard:hover .cardGlow {
+  opacity: 0.5;
+}
+
+/* Icon Badge */
+.iconBadge {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  border: 3px solid white;
+}
+
+.badgeIcon {
+  color: white;
+}
+
+.octagonWrapper {
+  width: 160px;
+  height: 160px;
+  background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+  clip-path: polygon(
+    30% 0%, 70% 0%, 100% 30%, 100% 70%,
+    70% 100%, 30% 100%, 0% 70%, 0% 30%
+  );
+  overflow: hidden;
+  position: relative;
+  margin: 0 auto 1rem;
+  transition: all 0.4s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.categoryCard:hover .octagonWrapper {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+  transform: rotate(5deg) scale(1.05);
+}
+
+.imageOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 0%, rgba(8, 30, 49, 0.7) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 2;
+}
+
+.categoryCard:hover .imageOverlay {
+  opacity: 1;
+}
+
+.hoverArrow {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  background: rgba(247, 200, 67, 0.95);
+  color: #081e31;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.categoryImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.categoryCard:hover .categoryImage {
+  transform: scale(1.15) rotate(-5deg);
+}
+
+.categoryName {
+  margin-top: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #081e31;
+  letter-spacing: -0.3px;
+  transition: color 0.3s ease;
+}
+
+.categoryCard:hover .categoryName {
+  color: #f7c843;
+}
+
+/* Hover Indicator */
+.hoverIndicator {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 4px;
+  border-radius: 2px 2px 0 0;
+  transition: width 0.3s ease;
+}
+
+/* 📱 Responsive Adjustments */
+@media (max-width: 1024px) {
+  .categoriesSection {
+    padding: 4rem 1.25rem;
+  }
+
+  .title {
+    font-size: 2.25rem;
+  }
+
+  .categoriesGrid {
+    gap: 2.5rem;
+  }
+
+  .octagonWrapper {
+    width: 140px;
+    height: 140px;
+  }
+}
+
+@media (max-width: 768px) {
+  .categoriesSection {
+    /* Slightly tighter padding so it sits closer to the hero on mobile */
+    padding: 2.25rem 1rem;
+  }
+
+  .header {
+    /* Bring heading closer to the grid on mobile */
+    margin-bottom: 2.25rem;
+  }
+
+  .titleWrapper {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .sparkleIcon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+
+  .categoriesGrid {
+    /* Turn the grid into a horizontal scrolling row on tablet/mobile */
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 1.25rem;
+    overflow-x: auto;
+    padding: 0.25rem 0 0.75rem;
+    margin: 0; /* avoid pushing beyond container width */
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .iconBadge {
+    width: 40px;
+    height: 40px;
+  }
+
+  .iconBadge svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .octagonWrapper {
+    /* Slightly larger than WhatsApp status bubbles */
+    width: 110px;
+    height: 110px;
+  }
+
+  .categoryName {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .categoriesSection {
+    /* Even tighter gap on small phones between hero and this section */
+    padding: 2rem 0.875rem;
+  }
+
+  .header {
+    margin-bottom: 2rem;
+  }
+
+  .title {
+    font-size: 1.75rem;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+  }
+
+  .categoriesGrid {
+    /* Keep horizontal scroll behavior inside container, ensure no page overflow */
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 1rem;
+    margin: 0;
+  }
+
+  .categoryCard {
+    padding: 0.5rem;
+    min-width: 130px;
+    scroll-snap-align: center;
+  }
+
+  .iconBadge {
+    width: 36px;
+    height: 36px;
+    top: -8px;
+    right: -8px;
+  }
+
+  .iconBadge svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .octagonWrapper {
+    width: 100px;
+    height: 100px;
+  }
+
+  .hoverArrow {
+    width: 32px;
+    height: 32px;
+  }
+
+  .hoverArrow svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .categoryName {
+    font-size: 0.9rem;
+  }
+}

@@ -1,0 +1,543 @@
+/* Base Card Styles */
+.card {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.5);
+  transition: all 0.5s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  box-shadow: 0 20px 40px -12px rgba(16, 185, 129, 0.2);
+}
+
+.gradientOverlay {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.card:hover .gradientOverlay {
+  opacity: 1;
+}
+
+.bgGradientGreen {
+  background: linear-gradient(to bottom right, rgba(16, 185, 129, 0.2), rgba(20, 184, 166, 0.2));
+}
+
+.bgGradientBlue {
+  background: linear-gradient(to bottom right, rgba(8, 30, 49, 0.3), rgba(37, 99, 235, 0.2));
+}
+
+/* Theme Selector */
+.themeSelector {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 10;
+  display: flex;
+  gap: 0.35rem;
+}
+
+.themeButton {
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+}
+
+.themeButton:hover {
+  color: white;
+}
+
+.themeButtonGreen.themeButtonActive {
+  background: linear-gradient(to right, #059669, #14b8a6);
+  color: white;
+  border: none;
+}
+
+.themeButtonBlue.themeButtonActive {
+  background: linear-gradient(to right, #081e31, #2563eb);
+  color: white;
+  border: none;
+}
+
+/* Like Button */
+.likeButton {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 10;
+  width: 2rem;
+  height: 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.likeButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.heart {
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.heartLiked {
+  color: #ef4444;
+  fill: #ef4444;
+  transition: all 0.3s ease;
+}
+
+/* Product Image */
+.productImage {
+  position: relative;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: all 0.5s ease;
+}
+
+.productImageInner {
+  transition: transform 0.7s ease;
+}
+
+.productImageHovered {
+  transform: scale(1.1) rotate(3deg);
+}
+
+.productIcon {
+  width: 140px;
+  height: 140px;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 0.75rem;
+}
+
+.gradientGreen {
+  background: linear-gradient(to bottom right, #059669, #14b8a6);
+}
+
+.gradientBlue {
+  background: linear-gradient(to bottom right, #081e31, #2563eb);
+}
+
+.productImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  position: relative;
+  z-index: 10;
+}
+
+/* Particles */
+.particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 9999px;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.particle1 {
+  top: 3rem;
+  left: 2rem;
+  width: 0.4rem;
+  height: 0.4rem;
+}
+
+.particle2 {
+  top: 6rem;
+  right: 2.5rem;
+  width: 0.3rem;
+  height: 0.3rem;
+  animation-delay: 0.5s;
+}
+
+.particle3 {
+  bottom: 3rem;
+  left: 3rem;
+  width: 0.25rem;
+  height: 0.25rem;
+  animation-delay: 1s;
+}
+
+.accentPulseGreen {
+  background: #34d399;
+}
+
+.accentPulseBlue {
+  background: #2563eb;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Content */
+.content {
+  position: relative;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stars {
+  display: flex;
+  gap: 0.125rem;
+}
+
+.star {
+  color: #facc15;
+  fill: #facc15;
+}
+
+.starEmpty {
+  color: rgba(255, 255, 255, 0.3);
+  fill: none;
+}
+
+.ratingText {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.875rem;
+}
+
+.ecoBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #4ade80;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Product Info */
+.productInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0.25rem;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.description {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.75rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.pricing {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.priceGreen {
+  background-image: linear-gradient(to right, #34d399, #14b8a6);
+}
+
+.priceBlue {
+  background-image: linear-gradient(to right, #2563eb, #60a5fa);
+}
+
+.oldPrice {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 1.125rem;
+  text-decoration: line-through;
+}
+
+/* Specs */
+.specs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.specCard {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-radius: 10px;
+  padding: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.specHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.specHeader svg {
+  color: #4ade80;
+}
+
+.specCard:nth-child(2) .specHeader svg {
+  color: #2563eb;
+}
+
+.specLabel {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: inherit;
+}
+
+.specValue {
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* CTA Button */
+.ctaButton {
+  width: 100%;
+  font-weight: 600;
+  padding: 0.75rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 12px -3px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  border: none;
+  color: white;
+  font-size: 0.875rem;
+}
+
+.buttonGreen {
+  background: linear-gradient(to right, #059669, #14b8a6);
+}
+
+.buttonBlue {
+  background: linear-gradient(to right, #081e31, #2563eb);
+}
+
+.ctaButton:hover:not(:disabled) {
+  transform: scale(1.02);
+  opacity: 0.9;
+}
+
+.ctaButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Footer */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.4);
+  padding-top: 0.25rem;
+}
+
+/* Responsive Design */
+@media (min-width: 769px) {
+  .card {
+    max-width: 320px;
+  }
+}
+
+@media (max-width: 768px) and (min-width: 481px) {
+  .card {
+    max-width: 280px;
+  }
+  
+  .productImage {
+    height: 160px;
+  }
+  
+  .productIcon {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+/* Mobile - Two Column Layout */
+@media (max-width: 480px) {
+  .card {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+  
+  /* Reduce height and content size for blue theme on mobile */
+  .card .bgGradientBlue {
+    height: calc(120px * 0.75); /* Reduce by 25% for blue theme on mobile */
+  }
+  
+  .themeSelector {
+    top: 0.5rem;
+    left: 0.5rem;
+  }
+  
+  .themeButton {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.6rem;
+  }
+  
+  .likeButton {
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+  
+  .productImage {
+    /* Further reduce hero image height to shrink card vertically */
+    height: calc(180px * 0.75); /* Reduce by 25% */
+  }
+  
+  .productIcon {
+    /* Slightly smaller icon container again */
+    width: calc(120px * 0.75); /* Reduce by 25% */
+    height: calc(120px * 0.75); /* Reduce by 25% */
+  }
+  
+  .content {
+    /* Even tighter inner spacing */
+    padding: 0.55rem;
+    gap: 0.35rem;
+  }
+  
+  .title {
+    font-size: 0.85rem; /* Smaller font for mobile */
+    margin-bottom: 0.15rem;
+  }
+  
+  .description {
+    font-size: 0.68rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .price {
+    font-size: 1.1rem;
+  }
+  
+  .specs {
+    gap: 0.35rem;
+  }
+  
+  .specCard {
+    padding: 0.35rem;
+  }
+  
+  .specLabel {
+    font-size: 0.6rem;
+  }
+  
+  .specValue {
+    font-size: 0.7rem;
+  }
+  
+  .ctaButton {
+    padding: 0.55rem;
+    font-size: 0.78rem;
+  }
+  
+  .footer {
+    font-size: 0.58rem;
+    gap: 0.3rem;
+  }
+  
+  .stars svg {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .ratingText {
+    font-size: 0.75rem;
+  }
+  
+  .ecoBadge {
+    font-size: 0.65rem;
+  }
+}

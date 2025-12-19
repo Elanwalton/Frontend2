@@ -1,0 +1,160 @@
+/* styles/CompanyProfile.module.css */
+.profileContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 5vh;
+  padding: 1rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.profileCard {
+  display: flex;
+  flex-direction: column;
+  max-width: 1000px; /* Increased max-width */
+  width: 100%;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.profileCard:hover {
+  transform: translateY(-5px);
+}
+
+@media (min-width: 768px) {
+  .profileCard {
+    flex-direction: row;
+    min-height: 450px; /* Added minimum height for larger screens */
+  }
+}
+
+.mediaContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  background-color: #ebf8ff;
+  min-height: 300px; /* Increased minimum height */
+  overflow: hidden;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .mediaContainer {
+    flex: 1.2; /* Increased flex ratio to give more space to video */
+    min-height: auto;
+    height: 100%;
+  }
+}
+
+.video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* For larger screens, make the video even more prominent */
+@media (min-width: 1024px) {
+  .mediaContainer {
+    min-height: 400px;
+  }
+  
+  .video {
+    transform: scale(1.05); /* Slightly zoom the video */
+  }
+}
+
+.content {
+  padding: 2.5rem; /* Increased padding */
+  flex: 1.8; /* Adjusted flex ratio */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.title {
+  font-size: 2rem; /* Slightly larger title */
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 60px; /* Longer underline */
+  height: 4px;
+  background-color: #38b2ac;
+  border-radius: 2px;
+}
+
+.shortText {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #4a5568;
+  margin-bottom: 1rem;
+}
+
+.expandedContent {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease-out;
+}
+
+.expandedContent.expanded {
+  max-height: 500px;
+  transition: max-height 0.5s ease-in;
+}
+
+.expandedContent p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #4a5568;
+  margin-bottom: 1rem;
+}
+
+.readMoreBtn {
+  background-color: #38b2ac;
+  color: white;
+  border: none;
+  padding: 0.85rem 1.75rem; /* Slightly larger button */
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1.2rem;
+  align-self: flex-start; /* Align button to left */
+}
+
+.readMoreBtn:hover {
+  background-color: #319795;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(56, 178, 172, 0.3);
+}
+
+.readMoreBtn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(56, 178, 172, 0.5);
+}
+
+/* Animation for the video container */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mediaContainer {
+  animation: fadeIn 0.8s ease-out;
+}

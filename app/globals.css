@@ -1,0 +1,128 @@
+/* ==========================================
+   GLOBAL COLOR VARIABLES
+   ========================================== */
+:root {
+  --bg-light: #f9fafb;
+  --bg-dark: #0d0d0d;
+
+  --text-light: #111827;
+  --text-dark: #f3f4f6;
+
+  --energy-blue: rgba(59, 130, 246, 0.4);
+  --energy-blue-strong: rgba(59, 130, 246, 0.8);
+  --solar-yellow: rgba(253, 224, 71, 0.3);
+  --pulse-accent: rgba(14, 165, 233, 0.25);
+
+  /* Site brand palette */
+  --brand-blue-400: #3b82f6; /* accents, numbers */
+  --brand-blue-500: #2563eb; /* primary */
+  --brand-blue-600: #1d4ed8; /* primary hover/depth */
+  --brand-deep-800: #081e31; /* deep navy text/bg */
+
+  --brand-green-500: #059669; /* success/section badge */
+  --brand-green-400: #14b8a6; /* success gradient end */
+
+  --cta-yellow-500: #f7c843; /* CTA start */
+  --cta-orange-500: #f77f00; /* CTA end */
+  --cta-yellow-400: #ffd65a; /* CTA start (dark) */
+  --cta-orange-400: #ff8c1a; /* CTA end (dark) */
+}
+
+/* ==========================================
+   BASE BODY STYLING
+   ========================================== */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, sans-serif;
+  background: var(--bg-light);
+  color: var(--text-light);
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+/* Dark theme mode */
+.dark body {
+  background: var(--bg-dark);
+  color: var(--text-dark);
+}
+
+/* ==========================================
+   SOLAR BACKGROUND MODULE
+   Apply to pages by adding: <body class="solar-theme">
+   ========================================== */
+body.solar-theme {
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Single optimized animated layer */
+body.solar-theme::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+
+  background:
+    radial-gradient(circle at 20% 30%, var(--energy-blue) 0%, transparent 70%),
+    radial-gradient(circle at 80% 70%, var(--solar-yellow) 0%, transparent 80%),
+    linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+
+  animation: solarPulse 10s ease-in-out infinite alternate;
+  background-blend-mode: screen;
+}
+
+/* ==========================================
+   ANIMATION
+   ========================================== */
+@keyframes solarPulse {
+  0% {
+    opacity: 0.35;
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(1.02);
+    filter: brightness(1.15);
+  }
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+/* ==========================================
+   DARK THEME VARIATION
+   ========================================== */
+.dark body.solar-theme::before {
+  background:
+    radial-gradient(circle at 30% 40%, var(--energy-blue-strong) 0%, transparent 70%),
+    radial-gradient(circle at 70% 80%, var(--pulse-accent) 0%, transparent 80%),
+    linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+  animation: solarPulseDark 12s ease-in-out infinite alternate;
+}
+
+@keyframes solarPulseDark {
+  0% { opacity: 0.25; transform: scale(1); filter: brightness(1); }
+  50% { opacity: 0.5; transform: scale(1.05); filter: brightness(1.2); }
+  100% { opacity: 0.25; transform: scale(1); filter: brightness(1); }
+}
+
+/* Subtle solar cell grid layer */
+body.solar-theme::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+
+  background-size: 40px 40px;
+  mix-blend-mode: overlay;
+  opacity: 0.15; /* fine-tune 0.05 → 0.2 range */
+}

@@ -1,0 +1,179 @@
+/* Base Hero */
+.hero {
+  max-width: 1200px;
+  margin: auto;
+  background: linear-gradient(135deg, #597003, #15316d);
+  color: white;
+  padding: 2rem;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Slide Layout */
+.slide {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 2rem;
+}
+
+.text {
+  max-width: 50%;
+  z-index: 2;
+}
+
+.text h2 {
+  font-size: 2.2rem;
+  font-weight: bold;
+  color: #ffc107;
+  margin-bottom: 0.5rem;
+}
+
+.text h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.newPrice {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.oldPrice {
+  text-decoration: line-through;
+  margin-left: 0.5rem;
+  opacity: 0.7;
+}
+
+.discount {
+  background: #ffc107;
+  color: #156d28;
+  padding: 0.4rem 0.8rem;
+  border-radius: 5px;
+  font-weight: bold;
+  margin-top: 0.5rem;
+  display: inline-block;
+}
+
+.timer {
+  margin-top: 0.8rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #ffc107;
+}
+
+.ctaButtons {
+  margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.whatsappBtn {
+  background: #25d366;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.whatsappBtn:hover {
+  background: #1ebe5d;
+}
+
+.shopBtn {
+  background: #ffc107;
+  color: #156d28;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.shopBtn:hover {
+  background: #ffe600;
+}
+
+.image img {
+  max-width: 280px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 1;
+}
+
+/* Swiper Wrapper */
+.swiper {
+  position: relative;
+}
+
+/* Navigation Arrows (Hidden by Default) */
+.swiper-button-next,
+.swiper-button-prev {
+  color: #ffc107 !important;
+  font-weight: bold;
+  transition: opacity 0.3s, color 0.3s;
+  top: 50% !important;
+  transform: translateY(-50%);
+  z-index: 10;
+  pointer-events: auto;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.swiper-button-next {
+  right: 15px !important;
+}
+.swiper-button-prev {
+  left: 15px !important;
+}
+
+/* Show arrows when hovered */
+.hero:hover .swiper-button-next,
+.hero:hover .swiper-button-prev {
+  opacity: 1;
+  visibility: visible;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  color: #fff !important;
+}
+
+/* Pagination Dots */
+.swiper-pagination-bullet {
+  background: #fff !important;
+  opacity: 0.6;
+}
+
+.swiper-pagination-bullet-active {
+  background: #ffc107 !important;
+  opacity: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .slide {
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+  }
+
+  .text {
+    max-width: 65%;
+  }
+
+  .image img {
+    max-width: 120px;
+    margin: 0;
+  }
+
+  .hero {
+    padding: 1rem;
+  }
+}

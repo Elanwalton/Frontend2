@@ -1,0 +1,87 @@
+.container {
+  padding: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.searchInput {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  flex: 1;
+}
+
+.sortSelect {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.createButton {
+  padding: 0.6rem 1.2rem;
+  background-color: #700000;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tableHead th {
+  background-color: #eee;
+  padding: 1rem;
+  text-align: left;
+}
+
+.tableBody td {
+  padding: 0.9rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.actionLink,
+.actionButton {
+  margin-right: 0.5rem;
+  color: #700000;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+.pagination {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.pageButton {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+}
+
+.pageButton.active {
+  background-color: #700000;
+  color: white;
+  font-weight: bold;
+}

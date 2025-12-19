@@ -1,0 +1,28 @@
+.container {
+  width: 100%;
+  padding: 24px;
+  background-color: #f9fafb;
+  min-height: 100vh;
+}
+
+.metricCard {
+  height: 100%;
+  transition: box-shadow 0.3s ease;
+  border-radius: 12px !important;
+}
+
+.metricCard:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 900px) {
+  .container {
+    padding: 20px;
+  }
+}

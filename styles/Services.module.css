@@ -1,0 +1,92 @@
+.services {
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  text-align: center;
+}
+
+.heading {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.card {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  text-align: left;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #1f2937;
+}
+
+.shortDesc {
+  font-size: 0.95rem;
+  color: #4b5563;
+  margin-bottom: 1rem;
+}
+
+.toggleBtn {
+ background-color: #38b2ac;
+  color: white;
+  border: none;
+  padding: 0.85rem 1.75rem; /* Slightly larger button */
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1.2rem;
+  align-self: flex-start; 
+}
+
+.toggleBtn:hover {
+  background-color: #319795;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(56, 178, 172, 0.3);
+}
+
+.details {
+  list-style: disc;
+  margin: 0.5rem 0 0 1.5rem;
+  color: #374151;
+  font-size: 0.9rem;
+}
+/* Existing styles remain same */
+
+.accordion {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.3s ease;
+  opacity: 0;
+}
+
+.accordion.open {
+  max-height: 500px; /* big enough to fit content */
+  opacity: 1;
+}
+
+

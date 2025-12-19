@@ -1,0 +1,45 @@
+.utilityBar {
+  background-color: #fbbd08; /* yellow background */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 40px;
+  font-size: 14px;
+  font-weight: 600;
+  color: black;
+}
+
+.left {
+  display: flex;
+  gap: 20px;
+}
+
+.links {
+  display: flex;
+  gap: 20px;
+}
+
+.links a {
+  text-decoration: none;
+  color: black;
+  transition: color 0.3s ease;
+}
+
+.links a:hover {
+  color: #700000; /* your theme red */
+}
+
+.socials {
+  display: flex;
+  gap: 15px;
+}
+
+.socials a {
+  color: black;
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+
+.socials a:hover {
+  color: #700000;
+}

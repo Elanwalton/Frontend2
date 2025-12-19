@@ -1,0 +1,776 @@
+/* ---------- Hero Section (Updated & Mobile-friendly) ---------- */
+
+.hero {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto; /* Large visual + 2x2 grid for mobile */
+  gap: 0.8rem;
+  max-width: 90%;
+  margin: 1rem auto;
+  margin-top: 4.8rem;
+  margin-bottom: 1.5rem; /* tighter default bottom spacing */
+  min-height: 320px;
+  padding: 0.75rem;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  background-color: #081e31;
+  width: 100%;
+}
+
+/* decorative top/bottom gradients */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #f7c843, #059669, #2563eb, #7c3aed);
+  z-index: 10;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #7c3aed, #2563eb, #059669, #f7c843);
+  z-index: 10;
+}
+
+/* Sidebar hidden by default (mobile) */
+.heroSidebar {
+  display: none;
+  background: linear-gradient(135deg, #081e31 0%, #0a0527 100%);
+  color: #fff;
+  border-radius: 12px;
+  padding: 0;
+  overflow: hidden;
+  height: 100%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(247, 200, 67, 0.2);
+}
+
+.sidebarHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem 1rem;
+  background: rgba(247, 200, 67, 0.08);
+  border-bottom: 2px solid rgba(247, 200, 67, 0.12);
+  font-weight: 700;
+  font-size: 1.0625rem;
+}
+
+.sidebarIcon {
+  color: #f7c843;
+  animation: sparkle-rotate 3s ease-in-out infinite;
+}
+
+@keyframes sparkle-rotate {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(180deg); }
+}
+
+/* Disable sparkle rotation on small screens to save CPU / avoid jank */
+@media (max-width: 480px) {
+  .sidebarIcon {
+    animation: none;
+  }
+}
+
+/* Left main banner */
+.heroLeft {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  width: 100%;
+  height: 280px; /* default mobile height */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  background: #f5f5f5;
+}
+
+.heroLeft:hover {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+}
+
+/* hero link wrapper */
+.heroLink {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* image wrapper and image */
+.imageWrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.heroImg,
+.banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center; /* protect focal point */
+  display: block;
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  backface-visibility: hidden; /* help mobile rendering */
+}
+
+/* subtle zoom on hover for larger screens only */
+.imageWrapper:hover .heroImg {
+  transform: scale(1.03);
+}
+
+/* MOBILE: Side banners - 2x2 grid */
+.heroRight {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2 columns for mobile */
+  grid-template-rows: 1fr 1fr;    /* 2 rows for mobile */
+  gap: 0.6rem; /* slightly more space between cards side-by-side */
+  width: 100%;
+  align-items: stretch;
+  aspect-ratio: 1 / 1; /* Maintain square proportions for the grid */
+  max-height: 50vh; /* Prevent from getting too tall */
+}
+
+/* Individual banner cards - square aspect ratio for mobile */
+.heroRight .banner {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  width: 100%;
+  aspect-ratio: 1 / 0.95; /* Force square shape for mobile */
+  display: block;
+  background: #f5f5f5;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+  border: 2px solid transparent;
+  min-height: 120px; /* Minimum height for touch targets */
+  margin: 2px 3px; /* tiny side margins for extra separation */
+}
+
+.heroRight .banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Maintain aspect ratio while covering the area */
+  border-radius: 8px;
+}
+
+/* Banner card */
+.banner {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  width: 100%;
+  display: block;
+  background: #f5f5f5;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+  border: 2px solid transparent;
+}
+
+/* hover effects (desktop/tablet) */
+.banner:hover {
+  border-color: rgba(247, 200, 67, 0.45);
+  box-shadow: 0 8px 24px rgba(247, 200, 67, 0.18);
+}
+
+/* Image transform: rotate removed for small screens */
+.banner img {
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Larger screens: slight rotate for flair */
+@media (min-width: 769px) {
+  .banner:hover img {
+    transform: scale(1.1) rotate(2deg);
+  }
+}
+/* ---------- Tablet Specific Fixes ---------- */
+
+@media (min-width: 769px) and (max-width: 1023px) {
+  .heroRight {
+    aspect-ratio: auto; /* Remove square constraint on tablets */
+    max-height: none;   /* Remove height limit */
+    height: 100%;       /* Fill available space */
+  }
+  
+  .heroRight .banner {
+    aspect-ratio: 1 / 1; /* Keep squares but let grid handle height */
+    min-height: 0;       /* Remove minimum height constraint */
+  }
+  
+  .heroLeft {
+    height: 60vh;
+    min-height: 360px;
+  }
+  
+  /* Ensure the hero container has enough height */
+  .hero {
+    min-height: 480px; /* Increased minimum height for tablets */
+  }
+}
+
+/* For smaller screens, avoid rotate to prevent cropping / heavy repaints */
+@media (max-width: 768px) {
+  .banner:hover img {
+    transform: scale(1.04);
+  }
+  
+  /* Mobile tap feedback */
+  .banner:active {
+    transform: scale(0.98);
+  }
+  
+  .banner:active img {
+    transform: scale(1.05);
+  }
+}
+
+/* Overlay for readability */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(8, 30, 49, 0.28) 40%,
+    rgba(8, 30, 49, 0.8) 100%
+  );
+  z-index: 1;
+  transition: background 0.3s ease;
+}
+
+.imageWrapper:hover .overlay,
+.banner:hover .overlay {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(8, 30, 49, 0.45) 40%,
+    rgba(8, 30, 49, 0.9) 100%
+  );
+}
+
+/* Text styles */
+.heroText {
+  position: absolute;
+  bottom: 1.25rem;
+  left: 1rem;
+  right: 1rem;
+  z-index: 2;
+  color: #fff;
+  max-width: 92%;
+  padding-right: 1rem;
+}
+
+.heroText h2 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin: 0 0 0.75rem 0;
+  line-height: 1.15;
+  text-shadow: 1px 1px 6px rgba(0, 0, 0, 0.75);
+  letter-spacing: -0.3px;
+}
+
+/* larger headline on wider screens */
+@media (min-width: 1024px) {
+  .heroText h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.5px;
+  }
+}
+
+/* Trending badge */
+.trendingBadge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #059669 0%, #14b8a6 100%);
+  color: white;
+  padding: 0.45rem 0.9rem;
+  border-radius: 18px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.28);
+  backdrop-filter: blur(6px);
+}
+
+/* banner text (small cards) */
+.bannerText {
+  position: absolute;
+  bottom: 0.65rem;
+  left: 0.6rem;
+  right: 0.6rem;
+  z-index: 2;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  opacity: 1; /* Always visible by default */
+  transition: opacity 0.2s ease;
+}
+
+/* Always show text on mobile */
+@media (max-width: 768px) {
+  .bannerText {
+    opacity: 1; /* Force visible on mobile */
+  }
+  
+  .bannerArrow {
+    opacity: 1; /* Ensure arrow icon is visible on mobile */
+    transform: translateX(0);
+    padding: 0.35rem; /* Slightly smaller padding on mobile */
+  }
+  
+  .bannerArrow svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+}
+
+/* iPhone 12/13 and similar devices (390px width) */
+@media (max-width: 430px) {
+  .hero {
+    max-width: 95%; /* Slightly wider on smaller phones */
+    padding: 0.5rem;
+  }
+}
+
+.banner:hover .bannerText {
+  opacity: 1;
+}
+
+.bannerText p {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0;
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.8);
+  line-height: 1.2;
+  background: rgba(8, 30, 49, 0.78);
+  padding: 0.45rem 0.6rem;
+  border-radius: 8px;
+  backdrop-filter: blur(6px);
+  flex: 1;
+}
+
+.bannerArrow {
+  background: rgba(247, 200, 67, 0.95);
+  color: #081e31;
+  padding: 0.45rem;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  margin-left: 0.5rem;
+}
+
+/* Buttons */
+.buyBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+  background: linear-gradient(135deg, #f7c843 0%, #f77f00 100%);
+  color: #081e31;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 40px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 700;
+  transition: box-shadow 0.25s ease, transform 0.18s ease;
+  box-shadow: 0 8px 20px rgba(247, 200, 67, 0.28);
+}
+
+.buyBtn:hover {
+  box-shadow: 0 12px 28px rgba(247, 200, 67, 0.42);
+  transform: translateY(-2px);
+}
+
+.btnIcon {
+  transition: transform 0.3s ease;
+}
+
+.buyBtn:hover .btnIcon {
+  transform: translateX(4px);
+}
+
+/* Skeleton shimmer loader */
+.skeleton {
+  background: linear-gradient(90deg, #eee 25%, #ddd 37%, #eee 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+  border-radius: 8px;
+}
+
+.heroLeft .skeleton {
+  width: 100%;
+  height: 100%;
+  min-height: 220px;
+}
+
+.heroRight .skeleton {
+  width: 100%;
+  height: 100%;
+  min-height: 100px;
+}
+
+@keyframes shimmer {
+  0% { background-position: -400% 0; }
+  100% { background-position: 400% 0; }
+}
+
+/* ---------- Mobile Optimizations ---------- */
+
+/* Very small phones tweaks */
+@media (max-width: 380px) {
+  .hero {
+    padding: 0.5rem;
+    gap: 0.6rem;
+    margin-bottom: 2.5rem; /* reduce excessive vertical gap on very small phones */
+  }
+
+  .heroLeft {
+    height: 260px;
+  }
+
+  .heroText {
+    bottom: 18px;
+    left: 12px;
+  }
+
+  .heroText h2 {
+    font-size: 1.4rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .buyBtn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+
+  /* Disable heavy hover transforms on mobile */
+  .banner:hover {
+    transform: none;
+  }
+
+  .banner:hover img {
+    transform: scale(1.03);
+  }
+}
+
+/* Ultra small phones - keep 2x2 but adjust spacing */
+@media (max-width: 360px) {
+  .heroLeft {
+    height: 240px;
+  }
+
+  .heroText h2 {
+    font-size: 1.2rem;
+  }
+
+  .heroRight {
+    gap: 0.35rem;
+  }
+
+  .bannerText p {
+    font-size: 0.85rem;
+    padding: 0.35rem 0.5rem;
+  }
+
+  .hero {
+    gap: 0.5rem;
+    margin-bottom: 2rem; /* reduce extra bottom space on ultra small phones */
+  }
+}
+
+/* Fallback for very small screens - switch to single column */
+@media (max-width: 320px) {
+  .heroRight {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(4, auto);
+    aspect-ratio: auto;
+    max-height: none;
+  }
+  
+  .heroRight .banner {
+    aspect-ratio: 2/1; /* Wider cards on very small screens */
+    min-height: 80px;
+  }
+}
+
+/* ---------- Tablet and Desktop: Main banner left + 2x2 grid right ---------- */
+
+/* Tablet and up: two-column layout with 2x2 grid on right */
+@media (min-width: 769px) {
+  .hero {
+    grid-template-columns: 1.5fr 1fr; /* Main banner left, 2x2 grid right */
+    grid-template-rows: 1fr; /* Single row for desktop */
+    gap: 0.9rem;
+    padding: 1rem;
+    min-height: 420px;
+    border-radius: 14px;
+  }
+
+  .heroLeft {
+    height: 100%;
+    min-height: 360px;
+    border-radius: 14px;
+  }
+
+  .heroRight {
+    /* Keep 2x2 grid for desktop */
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    aspect-ratio: 1 / 1;
+    max-height: none;
+    gap: 0.75rem;
+    height: 100%;
+  }
+
+  .heroRight .banner {
+    /* Keep square aspect ratio for desktop */
+    aspect-ratio: 1 / 1;
+    min-height: auto;
+  }
+
+  .heroText h2 {
+    font-size: 1.9rem;
+  }
+}
+
+/* Desktop: show left category sidebar and 3-column hero with 2x2 grid */
+@media (min-width: 1024px) {
+  .hero {
+    grid-template-columns: 280px 1.7fr 1fr; /* Sidebar + Main + 2x2 grid */
+    gap: 1.5rem;
+    padding: 1rem;
+    min-height: 500px;
+    border-radius: 16px;
+  }
+
+  .heroSidebar {
+    display: block;
+    border-radius: 16px;
+  }
+
+  .heroLeft {
+    min-height: 500px;
+    height: 55vh;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+
+  .heroRight {
+    /* Maintain 2x2 grid on large desktop */
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    height: 100%;
+  }
+
+  .heroText {
+    left: 2rem;
+    bottom: 2rem;
+    max-width: 75%;
+  }
+
+  .heroText h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1.25rem;
+  }
+}
+
+/* fix for medium-laptops where height used to become tiny */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .heroLeft {
+    height: 60vh;
+    min-height: 360px;
+  }
+}
+
+/* Menu List Styles */
+.menuList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.menuItem {
+  padding: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  transition: all 0.18s ease;
+}
+
+.menuItem:last-child {
+  border-bottom: none;
+}
+
+.menuItem a {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  color: rgba(255, 255, 255, 0.95);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: color 0.18s ease, transform 0.18s ease;
+}
+
+.menuIcon {
+  color: #f7c843;
+  transition: transform 0.18s ease;
+}
+
+.menuItem:hover .menuIcon {
+  transform: translateX(4px);
+}
+
+.menuItem a:hover {
+  color: #f7c843;
+}
+
+/* hero carousel container */
+.heroCarousel {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  background: #f5f5f5;
+}
+
+/* nav prev/next (custom controls) */
+.navPrev,
+.navNext {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.38);
+  color: #fff;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  z-index: 3;
+}
+.navPrev { left: 10px; }
+.navNext { right: 10px; }
+
+/* dots */
+.dots {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  z-index: 3;
+}
+.dot,
+.activeDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255,255,255,0.5);
+  cursor: pointer;
+}
+.activeDot {
+  width: 18px;
+  background: #700000;
+}
+
+.errorMsg {
+  margin-top: 8px;
+  color: #b91c1c;
+}
+/* Swiper Carousel Styles (Next / Prev buttons & pagination adjustments for module styling setups) */
+.swiperWrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.heroSwiper {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  opacity: 0.92;
+  margin-top: 0.4rem;
+  margin-bottom: 0.9rem;
+}
+
+/* Swiper Navigation Buttons - scoped global selectors (Next/Prev) */
+.swiperWrapper :global(.swiper-button-next),
+.swiperWrapper :global(.swiper-button-prev) {
+  color: #f7c843 !important;
+  background: rgba(255, 255, 255, 0.95);
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  transition: all 0.28s ease;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+.swiperWrapper :global(.swiper-button-next):hover,
+.swiperWrapper :global(.swiper-button-prev):hover {
+  background: #f7c843;
+  color: #081e31 !important;
+  transform: scale(1.06);
+}
+
+.swiperWrapper :global(.swiper-button-next):after,
+.swiperWrapper :global(.swiper-button-prev):after {
+  font-size: 20px;
+  font-weight: 900;
+}
+
+/* Swiper Pagination bullets */
+.swiperWrapper :global(.swiper-pagination-bullet) {
+  width: 12px;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 1;
+  transition: all 0.28s ease;
+}
+
+.swiperWrapper :global(.swiper-pagination-bullet-active) {
+  background: #f7c843;
+  width: 32px;
+  border-radius: 6px;
+}
+
+/* Responsive Swiper size adjustments */
+@media (max-width: 768px) {
+  .swiperWrapper :global(.swiper-button-next),
+  .swiperWrapper :global(.swiper-button-prev) {
+    width: 35px;
+    height: 35px;
+  }
+
+  .swiperWrapper :global(.swiper-button-next):after,
+  .swiperWrapper :global(.swiper-button-prev):after {
+    font-size: 16px;
+  }
+}

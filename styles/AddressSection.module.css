@@ -1,0 +1,34 @@
+.container {
+  padding: 1rem;
+}
+
+.container h3 {
+  margin-bottom: 1rem;
+}
+
+.container .addressList {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 1rem;
+}
+
+.container .addressList li {
+  margin-bottom: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.container .btn {
+  padding: 0.3rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.container .addBtn {
+  margin-top: 1rem;
+  background-color: #0070f3;
+  color: #fff;
+  border: none;
+}

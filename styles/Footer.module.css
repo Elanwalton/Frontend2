@@ -1,0 +1,317 @@
+/* Footer.module.css - Modern Theme */
+
+.footer {
+  background: linear-gradient(135deg, #081e31 0%, #0a2640 100%);
+  color: #f8fafc;
+  padding: 4rem 2rem 2rem;
+  margin-top: 5rem;
+  font-family: 'Segoe UI', -apple-system, sans-serif;
+  border-top: 1px solid rgba(14, 165, 233, 0.2);
+}
+
+/* CTA Section */
+.ctaSectionWrapper {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(8, 30, 49, 0.5) 100%);
+  padding: 3.5rem 2rem;
+  border-radius: 24px;
+  margin-bottom: 4rem;
+  border: 1px solid rgba(14, 165, 233, 0.3);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(8, 30, 49, 0.3);
+}
+
+.ctaSection {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+}
+
+.ctaIcon {
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 8px 20px rgba(14, 165, 233, 0.4);
+}
+
+.ctaText h2 {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+  color: #f8fafc;
+  font-weight: 700;
+}
+
+.ctaText p {
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  color: rgba(248, 250, 252, 0.8);
+  line-height: 1.6;
+}
+
+.ctaForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.inputWrapper {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.ctaForm input[type="email"] {
+  flex: 1;
+  min-width: 250px;
+  padding: 1rem 1.25rem;
+  border: 2px solid rgba(14, 165, 233, 0.4);
+  border-radius: 12px;
+  font-size: 1rem;
+  background: rgba(248, 250, 252, 0.95);
+  color: #081e31;
+  transition: all 0.3s ease;
+}
+
+.ctaForm input[type="email"]:focus {
+  outline: none;
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+}
+
+.ctaForm input[type="email"]::placeholder {
+  color: #9ca3af;
+}
+
+.ctaForm input[type="email"]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ctaForm button {
+  background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+  min-width: 140px;
+}
+
+.ctaForm button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(14, 165, 233, 0.4);
+}
+
+.ctaForm button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.successBtn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.successMessage,
+.errorMessage {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1.25rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  animation: slideIn 0.3s ease;
+}
+
+.successMessage {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #d1fae5;
+}
+
+.errorMessage {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #fee2e2;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Links Container */
+.linksContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid rgba(14, 165, 233, 0.2);
+}
+
+.linkColumn h4 {
+  font-size: 1.1rem;
+  margin-bottom: 1.25rem;
+  color: #0ea5e9;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.linkColumn ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.linkColumn li {
+  margin-bottom: 0.75rem;
+  color: rgba(248, 250, 252, 0.7);
+  transition: all 0.2s ease;
+}
+
+.linkColumn a {
+  color: rgba(248, 250, 252, 0.7);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: inline-block;
+}
+
+.linkColumn a:hover {
+  color: #0ea5e9;
+  transform: translateX(4px);
+}
+
+.socialIcons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.socialIcons a {
+  width: 44px;
+  height: 44px;
+  background: rgba(14, 165, 233, 0.15);
+  border: 1px solid rgba(14, 165, 233, 0.3);
+  color: #0ea5e9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.socialIcons a:hover {
+  background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+  border-color: #0ea5e9;
+  color: white;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
+}
+
+/* Bottom Section */
+.bottomSection {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-top: 2rem;
+  text-align: center;
+}
+
+.bottomNote {
+  font-size: 0.95rem;
+  color: rgba(248, 250, 252, 0.6);
+  margin-bottom: 1rem;
+}
+
+.legalLinks {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+}
+
+.legalLinks a {
+  color: rgba(248, 250, 252, 0.6);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.legalLinks a:hover {
+  color: #0ea5e9;
+}
+
+.legalLinks span {
+  color: rgba(248, 250, 252, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .footer {
+    padding: 3rem 1.5rem 1.5rem;
+  }
+
+  .ctaSectionWrapper {
+    padding: 2.5rem 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .ctaSection {
+    flex-direction: column;
+    gap: 2rem;
+    text-align: center;
+  }
+
+  .ctaIcon {
+    width: 70px;
+    height: 70px;
+  }
+
+  .ctaText h2 {
+    font-size: 1.5rem;
+  }
+
+  .inputWrapper {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ctaForm input[type="email"] {
+    width: 83%;
+    min-width: unset;
+  }
+
+  .ctaForm button {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .linksContainer {
+    gap: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  .linkColumn h4 {
+    font-size: 1rem;
+  }
+}
