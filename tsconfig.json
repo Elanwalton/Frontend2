@@ -23,7 +23,7 @@
         "name": "next"
       }
     ],
-    "baseUrl": "src",
+    "baseUrl": ".",
     "paths": {
       "@/*": [
         "*"
@@ -38,10 +38,10 @@
         "styles/*"
       ],
       "@lib/*": [
-        "library/*"
+        "lib/*"
       ],
-      "@mui/*": [
-        "MUI_Components/*"
+      "@utils/*": [
+        "utils/*"
       ]
     }
   },

@@ -1,5 +1,5 @@
 'use client';
-import { getApiUrl } from '../../utils/apiUrl';
+import { getApiUrl } from '@/utils/apiUrl';
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -29,11 +29,11 @@ import {
   RefreshCw,
   ArrowRight,
 } from 'lucide-react';
-import LoadingSpinner from '../../components/LoadingSpinner';
-import MetricCard from '../../components/admin/MetricCard';
-import PageHeader from '../../components/admin/PageHeader';
-import DataTable, { Column } from '../../components/admin/DataTable';
-import StatusBadge from '../../components/admin/StatusBadge';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import MetricCard from '@/components/admin/MetricCard';
+import PageHeader from '@/components/admin/PageHeader';
+import DataTable, { Column } from '@/components/admin/DataTable';
+import StatusBadge from '@/components/admin/StatusBadge';
 
 interface InventoryStats {
   totalProducts: number;

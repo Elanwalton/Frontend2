@@ -1,5 +1,5 @@
 'use client';
-import { getApiUrl } from '../../utils/apiUrl';
+import { getApiUrl } from '@/utils/apiUrl';
 
 import React, { useState, useEffect } from 'react';
 import { 
@@ -15,7 +15,7 @@ import {
   Clock
 } from 'lucide-react';
 import styles from './low-stock.module.css';
-import LoadingSpinner from '../../components/LoadingSpinner';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface LowStockItem {
   id: number;

@@ -14,7 +14,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import styles from './movements.module.css';
-import LoadingSpinner from '../../components/LoadingSpinner';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface StockMovement {
   id: number;

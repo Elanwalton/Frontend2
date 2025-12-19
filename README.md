@@ -13,7 +13,7 @@ Frontend application for Sunleaf Technologies e-commerce platform.
 Set these in your Vercel project settings:
 
 ```
-NEXT_PUBLIC_BACKEND_URL=https://your-backend-domain.com
+NEXT_PUBLIC_BACKEND_URL=https://api.sunleaftechnologies.co.ke
 NODE_ENV=production
 ```
 

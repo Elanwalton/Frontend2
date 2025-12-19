@@ -1,5 +1,5 @@
 'use client';
-import { getApiUrl } from '../../utils/apiUrl';
+import { getApiUrl } from '@/utils/apiUrl';
 
 import React, { useState, useEffect } from 'react';
 import { 
@@ -14,7 +14,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import styles from './adjustments.module.css';
-import LoadingSpinner from '../../components/LoadingSpinner';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface Product {
   id: number;
