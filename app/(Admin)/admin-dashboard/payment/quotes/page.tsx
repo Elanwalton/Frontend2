@@ -520,7 +520,6 @@ export default function QuotesPage() {
           data={sortedQuotes || []}
           columns={columns}
           loading={false}
-          pagination={false}
         />
       </Box>
     </Box>
