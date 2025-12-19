@@ -1,7 +1,7 @@
 // src/components/VerificationBanner.tsx
 "use client";
 
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import { FaExclamationTriangle, FaEnvelope } from 'react-icons/fa';
 

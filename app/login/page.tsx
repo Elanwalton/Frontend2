@@ -6,9 +6,9 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FaEnvelope, FaKey, FaCheck, FaExclamationTriangle } from 'react-icons/fa';
 import styles from '../../app/styles/Auth.module.css';
-import { useAuth } from '../../context/AuthContext';
-import { useToast } from '../../components/ToastProvider';
-import LoadingSpinner from '../../components/LoadingSpinner';
+import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/components/ToastProvider';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 function LoginContent() {
   const [formData, setFormData] = useState({ email: "", password: "" });

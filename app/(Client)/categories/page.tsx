@@ -1,7 +1,7 @@
 'use client';
 
 import React, { Suspense } from 'react';
-import CategoryProducts from '../../components/CategoryProducts';
+import CategoryProducts from '@/components/CategoryProducts';
 
 export default function CategoriesPage() {
   return (

@@ -2,9 +2,9 @@
 import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ShoppingCart, Heart } from 'lucide-react';
-import styles from '../../styles/QuickViewModal.module.css';
-import useCartStore from '../store/UseCartStore';
-import useWishlistStore from '../store/UseWishlistStore';
+import styles from '@/styles/QuickViewModal.module.css';
+import useCartStore from '@/store/UseCartStore';
+import useWishlistStore from '@/store/UseWishlistStore';
 import { toast } from 'react-toastify';
 
 interface Product {

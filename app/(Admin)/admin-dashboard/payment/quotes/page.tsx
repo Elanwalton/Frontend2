@@ -50,7 +50,7 @@ import {
   Group as UsersIcon,
   Inventory as PackageIcon
 } from '@mui/icons-material';
-import { PageHeader, DataTable, StatusBadge, MetricCard, Column } from '../../components/admin';
+import { PageHeader, DataTable, StatusBadge, MetricCard, Column } from '@/components/admin';
 import { 
   Edit as EditLucideIcon, 
   Eye as EyeLucideIcon, 

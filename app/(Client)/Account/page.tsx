@@ -1,8 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { getApiEndpoint } from '../../utils/apiClient';
-import styles from "../../../styles/Account.module.css";
+import { getApiEndpoint } from '@/utils/apiClient';
+import styles from '@/styles/Account.module.css';
 import { 
   Camera, 
   User, 
@@ -19,15 +19,15 @@ import {
   CheckCircle,
   AlertCircle
 } from "lucide-react";
-import OrdersSection from '../../components/Orders';
-import LogoutSection from '../../components/LogoutSection';
-import Breadcrumbs from '../../components/Breadcrumbs';
-import PasswordSection from '../../components/PasswordSection';
-import AddressSection from '../../components/AddressSection';
-import ServiceHighlights from '../../components/ServicesHighlights';
-import Footer from '../../components/Footer';
-import ProtectedRoute from '../../components/ProtectedRoute';
-import { useAuth } from '../../context/AuthContext';
+import OrdersSection from '@/components/Orders';
+import LogoutSection from '@/components/LogoutSection';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import PasswordSection from '@/components/PasswordSection';
+import AddressSection from '@/components/AddressSection';
+import ServiceHighlights from '@/components/ServicesHighlights';
+import Footer from '@/components/Footer';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import { useAuth } from '@/context/AuthContext';
 
 function AccountPageContent() {
   const [activeTab, setActiveTab] = useState("personal");

@@ -6,10 +6,10 @@ import {
   SlidersHorizontal, Grid, List, Heart, ShoppingCart,
   Star, TrendingUp, Eye, X, ChevronDown
 } from 'lucide-react';
-import styles from '../../styles/CategoryProducts.module.css';
+import styles from '@/styles/CategoryProducts.module.css';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Breadcrumbs from './Breadcrumbs';
-import { buildMediaUrl } from '../../utils/media';
+import { buildMediaUrl } from '@/utils/media';
 import LoadingSpinner from './LoadingSpinner';
 
 interface Product {

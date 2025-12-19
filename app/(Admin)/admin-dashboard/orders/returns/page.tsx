@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { getApiUrl } from '../../utils/apiUrl';
+import { getApiUrl } from '@/utils/apiUrl';
 import { Box, Grid, Button, TextField, InputAdornment, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { Search as SearchIcon, FileDownload as ExportIcon } from '@mui/icons-material';
-import { PageHeader, DataTable, StatusBadge, MetricCard, Column } from '../../components/admin';
+import { PageHeader, DataTable, StatusBadge, MetricCard, Column } from '@/components/admin';
 
 interface Return {
   id: string;

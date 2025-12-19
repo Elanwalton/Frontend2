@@ -4,9 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { FaEnvelope, FaCheck, FaExclamationTriangle } from 'react-icons/fa';
-import { getApiEndpoint } from '../../utils/apiClient';
+import { getApiEndpoint } from '@/utils/apiClient';
 import styles from '../../app/styles/Auth.module.css';
-import { useToast } from '../../components/ToastProvider';
+import { useToast } from '@/components/ToastProvider';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");

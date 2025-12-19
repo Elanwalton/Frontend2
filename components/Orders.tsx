@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 import { 
   Package, 
   Clock, 
@@ -17,8 +17,8 @@ import {
   ChevronDown,
   ChevronUp
 } from "lucide-react";
-import { getApiEndpoint } from '../../utils/apiClient';
-import styles from '../../styles/ClientOrders.module.css';
+import { getApiEndpoint } from '@/utils/apiClient';
+import styles from '@/styles/ClientOrders.module.css';
 
 interface OrderItem {
   id: number;

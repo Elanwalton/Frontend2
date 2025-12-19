@@ -19,7 +19,7 @@ import {
   Delete as DeleteIcon,
   Visibility as ViewIcon,
 } from '@mui/icons-material';
-import styles from '../../../styles/adminDashboard.module.css';
+import styles from '@/styles/adminDashboard.module.css';
 
 export interface Column {
   id: string;

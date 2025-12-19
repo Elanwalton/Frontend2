@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { getApiUrl } from '../../utils/apiUrl';
+import { getApiUrl } from '@/utils/apiUrl';
 import { Box, Grid, Button, TextField, InputAdornment } from '@mui/material';
 import { Search as SearchIcon, FileDownload as ExportIcon, LocalShipping as TrackIcon } from '@mui/icons-material';
-import { PageHeader, DataTable, StatusBadge, MetricCard, Column } from '../../components/admin';
+import { PageHeader, DataTable, StatusBadge, MetricCard, Column } from '@/components/admin';
 import { 
   Clock as ClockIcon, 
   Package as PackageIcon, 
@@ -12,7 +12,7 @@ import {
   Truck as TruckIcon,
   User as UserIcon
 } from 'lucide-react';
-import styles from '../../../styles/adminDashboard.module.css';
+import styles from '@/styles/adminDashboard.module.css';
 
 interface Order {
   id: string;

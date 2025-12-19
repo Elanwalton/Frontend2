@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from '../styles/QuoteModal.module.css';
+import styles from '@/styles/QuoteModal.module.css';
 import axios from 'axios';
 
 interface QuoteItem {

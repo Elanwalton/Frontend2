@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from 'react';
-import MpesaPayment from '../../components/MpesaPayment';
-import { useAuth } from '../../context/AuthContext';
+import MpesaPayment from '@/components/MpesaPayment';
+import { useAuth } from '@/context/AuthContext';
 
 export default function TestMpesaPage() {
   const { user } = useAuth();

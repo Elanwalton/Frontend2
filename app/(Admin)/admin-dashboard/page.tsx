@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { getApiUrl } from '../../utils/apiUrl';
-import { apiGet } from '../../utils/apiClient';
+import { getApiUrl } from '@/utils/apiUrl';
+import { apiGet } from '@/utils/apiClient';
 import {
   Box,
   Grid,
@@ -38,10 +38,10 @@ import {
   Inventory as PackageIcon,
 } from '@mui/icons-material';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import MetricCard from '../../components/admin/MetricCard';
-import DateRangePicker, { DateRange } from '../../components/admin/DateRangePicker';
-import { ChartSkeleton, TableSkeleton, ListSkeleton } from '../../components/admin/WidgetSkeleton';
-import PageHeader from '../../components/admin/PageHeader';
+import MetricCard from '@/components/admin/MetricCard';
+import DateRangePicker, { DateRange } from '@/components/admin/DateRangePicker';
+import { ChartSkeleton, TableSkeleton, ListSkeleton } from '@/components/admin/WidgetSkeleton';
+import PageHeader from '@/components/admin/PageHeader';
 import { Dashboard as DashboardIcon } from '@mui/icons-material';
 import Link from 'next/link';
 

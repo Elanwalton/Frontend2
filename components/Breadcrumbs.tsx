@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { ChevronRight, Home } from 'lucide-react';
-import styles from '../../styles/Breadcrumbs.module.css';
+import styles from '@/styles/Breadcrumbs.module.css';
 
 interface BreadcrumbItem {
   label: string;

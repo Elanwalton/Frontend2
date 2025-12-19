@@ -2,11 +2,11 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LogOut, AlertCircle, X } from "lucide-react";
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
-import { getApiEndpoint } from '../../utils/apiClient';
-import styles from '../../styles/LogoutSection.module.css';
+import { getApiEndpoint } from '@/utils/apiClient';
+import styles from '@/styles/LogoutSection.module.css';
 
 const LogoutSection = () => {
   const [showConfirm, setShowConfirm] = useState(false);

@@ -28,7 +28,7 @@ import {
   Payment as PaymentIcon,
   Settings as SettingsIcon,
 } from '@mui/icons-material';
-import { PageHeader } from '../../components/admin';
+import { PageHeader } from '@/components/admin';
 
 interface TabPanelProps {
   children?: React.ReactNode;

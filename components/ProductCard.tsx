@@ -2,9 +2,9 @@
 import React, { useState } from "react";
 import { useRouter } from 'next/navigation';
 import { ShoppingCart, Heart, Star, Zap, Shield, Leaf } from 'lucide-react';
-import styles from "../styles/ProductCard.module.css";
-import useCartStore from '../store/UseCartStore';
-import useWishlistStore from '../store/UseWishlistStore';
+import styles from '@/styles/ProductCard.module.css';
+import useCartStore from '@/store/UseCartStore';
+import useWishlistStore from '@/store/UseWishlistStore';
 import { toast } from 'react-toastify';
 import { useProductTracking } from '../hooks/useProductTracking';
 

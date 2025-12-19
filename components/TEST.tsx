@@ -1,4 +1,4 @@
-import CategorySection from '../../components/CategoriesSection';
+import CategorySection from '@/components/CategoriesSection';
 
 export default function HomePag() {
   const banners = [

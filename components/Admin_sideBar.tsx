@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { getApiUrl } from '../../utils/apiUrl';
+import { getApiUrl } from '@/utils/apiUrl';
 
-import styles from "../styles/Sidebar.module.css";
+import styles from '@/styles/Sidebar.module.css';
 import {
   LayoutDashboard,
   Users,

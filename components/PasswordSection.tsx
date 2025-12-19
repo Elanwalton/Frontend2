@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Lock, Eye, EyeOff, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
-import { getApiEndpoint } from '../../utils/apiClient';
-import styles from '../../styles/PasswordSection.module.css';
+import { getApiEndpoint } from '@/utils/apiClient';
+import styles from '@/styles/PasswordSection.module.css';
 
 const PasswordSection = () => {
   const [formData, setFormData] = useState({

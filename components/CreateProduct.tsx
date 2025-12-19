@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from 'axios';
-import { getApiUrl } from '../../utils/apiUrl';
-import styles from "../styles/CreateProduct.module.css";
+import { getApiUrl } from '@/utils/apiUrl';
+import styles from '@/styles/CreateProduct.module.css';
 const DEFAULT_CATEGORIES = [
   "Batteries",
   "Inverters",

@@ -1,10 +1,10 @@
 "use client";
-import { getApiUrl } from '../../utils/apiUrl';
+import { getApiUrl } from '@/utils/apiUrl';
 import { useState, useEffect } from "react";
-import CreateProductModal from '../../components/CreateProduct';
-import EditProductModal from '../../components/EditProductModal';
-import ViewProductModal from '../../components/ViewProductModal';
-import styles from '../../../styles/adminDashboard.module.css';
+import CreateProductModal from '@/components/CreateProduct';
+import EditProductModal from '@/components/EditProductModal';
+import ViewProductModal from '@/components/ViewProductModal';
+import styles from '@/styles/adminDashboard.module.css';
 import {
   Box,
   Grid,
@@ -51,8 +51,8 @@ import {
   MoreVert as MoreVertIcon,
   ContentCopy as ContentCopyIcon,
 } from "@mui/icons-material";
-import { PageHeader, DataTable, StatusBadge, MetricCard, Column } from '../../components/admin';
-import LoadingSpinner from '../../components/LoadingSpinner';
+import { PageHeader, DataTable, StatusBadge, MetricCard, Column } from '@/components/admin';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { 
   CheckCircle as CheckCircleIcon, 
   XCircle as XCircleIcon, 

@@ -1,5 +1,5 @@
 // components/FeaturedProducts.js
-import styles from '../styles/FeaturedSection.module.css';
+import styles from '@/styles/FeaturedSection.module.css';
 
 const FeaturedProducts = () => {
   const categories = [

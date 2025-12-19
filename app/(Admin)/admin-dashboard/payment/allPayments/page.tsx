@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { getApiUrl } from '../../utils/apiUrl'
+import { getApiUrl } from '@/utils/apiUrl'
 import {
   Box,
   Grid,
@@ -18,7 +18,7 @@ import {
   FileDownload as ExportIcon,
   Payment as PaymentIcon,
 } from "@mui/icons-material";
-import { PageHeader, DataTable, StatusBadge, MetricCard, Column } from '../../components/admin';
+import { PageHeader, DataTable, StatusBadge, MetricCard, Column } from '@/components/admin';
 
 export type Payment = {
   id: string

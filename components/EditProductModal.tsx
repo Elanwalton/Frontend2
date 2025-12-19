@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
-import styles from "../styles/CreateProduct.module.css";
+import styles from '@/styles/CreateProduct.module.css';
 
 const DEFAULT_CATEGORIES = [
   "Batteries",

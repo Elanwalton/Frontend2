@@ -1,17 +1,18 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Zap, TrendingUp, Star, Sparkles } from "lucide-react";
-import { getApiUrl } from '../../utils/apiUrl';
-import HeroSection from '../../components/Hero';
-import ProductCategory from '../../components/ProductCategory';
-import ProductCard from '../../components/ProductCard';
-import HomePag from '../../components/TEST';
-import FetchedCategorySection from '../../components/FetchedCategorySection';
-import Header from '../../components/NavBarReusable';
-import { CategoryProvider } from '../../context/CategoryContext';
-import sectionStyles from '../../styles/HomeSections.module.css';
-import PageLoadingSpinner from '../../components/PageLoadingSpinner';
-import { buildMediaUrl } from '../../utils/media';
+import { getApiUrl } from '@/utils/apiUrl';
+import HeroSection from '@/components/Hero';
+import ProductCategory from '@/components/ProductCategory';
+import ProductCard from '@/components/ProductCard';
+import HomePag from '@/components/TEST';
+import FetchedCategorySection from '@/components/FetchedCategorySection';
+import Header from '@/components/NavBarReusable';
+import MobileBottomNav from '@/components/MobileBottomNav';
+import { CategoryProvider } from '@/context/CategoryContext';
+import sectionStyles from '@/styles/HomeSections.module.css';
+import PageLoadingSpinner from '@/components/PageLoadingSpinner';
+import { buildMediaUrl } from '@/utils/media';
 
 type Product = {
   id: number;
@@ -167,6 +168,11 @@ export default function HomePage() {
           fetchUrl={`${API_BASE}/api/getProductsClients.php?page=1&limit=8&q=inverter`}
         />
       </CategoryProvider>
+      
+      {/* Mobile Bottom Navigation - Only visible on mobile */}
+      <div className="md:hidden">
+        <MobileBottomNav />
+      </div>
     </>
   );
 }

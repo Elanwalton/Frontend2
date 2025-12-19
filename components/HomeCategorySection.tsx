@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import ProductCard from '../../components/ProductCard';
-import sectionStyles from '../../styles/HomeSections.module.css';
+import ProductCard from '@/components/ProductCard';
+import sectionStyles from '@/styles/HomeSections.module.css';
 
 type Product = {
   id: number;

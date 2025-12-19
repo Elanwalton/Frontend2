@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { Zap } from 'lucide-react';
-import styles from '../../styles/PageLoadingSpinner.module.css';
+import styles from '@/styles/PageLoadingSpinner.module.css';
 
 interface PageLoadingSpinnerProps {
   isLoading?: boolean;

@@ -23,7 +23,7 @@ import {
   AttachMoney as RevenueIcon,
   Inventory as ProductsIcon,
 } from '@mui/icons-material';
-import { PageHeader, DateRangePicker, DateRange, MetricCard } from '../../components/admin';
+import { PageHeader, DateRangePicker, DateRange, MetricCard } from '@/components/admin';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 export default function ReportsPage() {

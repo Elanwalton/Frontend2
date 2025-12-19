@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { FaCheckCircle } from 'react-icons/fa';
 import styles from '../../app/styles/Auth.module.css';
 import { Suspense } from 'react';
-import LoadingSpinner from '../../components/LoadingSpinner';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 function EmailVerifiedContent() {
   const searchParams = useSearchParams();

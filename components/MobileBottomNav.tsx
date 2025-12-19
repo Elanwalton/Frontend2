@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Home, ShoppingCart, ShoppingBag, User, LogOut } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
+import { Home, ShoppingCart, ShoppingBag, User, LogOut, LogIn } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 
 export default function MobileBottomNav() {
+  const { user, logout } = useAuth();
   const router = useRouter();
-  const { logout } = useAuth();
   const [activeTab, setActiveTab] = useState('home');
   const [cartCount, setCartCount] = useState(0);
 
@@ -56,6 +56,10 @@ export default function MobileBottomNav() {
         // Handle logout logic using AuthContext
         await logout();
         break;
+      case 'login':
+        // Navigate to login page
+        router.push('/login');
+        break;
     }
   };
 
@@ -64,7 +68,12 @@ export default function MobileBottomNav() {
     { id: 'shop', icon: ShoppingBag, label: 'Shop', color: '#667eea' },
     { id: 'cart', icon: ShoppingCart, label: 'Cart', color: '#10B981', badge: cartCount },
     { id: 'account', icon: User, label: 'Account', color: '#8B5CF6' },
-    { id: 'logout', icon: LogOut, label: 'Logout', color: '#EF4444' }
+    { 
+      id: user ? 'logout' : 'login', 
+      icon: user ? LogOut : LogIn, 
+      label: user ? 'Logout' : 'Login', 
+      color: '#EF4444' 
+    }
   ];
 
   // Only show on mobile screens
@@ -97,7 +106,7 @@ export default function MobileBottomNav() {
       background: 'rgba(15, 23, 42, 0.95)',
       backdropFilter: 'blur(20px)',
       borderTop: '1px solid rgba(245, 158, 11, 0.2)',
-      padding: '0.75rem 1rem 0.5rem',
+      padding: '0.675rem 1rem 0.45rem',
       boxShadow: '0 -10px 40px rgba(0, 0, 0, 0.3)',
       zIndex: 1000
     }}>

@@ -26,15 +26,15 @@ import {
   Snackbar,
 } from '@mui/material';
 import { Search as SearchIcon, CheckCircle as ApproveIcon, Block as RejectIcon, Star as StarIcon, Visibility as ViewIcon } from '@mui/icons-material';
-import { PageHeader, DataTable, StatusBadge, MetricCard, Column } from '../../components/admin';
+import { PageHeader, DataTable, StatusBadge, MetricCard, Column } from '@/components/admin';
 import { 
   Clock as ClockIcon, 
   CheckCircle as CheckCircleIcon, 
   XCircle as XCircleIcon,
   Package as PackageIcon
 } from 'lucide-react';
-import styles from '../../../styles/adminDashboard.module.css';
-import { getApiEndpoint } from '../../utils/apiClient';
+import styles from '@/styles/adminDashboard.module.css';
+import { getApiEndpoint } from '@/utils/apiClient';
 
 interface Review {
   id: string;

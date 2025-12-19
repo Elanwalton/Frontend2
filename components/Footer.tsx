@@ -1,9 +1,9 @@
 "use client";
 import { useState } from 'react';
-import styles from '../styles/Footer.module.css';
+import styles from '@/styles/Footer.module.css';
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedin, FaYoutube } from 'react-icons/fa';
 import { Mail, CheckCircle, AlertCircle } from 'lucide-react';
-import { getApiEndpoint } from '../../utils/apiClient';
+import { getApiEndpoint } from '@/utils/apiClient';
 
 const Footer = () => {
   const [email, setEmail] = useState('');

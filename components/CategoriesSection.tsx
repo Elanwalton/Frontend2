@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { ArrowRight, TrendingUp, Zap, Star } from 'lucide-react';
-import styles from '../../styles/CategoriesSection.module.css';
+import styles from '@/styles/CategoriesSection.module.css';
 
 interface Banner {
   image: string;

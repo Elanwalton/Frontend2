@@ -2,9 +2,9 @@
 "use client";
 import { ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AuthProvider, useAuth } from '../../context/AuthContext';
-import AdminShell from '../../components/admin/AdminShell';
-import AdminProviders from '../../components/admin/AdminProviders';
+import { AuthProvider, useAuth } from '@/context/AuthContext';
+import AdminShell from '@/components/admin/AdminShell';
+import AdminProviders from '@/components/admin/AdminProviders';
 
 // ---------------------------
 // Admin layout content

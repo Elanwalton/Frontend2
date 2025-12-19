@@ -1,4 +1,4 @@
-import styles from "../styles/ServicesHighlights.module.css";
+import styles from '@/styles/ServicesHighlights.module.css';
 
 interface Service {
   img: string;

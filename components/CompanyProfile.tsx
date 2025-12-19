@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import styles from "../styles/CompanyProfile.module.css";
+import styles from '@/styles/CompanyProfile.module.css';
 import Lottie from "lottie-react";
 
 const CompanyProfile = () => {

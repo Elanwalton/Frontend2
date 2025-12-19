@@ -4,8 +4,8 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Sparkles, ArrowRight } from "lucide-react";
 import ProductCard from "./ProductCard";
-import styles from '../../styles/RelatedProducts.module.css';
-import { buildMediaUrl } from '../../utils/media';
+import styles from '@/styles/RelatedProducts.module.css';
+import { buildMediaUrl } from '@/utils/media';
 
 interface Product {
   id: number;

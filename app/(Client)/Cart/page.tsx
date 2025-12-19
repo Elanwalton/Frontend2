@@ -4,11 +4,11 @@ import { motion } from "framer-motion";
 import { ShoppingCart, Trash2, Plus, Minus, ArrowLeft, ShoppingBag, Zap, Shield, Truck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import styles from '../../styles/CartPage.module.css';
-import useCartStore from '../store/UseCartStore';
-import ServiceHighlights from '../../components/ServicesHighlights';
-import Breadcrumbs from '../../components/Breadcrumbs';
-import RelatedProducts from '../../components/RelatedProducts';
+import styles from '@/styles/CartPage.module.css';
+import useCartStore from '@/store/UseCartStore';
+import ServiceHighlights from '@/components/ServicesHighlights';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import RelatedProducts from '@/components/RelatedProducts';
 
 const CartPageContent = () => {
   const router = useRouter();

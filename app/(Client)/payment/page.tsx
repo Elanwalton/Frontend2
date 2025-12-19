@@ -4,11 +4,11 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Smartphone, CreditCard, ArrowLeft, ArrowRight, CheckCircle, AlertCircle, Loader2, Shield, Clock, Home, ChevronRight, ShoppingBag, Package } from 'lucide-react';
-import { getApiUrl } from '../../utils/apiUrl';
-import Breadcrumbs from '../../components/Breadcrumbs';
-import ProtectedRoute from '../../components/ProtectedRoute';
+import { getApiUrl } from '@/utils/apiUrl';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import ProtectedRoute from '@/components/ProtectedRoute';
 import styles from './payment.module.css';
-import LoadingSpinner from '../../components/LoadingSpinner';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 const RAW_API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 const API_BASE_URL = RAW_API_URL ? RAW_API_URL.replace(/\/?api\/?$/i, '') : '';

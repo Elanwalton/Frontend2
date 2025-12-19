@@ -2,9 +2,9 @@
 
 import React from "react";
 import { usePathname } from "next/navigation";
-import { AuthProvider } from '../../context/AuthContext';
-import WhatsAppWidget from '../../components/WhatsAppWidget';
-import ToastProvider from '../../components/ToastProvider';
+import { AuthProvider } from '@/context/AuthContext';
+import WhatsAppWidget from '@/components/WhatsAppWidget';
+import ToastProvider from '@/components/ToastProvider';
 
 export default function RootProviders({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

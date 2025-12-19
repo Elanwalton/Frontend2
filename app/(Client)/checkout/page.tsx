@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, MapPin, Tag, ArrowRight, ShoppingBag, Shield, Truck, Check, AlertCircle, X, Package } from 'lucide-react';
-import useCartStore from '../store/UseCartStore';
-import Breadcrumbs from '../../components/Breadcrumbs';
-import ProtectedRoute from '../../components/ProtectedRoute';
+import useCartStore from '@/store/UseCartStore';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import ProtectedRoute from '@/components/ProtectedRoute';
 import styles from './checkout.module.css';
 
 function CheckoutPageContent() {

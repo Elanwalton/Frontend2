@@ -22,7 +22,7 @@ import {
   ThumbsUp,
   AlertCircle
 } from 'lucide-react';
-import useCartStore from '../store/UseCartStore';
+import useCartStore from '@/store/UseCartStore';
 import styles from './product.module.css';
 
 interface Product {

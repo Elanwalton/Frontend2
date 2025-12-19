@@ -2,7 +2,7 @@
 import "./globals.css";
 import { ReactNode } from "react";
 import type { Metadata, Viewport } from "next";
-import RootProviders from '../../components/RootProviders';
+import RootProviders from '@/components/RootProviders';
 import Script from "next/script";
 
 export const metadata: Metadata = {

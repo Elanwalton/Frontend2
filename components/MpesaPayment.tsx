@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import { getApiUrl } from '../../utils/apiUrl';
+import { getApiUrl } from '@/utils/apiUrl';
 
 interface MpesaPaymentProps {
   amount: number;

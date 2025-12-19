@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { CheckCircle, Home, Package, Truck, Mail, Phone, MapPin, Download, Share2, ArrowRight } from 'lucide-react';
-import Breadcrumbs from '../../components/Breadcrumbs';
-import ProtectedRoute from '../../components/ProtectedRoute';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import ProtectedRoute from '@/components/ProtectedRoute';
 import styles from './confirmation.module.css';
-import LoadingSpinner from '../../components/LoadingSpinner';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface TransactionData {
   transactionId: string;

@@ -3,7 +3,7 @@
 
 import React from 'react';
 import { Zap } from 'lucide-react';
-import styles from '../../styles/EnergyWaveLoader.module.css';
+import styles from '@/styles/EnergyWaveLoader.module.css';
 
 interface LoadingSpinnerProps {
   message?: string;

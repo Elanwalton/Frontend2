@@ -2,8 +2,8 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from '../../context/AuthContext';
-import { getApiUrl } from '../../utils/apiUrl';
+import { useAuth } from '@/context/AuthContext';
+import { getApiUrl } from '@/utils/apiUrl';
 import {
   Box,
   Grid,
@@ -22,8 +22,8 @@ import {
   People as PeopleIcon,
   FileDownload as ExportIcon,
 } from "@mui/icons-material";
-import { PageHeader, DataTable, StatusBadge, MetricCard, Column } from '../../components/admin';
-import LoadingSpinner from '../../components/LoadingSpinner';
+import { PageHeader, DataTable, StatusBadge, MetricCard, Column } from '@/components/admin';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { 
   CheckCircle as CheckCircleIcon, 
   XCircle as XCircleIcon, 
@@ -32,7 +32,7 @@ import {
   ShoppingBag as CustomerIcon,
   CircleUser as PersonIcon
 } from 'lucide-react';
-import styles from '../../../styles/adminDashboard.module.css';
+import styles from '@/styles/adminDashboard.module.css';
 
 /* ───── Types ───── */
 export type User = {

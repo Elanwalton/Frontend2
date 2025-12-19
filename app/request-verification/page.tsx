@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { FaEnvelope, FaCheckCircle, FaExclamationTriangle, FaSpinner } from "react-icons/fa";
-import { getApiEndpoint } from '../../utils/apiClient';
+import { getApiEndpoint } from '@/utils/apiClient';
 import styles from '../../app/styles/Auth.module.css';
 
 export default function RequestVerification() {

@@ -5,9 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FaEnvelope, FaKey, FaUser, FaCheck, FaEye, FaEyeSlash } from "react-icons/fa";
-import { getApiEndpoint } from '../../utils/apiClient';
+import { getApiEndpoint } from '@/utils/apiClient';
 import styles from '../../app/styles/Auth.module.css';
-import LoadingSpinner from '../../components/LoadingSpinner';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface PasswordStrength {
   score: number;

@@ -3,8 +3,8 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { getApiEndpoint } from '../../utils/apiClient';
-import { useToast } from '../../components/ToastProvider';
+import { getApiEndpoint } from '@/utils/apiClient';
+import { useToast } from '@/components/ToastProvider';
 
 interface User {
   id: number;

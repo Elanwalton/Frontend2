@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import ProductDetailClient from './ProductDetailClient';
-import Breadcrumbs from '../../components/Breadcrumbs';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 interface Product {
   id: string;

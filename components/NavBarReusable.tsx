@@ -4,12 +4,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import styles from '../../styles/Header.module.css';
+import styles from '@/styles/Header.module.css';
 import { FaShoppingCart } from "react-icons/fa";
 import { UserCircle, Search } from "lucide-react";
-import LogoutButton from '../../components/LogoutButton';
-import { useAuth } from '../../context/AuthContext';
-import useCartStore from '../store/UseCartStore';
+import LogoutButton from '@/components/LogoutButton';
+import { useAuth } from '@/context/AuthContext';
+import useCartStore from '@/store/UseCartStore';
 
 const Header: React.FC = () => {
   const router = useRouter();

@@ -5,10 +5,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { FaCheckCircle, FaExclamationTriangle, FaEye, FaEyeSlash } from 'react-icons/fa';
-import { getApiEndpoint } from '../../utils/apiClient';
+import { getApiEndpoint } from '@/utils/apiClient';
 import styles from '../../app/styles/Auth.module.css';
-import { useToast } from '../../components/ToastProvider';
-import LoadingSpinner from '../../components/LoadingSpinner';
+import { useToast } from '@/components/ToastProvider';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface PasswordStrength {
   score: number;

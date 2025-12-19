@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Star, X, Package, DollarSign, TrendingUp, BarChart3, ShoppingBag, Tag, Layers, CheckCircle } from "lucide-react";
-import styles from "../styles/ViewProductModal.module.css";
+import styles from '@/styles/ViewProductModal.module.css';
 
 interface Product {
   id: number;

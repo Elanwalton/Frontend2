@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MapPin, Plus, Edit2, Trash2, CheckCircle, AlertCircle, Loader2, Home, Building, Map } from "lucide-react";
-import { getApiEndpoint } from '../../utils/apiClient';
-import styles from '../../styles/AddressSection.module.css';
+import { getApiEndpoint } from '@/utils/apiClient';
+import styles from '@/styles/AddressSection.module.css';
 
 interface Address {
   id: number;

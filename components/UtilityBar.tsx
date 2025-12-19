@@ -1,5 +1,5 @@
 import { FaFacebookF, FaInstagram, FaLinkedinIn } from "react-icons/fa";
-import styles from "../styles/UtilityBar.module.css";
+import styles from '@/styles/UtilityBar.module.css';
 
 const UtilityBar: React.FC = () => {
   return (

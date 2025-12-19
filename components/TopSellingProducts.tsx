@@ -14,7 +14,7 @@ import {
   Divider,
 } from "@mui/material";
 import { TrendingUp } from "@mui/icons-material";
-import LoadingSpinner from '../../components/LoadingSpinner';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface TopProduct {
   id: number;

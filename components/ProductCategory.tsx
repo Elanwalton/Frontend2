@@ -2,7 +2,7 @@
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Sun, Battery, Zap, Droplets, Wrench, Sparkles, ArrowRight } from 'lucide-react';
-import styles from '../../styles/ProductCategory.module.css';
+import styles from '@/styles/ProductCategory.module.css';
 
 const ProductCategories = () => {
   const router = useRouter();

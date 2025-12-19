@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Eye, Star, Zap, Award, TrendingUp } from 'lucide-react';
-import styles from '../../styles/SimplifiedProductCard.module.css';
+import styles from '@/styles/SimplifiedProductCard.module.css';
 
 interface SimplifiedProductCardProps {
   id: number;

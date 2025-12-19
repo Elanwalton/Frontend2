@@ -1,7 +1,7 @@
 // components/Testimonials.tsx
 "use client";
 import Image from "next/image";
-import styles from "../styles/Testimonials.module.css";
+import styles from '@/styles/Testimonials.module.css';
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
 

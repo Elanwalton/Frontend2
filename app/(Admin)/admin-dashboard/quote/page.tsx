@@ -13,7 +13,7 @@ import {
   MenuItem,
 } from '@mui/material';
 import { Search as SearchIcon, FileDownload as ExportIcon, Send as SendIcon } from '@mui/icons-material';
-import { PageHeader, DataTable, StatusBadge, MetricCard, Column } from '../../components/admin';
+import { PageHeader, DataTable, StatusBadge, MetricCard, Column } from '@/components/admin';
 
 interface Quote {
   id: string;

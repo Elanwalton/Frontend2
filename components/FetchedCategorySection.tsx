@@ -1,13 +1,13 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import { getApiUrl } from '../../utils/apiUrl';
+import { getApiUrl } from '@/utils/apiUrl';
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowRight, Zap, TrendingUp, Star } from "lucide-react";
-import SimplifiedProductCard from '../../components/SimplifiedProductCard';
-import styles from '../../styles/FetchedCategorySection.module.css';
-import { buildMediaUrl } from '../../utils/media';
+import SimplifiedProductCard from '@/components/SimplifiedProductCard';
+import styles from '@/styles/FetchedCategorySection.module.css';
+import { buildMediaUrl } from '@/utils/media';
 
 interface Banner {
   image: string;
