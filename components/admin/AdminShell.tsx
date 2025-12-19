@@ -11,7 +11,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import MenuIcon from "@mui/icons-material/Menu";
 import { alpha } from "@mui/material/styles";
 import Sidebar from "../Admin_sideBar";
-import Profile from '../MinorComponents/Admin_topbar';
+import Profile from '@/MinorComponents/Admin_topbar';
 
 const drawerWidth = 280;
 
