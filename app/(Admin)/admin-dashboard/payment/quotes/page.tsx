@@ -517,7 +517,7 @@ export default function QuotesPage() {
       {/* Quotes Table */}
       <Box sx={{ mt: 3 }}>
         <DataTable
-          data={sortedQuotes || []}
+          rows={sortedQuotes || []}
           columns={columns}
           loading={false}
         />
