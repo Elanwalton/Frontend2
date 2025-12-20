@@ -99,7 +99,7 @@ const Sidebar = () => {
       {/* Logo */}
       <div className={styles.logo}>
         <Image
-          src="/images/remove background.svg"
+          src="/remove-background.svg"
           alt="Penguin Logo"
           width={120}
           height={40}
