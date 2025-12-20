@@ -13,8 +13,9 @@ export interface FetchOptions extends RequestInit {
  */
 export function getApiEndpoint(path: string): string {
   const backendUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, '') || 'http://localhost/sunleaf-tech';
-  const phpPath = path.endsWith('.php') ? path : `${path}.php`;
-  return `${backendUrl}/api/${phpPath.replace('/api/', '')}`;
+  const cleanPath = path.replace(/^\/+api\/+/, ''); // Remove leading /api/ if present
+  const phpPath = cleanPath.endsWith('.php') ? cleanPath : `${cleanPath}.php`;
+  return `${backendUrl}/api/${phpPath}`;
 }
 
 /**

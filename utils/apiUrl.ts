@@ -5,8 +5,9 @@
 
 export function getApiUrl(endpoint: string): string {
   const backendUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, '') || 'http://localhost/sunleaf-tech';
-  const phpPath = endpoint.endsWith('.php') ? endpoint : `${endpoint}.php`;
-  return `${backendUrl}/api/${phpPath.replace('/api/', '')}`;
+  const cleanEndpoint = endpoint.replace(/^\/+api\/+/, ''); // Remove leading /api/ if present
+  const phpPath = cleanEndpoint.endsWith('.php') ? cleanEndpoint : `${cleanEndpoint}.php`;
+  return `${backendUrl}/api/${phpPath}`;
 }
 
 /**
