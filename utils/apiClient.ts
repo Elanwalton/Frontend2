@@ -12,7 +12,7 @@ export interface FetchOptions extends RequestInit {
  * Always calls PHP backend directly
  */
 export function getApiEndpoint(path: string): string {
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost/sunleaf-tech';
+  const backendUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, '') || 'http://localhost/sunleaf-tech';
   const phpPath = path.endsWith('.php') ? path : `${path}.php`;
   return `${backendUrl}/api/${phpPath.replace('/api/', '')}`;
 }

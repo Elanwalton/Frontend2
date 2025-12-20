@@ -4,7 +4,7 @@
  */
 
 export function getApiUrl(endpoint: string): string {
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost/sunleaf-tech';
+  const backendUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, '') || 'http://localhost/sunleaf-tech';
   const phpPath = endpoint.endsWith('.php') ? endpoint : `${endpoint}.php`;
   return `${backendUrl}/api/${phpPath.replace('/api/', '')}`;
 }
@@ -13,7 +13,7 @@ export function getApiUrl(endpoint: string): string {
  * Get the base API URL for PHP backend
  */
 export function getApiBaseUrl(): string {
-  return process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost/sunleaf-tech/api';
+  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost/sunleaf-tech/api';
 }
 
 /**
