@@ -70,7 +70,7 @@ const Header: React.FC = () => {
       {/* Logo */}
       <Link href="/" className={styles.logoContainer}>
         <Image 
-          src="/remove background (1).svg" 
+          src="/remove-background (1).svg" 
           alt="Sunleaf Tech Logo" 
           width={45} 
           height={45}
