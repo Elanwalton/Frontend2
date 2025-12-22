@@ -21,9 +21,9 @@ export const buildMediaUrl = (rawPath?: string | null, fallback: string = '/imag
 
   const mediaBase = mediaBaseRaw ? sanitizeBase(mediaBaseRaw) : '';
   const apiRoot = apiBaseRaw ? sanitizeBase(apiBaseRaw) : '';
-  const siteBase = apiRoot ? apiRoot.replace(/\/?api$/i, '') : '';
-
-  const candidateBase = mediaBase || siteBase;
+  
+  // For images, always prefer the API domain - don't strip /api from it
+  const candidateBase = mediaBase || apiRoot;
 
   if (candidateBase) {
     return `${candidateBase}/${normalized}`;
