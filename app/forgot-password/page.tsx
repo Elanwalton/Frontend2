@@ -1,3 +1,5 @@
+'use client';
+
 import { buildMediaUrl } from '@/utils/media';
 import { useState } from "react";
 import Link from "next/link";

@@ -1,5 +1,6 @@
-import { buildMediaUrl } from '@/utils/media';
 "use client";
+
+import { buildMediaUrl } from '@/utils/media';
 
 import React, { useState, Suspense } from "react";
 import Image from "next/image";
