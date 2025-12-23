@@ -1,5 +1,6 @@
 "use client";
 
+import { buildMediaUrl } from '@/utils/media';
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
@@ -70,7 +71,7 @@ const Header: React.FC = () => {
       {/* Logo */}
       <Link href="/" className={styles.logoContainer}>
         <Image 
-          src="/remove-background.svg" 
+          src={buildMediaUrl("remove-background.svg")} 
           alt="Sunleaf Tech Logo" 
           width={45} 
           height={45}

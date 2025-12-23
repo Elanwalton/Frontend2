@@ -1,5 +1,6 @@
 // components/Testimonials.tsx
 "use client";
+import { buildMediaUrl } from '@/utils/media';
 import Image from "next/image";
 import styles from '@/styles/Testimonials.module.css';
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -14,21 +15,21 @@ const testimonials = [
     name: "Esther Howard",
     role: "Graphic Designer",
     rating: 4.5,
-    image: "/images/esther.jpg",
+    image: buildMediaUrl("images/esther.jpg"),
     text: "Morbi ac orci hac. Donec pretium. Aliquam porta nisi vitae, malesuada elementum.",
   },
   {
     name: "Kristin Watson",
     role: "Architecture",
     rating: 4.2,
-    image: "/images/kristin.jpg",
+    image: buildMediaUrl("images/kristin.jpg"),
     text: "Morbi ac orci hac. Donec pretium. Aliquam porta nisi vitae, malesuada elementum.",
   },
   {
     name: "Courtney Henry",
     role: "Web Developer",
     rating: 4.9,
-    image: "/images/courtney.jpg",
+    image: buildMediaUrl("images/courtney.jpg"),
     text: "Morbi ac orci hac. Donec pretium. Aliquam porta nisi vitae, malesuada elementum.",
   },
 ];

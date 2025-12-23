@@ -1,3 +1,4 @@
+import { buildMediaUrl } from '@/utils/media';
 "use client";
 
 import React, { useState, Suspense } from "react";
@@ -202,7 +203,7 @@ const SignUpContent: React.FC = () => {
         <div className={styles.authLeft}>
           <div className={styles.logo}>
             <Image 
-              src="/remove-background.svg" 
+              src={buildMediaUrl("remove-background.svg")} 
               alt="Sunleaf Tech Logo" 
               width={45} 
               height={45}
