@@ -29,7 +29,15 @@ export const buildMediaUrl = (rawPath?: string | null, fallback: string = '/imag
     return `${candidateBase}/${normalized}`;
   }
 
+  // Hardcoded fallback for production - always use API domain
+  const productionFallback = 'https://api.sunleaftechnologies.co.ke/public';
+  
   if (typeof window !== 'undefined') {
+    // Check if we're in production (on Vercel)
+    if (window.location.hostname.includes('vercel.app') || 
+        window.location.hostname.includes('sunleaftechnologies.co.ke')) {
+      return `${productionFallback}/${normalized}`;
+    }
     const origin = window.location.origin.replace(/\/$/, '');
     return `${origin}/${normalized}`;
   }
