@@ -1,6 +1,5 @@
-'use client';
+"use client";
 
-import { buildMediaUrl } from '@/utils/media';
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -56,7 +55,7 @@ export default function ForgotPassword() {
         <div className={styles.authLeft}>
           <div className={styles.logo}>
             <Image 
-              src={buildMediaUrl("remove-background.svg")} 
+              src="/remove-background.svg" 
               alt="Sunleaf Tech Logo" 
               width={45} 
               height={45}

@@ -1,7 +1,5 @@
 "use client";
 
-import { buildMediaUrl } from '@/utils/media';
-
 import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -77,7 +75,7 @@ function LoginContent() {
         <div className={styles.authLeft}>
           <div className={styles.logo}>
             <Image 
-              src={buildMediaUrl("remove-background.svg")} 
+              src="/remove-background.svg" 
               alt="Sunleaf Tech Logo" 
               width={45} 
               height={45}

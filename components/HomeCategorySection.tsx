@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { buildMediaUrl } from '@/utils/media';
 import ProductCard from '@/components/ProductCard';
 import sectionStyles from '@/styles/HomeSections.module.css';
 
@@ -65,7 +66,7 @@ const HomeCategorySection: React.FC<HomeCategorySectionProps> = ({
           id: Number(item.id),
           image: String(item.main_image_url).startsWith("http")
             ? String(item.main_image_url)
-            : `${process.env.NEXT_PUBLIC_API_URL?.replace(/\/?api\/?$/i, "")}/${item.main_image_url}`,
+            : buildMediaUrl(String(item.main_image_url)),
           title: item.name,
           price: Number(item.price),
           category: item.category || "Uncategorized",

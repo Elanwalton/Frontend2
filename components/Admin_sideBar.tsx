@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { buildMediaUrl } from '@/utils/media';
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -100,7 +99,7 @@ const Sidebar = () => {
       {/* Logo */}
       <div className={styles.logo}>
         <Image
-          src={buildMediaUrl("remove-background.svg")}
+          src="/remove-background.svg"
           alt="Penguin Logo"
           width={120}
           height={40}

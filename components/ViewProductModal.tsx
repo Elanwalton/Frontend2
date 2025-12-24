@@ -66,7 +66,7 @@ const ViewProductModal: React.FC<ViewProductModalProps> = ({ product, onClose })
               <div className={styles.mainImageContainer}>
                 {selectedImage ? (
                   <img 
-                    src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/${selectedImage}`} 
+                    src={`${process.env.NEXT_PUBLIC_MEDIA_BASE_URL?.replace(/\/?public\/?$/i, "") || 'https://api.sunleaftechnologies.co.ke'}/public/${selectedImage}`} 
                     alt={product.name}
                     className={styles.mainImage}
                   />
@@ -93,7 +93,7 @@ const ViewProductModal: React.FC<ViewProductModalProps> = ({ product, onClose })
                     onClick={() => setSelectedImage(product.main_image_url!)}
                   >
                     <img 
-                      src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/${product.main_image_url}`} 
+                      src={`${process.env.NEXT_PUBLIC_MEDIA_BASE_URL?.replace(/\/?public\/?$/i, "") || 'https://api.sunleaftechnologies.co.ke'}/public/${product.main_image_url}`} 
                       alt={product.name}
                       className={styles.thumbnail}
                     />
@@ -106,7 +106,7 @@ const ViewProductModal: React.FC<ViewProductModalProps> = ({ product, onClose })
                     onClick={() => setSelectedImage(thumb)}
                   >
                     <img 
-                      src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/${thumb}`} 
+                      src={`${process.env.NEXT_PUBLIC_MEDIA_BASE_URL?.replace(/\/?public\/?$/i, "") || 'https://api.sunleaftechnologies.co.ke'}/public/${thumb}`} 
                       alt={`${product.name} ${idx + 1}`}
                       className={styles.thumbnail}
                     />

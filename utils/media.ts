@@ -29,7 +29,7 @@ export const buildMediaUrl = (rawPath?: string | null, fallback: string = '/imag
     return `${candidateBase}/${normalized}`;
   }
 
-  // Hardcoded fallback for production - always use API domain
+  // Hardcoded fallback for production - always use API domain with /public
   const productionFallback = 'https://api.sunleaftechnologies.co.ke/public';
   
   if (typeof window !== 'undefined') {

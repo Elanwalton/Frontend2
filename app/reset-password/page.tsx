@@ -1,6 +1,5 @@
 "use client";
 
-import { buildMediaUrl } from '@/utils/media';
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -167,7 +166,7 @@ function ResetPasswordContent() {
         <div className={styles.authLeft}>
           <div className={styles.logo}>
             <Image 
-              src={buildMediaUrl("remove-background.svg")} 
+              src="/remove-background.svg" 
               alt="Sunleaf Tech Logo" 
               width={45} 
               height={45}

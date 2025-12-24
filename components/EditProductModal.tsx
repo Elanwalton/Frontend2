@@ -248,7 +248,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ product, onClose, o
                   {mainImage && (
                     <div className={styles.thumbnailContainer}>
                       <img 
-                        src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/${mainImage}`} 
+                        src={`${process.env.NEXT_PUBLIC_MEDIA_BASE_URL?.replace(/\/?public\/?$/i, "") || 'https://api.sunleaftechnologies.co.ke'}/public/${mainImage}`} 
                         alt="Main" 
                         className={styles.thumbnail} 
                       />
@@ -265,7 +265,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ product, onClose, o
                   {thumbnails.map((url, i) => (
                     <div key={i} className={styles.thumbnailContainer}>
                       <img 
-                        src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/${url}`} 
+                        src={`${process.env.NEXT_PUBLIC_MEDIA_BASE_URL?.replace(/\/?public\/?$/i, "") || 'https://api.sunleaftechnologies.co.ke'}/public/${url}`} 
                         alt={`Thumb ${i}`} 
                         className={styles.thumbnail} 
                       />

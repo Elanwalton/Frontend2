@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { buildMediaUrl } from '@/utils/media';
 import { getApiUrl } from '@/utils/apiUrl';
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -39,7 +38,7 @@ export default function HeroSection() {
         id: 1,
         title: "Power Your Future with Solar Energy",
         subtitle: "Premium solar panels and renewable energy solutions",
-        image_url: buildMediaUrl("images/HeroMantion.jpg"),
+        image_url: "/images/HeroMantion.jpg",
         link_url: "/categories?category=solar%20panels",
         position: "main",
         display_order: 1,
@@ -52,7 +51,7 @@ export default function HeroSection() {
         id: 2,
         title: "Battery Storage",
         subtitle: "Advanced lithium solutions",
-        image_url: buildMediaUrl("images/BYD-BATTERY-BOX.webp"),
+        image_url: "/images/BYD-BATTERY-BOX.webp",
         link_url: "/categories?category=Batteries",
         position: "side",
         display_order: 1,
@@ -62,7 +61,7 @@ export default function HeroSection() {
         id: 3,
         title: "Solar Inverters",
         subtitle: "High-performance conversion",
-        image_url: buildMediaUrl("images/growatt-solar-inverters-1.jpg"),
+        image_url: "/images/growatt-solar-inverters-1.jpg",
         link_url: "/categories?category=Inverters",
         position: "side",
         display_order: 2,
@@ -72,7 +71,7 @@ export default function HeroSection() {
         id: 4,
         title: "Water Pumps",
         subtitle: "Efficient solar pumping",
-        image_url: buildMediaUrl("images/solar-water-pumping-inverters-for-sale-in-nairobi-kenya.webp"),
+        image_url: "/images/solar-water-pumping-inverters-for-sale-in-nairobi-kenya.webp",
         link_url: "/categories",
         position: "side",
         display_order: 3,
@@ -82,7 +81,7 @@ export default function HeroSection() {
         id: 5,
         title: "Accessories",
         subtitle: "Complete solar kits",
-        image_url: buildMediaUrl("images/Original-suntree-solar-accessories-in-nairobi-kenya.jpg"),
+        image_url: "/images/Original-suntree-solar-accessories-in-nairobi-kenya.jpg",
         link_url: "/categories?category=Mounting%20Accesories",
         position: "side",
         display_order: 4,
