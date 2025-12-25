@@ -5,6 +5,7 @@ import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { buildMediaUrl } from '@/utils/media';
 import styles from '@/styles/Banner.module.css';
 
 const Hero = () => {
@@ -14,7 +15,7 @@ const Hero = () => {
       oldPrice: 15000,
       newPrice: 11999,
       discount: "20% OFF",
-      image: "/images/solar.png",
+      image: buildMediaUrl("images/solar.png"),
       expiry: Date.now() + 1000 * 60 * 60 * 8,
     },
     {
@@ -22,7 +23,7 @@ const Hero = () => {
       oldPrice: 120000,
       newPrice: 95000,
       discount: "21% OFF",
-      image: "/images/lithium-battery.png",
+      image: buildMediaUrl("images/lithium-battery.png"),
       expiry: Date.now() + 1000 * 60 * 60 * 12,
     },
     {
@@ -30,7 +31,7 @@ const Hero = () => {
       oldPrice: 85000,
       newPrice: 69999,
       discount: "18% OFF",
-      image: "/images/inverter.png",
+      image: buildMediaUrl("images/inverter.png"),
       expiry: Date.now() + 1000 * 60 * 60 * 6,
     },
     {
@@ -38,7 +39,7 @@ const Hero = () => {
       oldPrice: 180000,
       newPrice: 149999,
       discount: "17% OFF",
-      image: "/images/heat-pump.png",
+      image: buildMediaUrl("images/heat-pump.png"),
       expiry: Date.now() + 1000 * 60 * 60 * 24,
     },
   ];

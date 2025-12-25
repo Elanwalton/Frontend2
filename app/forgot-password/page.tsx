@@ -7,6 +7,8 @@ import { FaEnvelope, FaCheck, FaExclamationTriangle } from 'react-icons/fa';
 import { getApiEndpoint } from '@/utils/apiClient';
 import styles from '../../app/styles/Auth.module.css';
 import { useToast } from '@/components/ToastProvider';
+import { buildMediaUrl } from '@/utils/media';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -55,7 +57,7 @@ export default function ForgotPassword() {
         <div className={styles.authLeft}>
           <div className={styles.logo}>
             <Image 
-              src="/remove-background.svg" 
+              src={buildMediaUrl("remove-background.svg")} 
               alt="Sunleaf Tech Logo" 
               width={45} 
               height={45}

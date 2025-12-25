@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { getApiUrl } from '@/utils/apiUrl';
+import { buildMediaUrl } from '@/utils/media';
 
 import styles from '@/styles/Sidebar.module.css';
 import {
@@ -99,7 +100,7 @@ const Sidebar = () => {
       {/* Logo */}
       <div className={styles.logo}>
         <Image
-          src="/remove-background.svg"
+          src={buildMediaUrl("remove-background.svg")}
           alt="Penguin Logo"
           width={120}
           height={40}

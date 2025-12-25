@@ -1,4 +1,5 @@
 'use client';
+import { buildMediaUrl } from '@/utils/media';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Sun, Battery, Zap, Droplets, Wrench, Sparkles, ArrowRight } from 'lucide-react';
@@ -11,7 +12,7 @@ const ProductCategories = () => {
     {
       id: 'solar-panels',
       name: 'Solar Panels',
-      image: '/images/Original-suntree-solar-accessories-in-nairobi-kenya.jpg',
+      image: buildMediaUrl('images/Original-suntree-solar-accessories-in-nairobi-kenya.jpg'),
       alt: 'High-efficiency solar panels for renewable energy generation',
       icon: Sun,
       color: '#f7c843',
@@ -20,7 +21,7 @@ const ProductCategories = () => {
     {
       id: 'batteries',
       name: 'Batteries',
-      image: '/images/BYD-BATTERY-BOX.webp',
+      image: buildMediaUrl('images/BYD-BATTERY-BOX.webp'),
       alt: 'Energy storage batteries for solar power systems',
       icon: Battery,
       color: '#059669',
@@ -29,7 +30,7 @@ const ProductCategories = () => {
     {
       id: 'inverters',
       name: 'Inverters',
-      image: '/images/growatt-solar-inverters-1.jpg',
+      image: buildMediaUrl('images/growatt-solar-inverters-1.jpg'),
       alt: 'Solar inverters for power conversion',
       icon: Zap,
       color: '#2563eb',
@@ -38,7 +39,7 @@ const ProductCategories = () => {
     {
       id: 'heat-pumps',
       name: 'Heat Pumps',
-      image: '/images/non-pressurized-solar-water-heaters-in-kenya.png',
+      image: buildMediaUrl('images/non-pressurized-solar-water-heaters-in-kenya.png'),
       alt: 'Energy-efficient heat pumps and water heaters',
       icon: Droplets,
       color: '#0891b2',
@@ -47,7 +48,7 @@ const ProductCategories = () => {
     {
       id: 'accessories',
       name: 'Accessories',
-      image: '/images/solar-water-pumping-inverters-for-sale-in-nairobi-kenya.webp',
+      image: buildMediaUrl('images/solar-water-pumping-inverters-for-sale-in-nairobi-kenya.webp'),
       alt: 'Solar system accessories and installation components',
       icon: Wrench,
       color: '#7c3aed',

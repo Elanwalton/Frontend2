@@ -8,6 +8,7 @@ import { FaCheckCircle, FaExclamationTriangle, FaEye, FaEyeSlash } from 'react-i
 import { getApiEndpoint } from '@/utils/apiClient';
 import styles from '../../app/styles/Auth.module.css';
 import { useToast } from '@/components/ToastProvider';
+import { buildMediaUrl } from '@/utils/media';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface PasswordStrength {
@@ -166,7 +167,7 @@ function ResetPasswordContent() {
         <div className={styles.authLeft}>
           <div className={styles.logo}>
             <Image 
-              src="/remove-background.svg" 
+              src={buildMediaUrl("remove-background.svg")} 
               alt="Sunleaf Tech Logo" 
               width={45} 
               height={45}

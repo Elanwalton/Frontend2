@@ -9,6 +9,7 @@ import { FaShoppingCart } from "react-icons/fa";
 import { UserCircle, Search } from "lucide-react";
 import LogoutButton from '@/components/LogoutButton';
 import { useAuth } from '@/context/AuthContext';
+import { buildMediaUrl } from '@/utils/media';
 import useCartStore from '@/store/UseCartStore';
 
 const Header: React.FC = () => {
@@ -70,7 +71,7 @@ const Header: React.FC = () => {
       {/* Logo */}
       <Link href="/" className={styles.logoContainer}>
         <Image 
-          src="/remove-background.svg" 
+          src={buildMediaUrl("remove-background.svg")} 
           alt="Sunleaf Tech Logo" 
           width={45} 
           height={45}
