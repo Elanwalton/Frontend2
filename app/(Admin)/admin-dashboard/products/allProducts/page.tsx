@@ -395,7 +395,7 @@ const ProductManagement = () => {
   const handleDeleteConfirm = async () => {
     if (!productToDelete) return;
     
-    const deleteUrl = `/api/deleteproduct.php?id=${productToDelete}`;
+    const deleteUrl = `${getApiUrl('/api/deleteproduct')}?id=${productToDelete}`;
     console.log('Deleting product with ID:', productToDelete, 'Type:', typeof productToDelete);
     console.log('Delete URL:', deleteUrl);
     
