@@ -4,17 +4,22 @@
  */
 
 export function getApiUrl(endpoint: string): string {
-  const backendUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, '') || 'http://localhost/sunleaf-tech';
+  const backendUrl =
+    process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, '') ||
+    (typeof window !== 'undefined' ? window.location.origin : '');
   const cleanEndpoint = endpoint.replace(/^\/+api\/+/, '').replace(/^\/+/, ''); // Remove leading /api/ and any leading /
   const phpPath = cleanEndpoint.endsWith('.php') ? cleanEndpoint : `${cleanEndpoint}.php`;
-  return `${backendUrl}/api/${phpPath}`;
+  return backendUrl ? `${backendUrl}/api/${phpPath}` : `/api/${phpPath}`;
 }
 
 /**
  * Get the base API URL for PHP backend
  */
 export function getApiBaseUrl(): string {
-  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost/sunleaf-tech/api';
+  return (
+    process.env.NEXT_PUBLIC_API_URL ||
+    (typeof window !== 'undefined' ? `${window.location.origin}/api` : '/api')
+  );
 }
 
 /**

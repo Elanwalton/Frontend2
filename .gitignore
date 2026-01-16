@@ -1,0 +1,173 @@
+# ================================
+# SENSITIVE FILES - NEVER COMMIT
+# ================================
+
+# Environment variables (CRITICAL)
+.env
+.env.*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+api/.env
+api/.env.*
+api/.env.production
+
+# Service account credentials
+api/service-account-credentials.json
+
+# ================================
+# DEPENDENCIES
+# ================================
+
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Composer
+api/vendor/
+api/composer.lock
+
+# ================================
+# BUILD OUTPUT
+# ================================
+
+# Next.js
+.next/
+out/
+build/
+dist/
+
+# ================================
+# LOGS & DEBUG FILES
+# ================================
+
+# Application logs
+*.log
+logs/
+api/logs/
+api/debug.log
+api/session-token-errors.log
+api/verify_debug.log
+api/session_debug.txt
+api/session_log.txt
+api/mpesa/mpesa_callback.log
+
+# ================================
+# UPLOADED FILES & MEDIA
+# ================================
+
+# Product images (large files)
+images/
+products/
+public/uploads/
+
+# Quotes and large archives
+quotes/
+quotes.zip
+*.zip
+
+# Sunleaf frontend folder (if it's a duplicate)
+sunleaf-frontend/
+
+# ================================
+# DATABASE & BACKUPS
+# ================================
+
+# Database dumps
+*.sql.gz
+*.sql.zip
+backup/
+backups/
+
+# ================================
+# IDE & EDITOR FILES
+# ================================
+
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# ================================
+# OS GENERATED FILES
+# ================================
+
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ================================
+# TEMPORARY FILES
+# ================================
+
+*.tmp
+*.temp
+*.cache
+.cache/
+.parcel-cache/
+
+# ================================
+# RUNTIME & PROCESS FILES
+# ================================
+
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# ================================
+# TEST COVERAGE
+# ================================
+
+coverage/
+*.lcov
+.nyc_output
+
+# ================================
+# TYPESCRIPT
+# ================================
+
+*.tsbuildinfo
+next-env.d.ts
+
+# ================================
+# DEVELOPMENT SCRIPTS
+# ================================
+
+fix-imports.js
+fix-final-imports.js
+
+# ================================
+# PHP SPECIFIC
+# ================================
+
+# PHPMailer archive
+api/PHPMailer-master.zip
+
+# Test and debug files
+api/test-*.php
+api/debug-*.php
+api/simple-test.php
+api/check-*.php
+api/*-test.php
+api/*-debug.php
+
+# ================================
+# KEEP THESE FILES (EXAMPLES)
+# ================================
+
+# Keep example environment files
+!.env.example
+!api/.env.example

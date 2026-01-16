@@ -1,0 +1,406 @@
+.container {
+  max-width: 900px;
+  margin: 1.5rem auto 0;
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.statusBadge.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.statusBadge.accepted {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.statusBadge.expired {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.statusBadge.rejected {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.header {
+  background: linear-gradient(135deg, #2a9d35 0%, #44af45 100%);
+  color: white;
+  padding: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 300px;
+  height: 300px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+}
+
+.badge {
+  position: absolute;
+  top: 40px;
+  right: 40px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  padding: 16px 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.badgeLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 4px;
+}
+
+.badgeNumber {
+  font-size: 24px;
+  font-weight: 700;
+  color: white;
+}
+
+.companyInfo {
+  position: relative;
+  z-index: 1;
+}
+
+.companyName {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.companyTagline {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 20px;
+}
+
+.contactGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  padding: 40px;
+  background: #f7fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.infoSection h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #718096;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.clientName {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a202c;
+  margin-bottom: 4px;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 14px;
+}
+
+.detailLabel {
+  color: #718096;
+  font-weight: 500;
+}
+
+.detailValue {
+  color: #1a202c;
+  font-weight: 600;
+}
+
+.itemsSection {
+  padding: 40px;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a202c;
+  margin-bottom: 24px;
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+
+.table thead {
+  background: #edf2f7;
+}
+
+.table th {
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #4a5568;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.table td {
+  padding: 16px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #2d3748;
+  font-size: 14px;
+  vertical-align: top;
+}
+
+.center {
+  text-align: center;
+}
+
+.right {
+  text-align: right;
+}
+
+.itemDescription {
+  font-weight: 600;
+  color: #1a202c;
+}
+
+.itemSub {
+  margin-top: 4px;
+  color: #718096;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.priceFinal {
+  color: #1a202c;
+  font-weight: 600;
+}
+
+.totalsSection {
+  background: #f7fafc;
+  padding: 32px 40px;
+  border-top: 2px solid #e2e8f0;
+}
+
+.totalsGrid {
+  max-width: 420px;
+  margin-left: auto;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  font-size: 14px;
+}
+
+.subtotalRow {
+  color: #4a5568;
+}
+
+.grandRow {
+  border-top: 2px solid #cbd5e0;
+  padding-top: 16px;
+  margin-top: 8px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a202c;
+}
+
+.actions {
+  padding: 20px 40px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-end;
+  background: white;
+}
+
+.download {
+  display: inline-block;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: #111827;
+  color: white;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.download:hover {
+  background: #0b1220;
+}
+
+.noPdf {
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.startOver {
+  border: 1px solid #e5e7eb;
+  background: white;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.startOver:hover {
+  background: #f9fafb;
+}
+
+.footerNote {
+  margin: 0 40px 0;
+  padding: 20px;
+  background: #edf2f7;
+  border-left: 4px solid #667eea;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #4a5568;
+  line-height: 1.6;
+}
+
+.signatureSection {
+  margin: 24px 40px 0;
+  padding: 24px;
+  background: #f7fafc;
+  border-radius: 8px;
+  border: 2px dashed #cbd5e0;
+}
+
+.signatureTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 20px;
+}
+
+.signatureFields {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.signatureField label {
+  display: block;
+  font-size: 12px;
+  color: #718096;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.signatureLine {
+  width: 100%;
+  border-bottom: 1px solid #cbd5e0;
+  height: 30px;
+}
+
+.disclaimer {
+  margin: 24px 40px 32px;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 640px) {
+  .header {
+    padding: 28px;
+  }
+
+  .badge {
+    position: static;
+    margin-bottom: 16px;
+    width: fit-content;
+  }
+
+  .contactGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .infoGrid {
+    grid-template-columns: 1fr;
+    padding: 24px;
+    gap: 20px;
+  }
+
+  .itemsSection {
+    padding: 24px;
+  }
+
+  .totalsSection {
+    padding: 24px;
+  }
+
+  .actions {
+    padding: 16px 24px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .download,
+  .startOver {
+    width: 100%;
+    text-align: center;
+  }
+
+  .footerNote {
+    margin: 0 24px;
+  }
+
+  .signatureSection {
+    margin: 16px 24px 0;
+  }
+
+  .signatureFields {
+    grid-template-columns: 1fr;
+  }
+
+  .disclaimer {
+    margin: 16px 24px 24px;
+  }
+}

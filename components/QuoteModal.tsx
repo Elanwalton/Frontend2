@@ -1,19 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import styles from '@/styles/QuoteModal.module.css';
-import axios from 'axios';
+import { getApiUrl } from '@/utils/apiUrl';
 
 interface QuoteItem {
+  product_id?: number;
   description: string;
   quantity: string;
   price: string;
 }
 
+interface ProductOption {
+  id: number;
+  name: string;
+  price: number;
+}
+
 interface CreateQuoteModalProps {
   onClose: () => void;
   onQuoteCreated: () => void;
+  onSuccessMessage?: (message: string) => void;
 }
 
-const CreateQuoteModal: React.FC<CreateQuoteModalProps> = ({ onClose, onQuoteCreated }) => {
+const CreateQuoteModal: React.FC<CreateQuoteModalProps> = ({ onClose, onQuoteCreated, onSuccessMessage }) => {
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [items, setItems] = useState<QuoteItem[]>([{ description: '', quantity: '', price: '' }]);
@@ -21,6 +29,59 @@ const CreateQuoteModal: React.FC<CreateQuoteModalProps> = ({ onClose, onQuoteCre
   const [tax, setTax] = useState('');
   const [discount, setDiscount] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [products, setProducts] = useState<ProductOption[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadProducts = async () => {
+      try {
+        let res = await fetch(getApiUrl('/api/getProducts'), {
+          method: 'GET',
+          credentials: 'include',
+          headers: { Accept: 'application/json' },
+        });
+        let json: any = null;
+        try {
+          json = await res.json();
+        } catch {
+          json = null;
+        }
+
+        if (!res.ok || !json?.success) {
+          // Fallback: some environments use the admin endpoint
+          res = await fetch(getApiUrl('/api/admin/getProducts'), {
+            method: 'GET',
+            credentials: 'include',
+            headers: { Accept: 'application/json' },
+          });
+          json = await res.json();
+          if (!res.ok || !json?.success) return;
+        }
+        const rows: ProductOption[] = (json.data || []).map((p: any) => ({
+          id: Number(p.id),
+          name: String(p.name || ''),
+          price: Number(p.price || 0),
+        }));
+        if (!cancelled) setProducts(rows);
+      } catch {
+        // ignore
+      }
+    };
+
+    loadProducts();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const productByName = useMemo(() => {
+    const map = new Map<string, ProductOption>();
+    for (const p of products) {
+      map.set(p.name.toLowerCase(), p);
+    }
+    return map;
+  }, [products]);
 
   const handleItemChange = (
     index: number,
@@ -28,7 +89,24 @@ const CreateQuoteModal: React.FC<CreateQuoteModalProps> = ({ onClose, onQuoteCre
     value: string
   ) => {
     const updatedItems = [...items];
-    updatedItems[index][field] = value;
+
+    if (field === 'description') {
+      updatedItems[index].description = value;
+      // If the typed text matches a product, bind product_id + auto-fill price
+      const match = productByName.get(value.trim().toLowerCase());
+      if (match) {
+        updatedItems[index].product_id = match.id;
+        if (!(Number(updatedItems[index].price) > 0)) {
+          updatedItems[index].price = String(match.price ?? 0);
+        }
+      } else {
+        updatedItems[index].product_id = undefined;
+      }
+    } else if (field === 'quantity') {
+      updatedItems[index].quantity = value;
+    } else if (field === 'price') {
+      updatedItems[index].price = value;
+    }
     setItems(updatedItems);
   };
 
@@ -67,26 +145,49 @@ const CreateQuoteModal: React.FC<CreateQuoteModalProps> = ({ onClose, onQuoteCre
       return;
     }
 
+    // Allow both DB products and custom items. For custom items we rely on the backend to create
+    // a placeholder product row and continue with quote creation.
+
     setSubmitting(true);
     try {
       // Prepare numeric values
       const normalizedItems = items.map(item => ({
+        product_id: item.product_id || productByName.get(item.description.trim().toLowerCase())?.id,
         description: item.description,
+        name: item.description,
         quantity: Number(item.quantity) || 0,
         price: Number(item.price) || 0,
       }));
-      await axios.post('/api/createQuote.php', {
-        customer_name: customerName,
-        customer_email: customerEmail,
-        items: normalizedItems,
-        notes,
-        tax: Number(tax) || 0,
-        discount: Number(discount) || 0,
+      
+      const response = await fetch(getApiUrl('/api/createQuote'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          customer_name: customerName,
+          customer_email: customerEmail,
+          items: normalizedItems,
+          notes,
+          tax: Number(tax) || 0,
+          discount: Number(discount) || 0,
+        }),
       });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to create quote: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to create quote');
+      }
+      
+      onSuccessMessage?.('Quote created successfully');
       onQuoteCreated();
       onClose();
     } catch (error) {
       console.error('Failed to create quote:', error);
+      alert('Failed to create quote. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -114,12 +215,18 @@ const CreateQuoteModal: React.FC<CreateQuoteModalProps> = ({ onClose, onQuoteCre
 
         <div className={styles.itemsSection}>
           <h3>Quote Items</h3>
+          {products.length === 0 && (
+            <div style={{ fontSize: 12, opacity: 0.8, marginBottom: 8 }}>
+              Start typing in Item Description to see product suggestions. (Products are still loading.)
+            </div>
+          )}
           {items.map((item, index) => (
             <div key={index} className={styles.itemRow}>
               <input
                 type="text"
                 placeholder="Item Description"
                 value={item.description}
+                list="quote-products"
                 onChange={(e) => handleItemChange(index, 'description', e.target.value)}
               />
               <input
@@ -149,6 +256,11 @@ const CreateQuoteModal: React.FC<CreateQuoteModalProps> = ({ onClose, onQuoteCre
               <button onClick={() => removeItem(index)} className={styles.removeBtn}>×</button>
             </div>
           ))}
+          <datalist id="quote-products">
+            {products.map((p) => (
+              <option key={p.id} value={p.name} />
+            ))}
+          </datalist>
           <button className={styles.addItemBtn} onClick={addItem}>+ Add Item</button>
         </div>
 

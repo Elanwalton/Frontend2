@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { getApiUrl } from '@/utils/apiUrl';
 import { 
   Search, 
   Filter, 
@@ -15,6 +16,12 @@ import {
 } from 'lucide-react';
 import styles from './movements.module.css';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import PageHeader from '@/components/admin/PageHeader';
+import MetricCard from '@/components/admin/MetricCard';
+import { Box, Grid, TextField, Button } from '@mui/material';
+import { useRouter } from 'next/navigation';
+
+type MetricTrend = 'up' | 'down' | 'neutral';
 
 interface StockMovement {
   id: number;
@@ -40,6 +47,7 @@ interface Pagination {
 }
 
 const StockMovements: React.FC = () => {
+  const router = useRouter();
   const [movements, setMovements] = useState<StockMovement[]>([]);
   const [pagination, setPagination] = useState<Pagination>({
     page: 1,
@@ -72,7 +80,7 @@ const StockMovements: React.FC = () => {
         end_date: filters.end_date
       });
       
-      const url = `${process.env.NEXT_PUBLIC_API_URL}/inventory/movements-list.php?${params}`;
+      const url = `${getApiUrl('/api/inventory/movements-list')}?${params}`;
       console.log('Fetching movements from:', url);
       
       const response = await fetch(url, { credentials: 'include' });
@@ -137,95 +145,138 @@ const StockMovements: React.FC = () => {
     setPagination(prev => ({ ...prev, page: newPage }));
   };
 
+  const metrics = React.useMemo(() => {
+    const total = pagination.total || 0;
+    const purchases = movements.filter(m => m.movement_type === 'purchase').length;
+    const sales = movements.filter(m => m.movement_type === 'sale').length;
+    const netQty = movements.reduce((sum, m) => {
+      const sign = m.movement_type === 'sale' ? -1 : 1;
+      return sum + (sign * Number(m.quantity_change || 0));
+    }, 0);
+
+    return [
+      {
+        title: 'Total Movements',
+        value: total.toLocaleString(),
+        change: `Page ${pagination.page} of ${pagination.total_pages || 1}`,
+        trend: 'neutral' as MetricTrend,
+        period: 'Current',
+        sparklineData: Array(10).fill(total),
+        color: '#3b82f6'
+      },
+      {
+        title: 'Purchases (this page)',
+        value: purchases.toString(),
+        change: 'Incoming stock',
+        trend: (purchases ? 'up' : 'neutral') as MetricTrend,
+        period: 'Current',
+        sparklineData: Array(10).fill(purchases),
+        color: '#10b981'
+      },
+      {
+        title: 'Sales (this page)',
+        value: sales.toString(),
+        change: 'Outgoing stock',
+        trend: (sales ? 'down' : 'neutral') as MetricTrend,
+        period: 'Current',
+        sparklineData: Array(10).fill(sales),
+        color: '#ef4444'
+      },
+      {
+        title: 'Net Qty (this page)',
+        value: netQty.toString(),
+        change: 'Purchases - Sales',
+        trend: (netQty > 0 ? 'up' : netQty < 0 ? 'down' : 'neutral') as MetricTrend,
+        period: 'Current',
+        sparklineData: Array(10).fill(netQty),
+        color: '#f59e0b'
+      }
+    ];
+  }, [movements, pagination.page, pagination.total, pagination.total_pages]);
+
   if (loading && movements.length === 0) {
     return <LoadingSpinner fullScreen message="Loading inventory movements" />;
   }
 
   return (
-    <div className={styles.container}>
-      {/* Header */}
-      <div className={styles.header}>
-        <div>
-          <h1>Stock Movements</h1>
-          <p>Track all inventory changes and adjustments</p>
-        </div>
-        <div className={styles.headerActions}>
-          <button className={`${styles.btn} ${styles.btnPrimary}`}>
-            <Plus size={20} />
-            New Adjustment
-          </button>
-          <button className={`${styles.btn} ${styles.btnSecondary}`}>
-            <Download size={20} />
-            Export
-          </button>
-        </div>
-      </div>
+    <Box sx={{ p: 3 }}>
+      <PageHeader
+        title="Stock Movements"
+        subtitle="Track all inventory changes and adjustments"
+        icon={<Package size={24} />}
+        action={{
+          label: 'New Adjustment',
+          onClick: () => router.push('/admin-dashboard/inventory/adjustments'),
+          icon: <Plus size={18} />,
+          variant: 'contained'
+        }}
+      />
 
-      {/* Filters */}
-      <div className={styles.filters}>
-        <div className={styles.filtersGrid}>
-          <div className={styles.filterGroup}>
-            <label className={styles.filterLabel}>Product SKU</label>
-            <div className={`${styles.searchWrapper} ${styles.filterInput}`}>
-              <Search className={styles.searchIcon} size={20} />
-              <input
-                type="text"
-                placeholder="Search SKU..."
-                className={`${styles.searchInput} ${styles.filterInput}`}
-                value={filters.product_id}
-                onChange={(e) => handleFilterChange('product_id', e.target.value)}
-              />
-            </div>
-          </div>
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        {metrics.map((metric) => (
+          <Grid size={{ xs: 12, sm: 6, lg: 3 }} key={metric.title}>
+            <MetricCard {...metric} loading={loading} />
+          </Grid>
+        ))}
+      </Grid>
 
-          <div className={styles.filterGroup}>
-            <label className={styles.filterLabel}>Movement Type</label>
-            <select
-              className={`${styles.filterSelect} ${styles.filterInput}`}
-              value={filters.movement_type}
-              onChange={(e) => handleFilterChange('movement_type', e.target.value)}
-            >
-              <option value="">All Types</option>
-              <option value="purchase">Purchase</option>
-              <option value="sale">Sale</option>
-              <option value="return">Return</option>
-              <option value="adjustment">Adjustment</option>
-            </select>
-          </div>
+      <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
+        <TextField
+          placeholder="Product SKU..."
+          value={filters.product_id}
+          onChange={(e) => handleFilterChange('product_id', e.target.value)}
+          size="small"
+          sx={{ minWidth: 220 }}
+          InputProps={{
+            startAdornment: (
+              <Box component="span" sx={{ mr: 1, display: 'flex', alignItems: 'center' }}>
+                <Search size={18} />
+              </Box>
+            )
+          }}
+        />
 
-          <div className={styles.filterGroup}>
-            <label className={styles.filterLabel}>Start Date</label>
-            <input
-              type="date"
-              className={styles.filterInput}
-              value={filters.start_date}
-              onChange={(e) => handleFilterChange('start_date', e.target.value)}
-            />
-          </div>
+        <TextField
+          placeholder="Movement type (purchase/sale/return/adjustment)"
+          value={filters.movement_type}
+          onChange={(e) => handleFilterChange('movement_type', e.target.value)}
+          size="small"
+          sx={{ minWidth: 280 }}
+        />
 
-          <div className={styles.filterGroup}>
-            <label className={styles.filterLabel}>End Date</label>
-            <input
-              type="date"
-              className={styles.filterInput}
-              value={filters.end_date}
-              onChange={(e) => handleFilterChange('end_date', e.target.value)}
-            />
-          </div>
-        </div>
+        <TextField
+          type="date"
+          value={filters.start_date}
+          onChange={(e) => handleFilterChange('start_date', e.target.value)}
+          size="small"
+          sx={{ minWidth: 170 }}
+        />
 
-        <div className={styles.filtersFooter}>
-          <button
-            onClick={() => setFilters({ product_id: '', movement_type: '', start_date: '', end_date: '' })}
-            className={styles.clearFilters}
-          >
-            Clear Filters
-          </button>
-          <span className={styles.filterResults}>
-            {pagination.total} movements found
-          </span>
-        </div>
-      </div>
+        <TextField
+          type="date"
+          value={filters.end_date}
+          onChange={(e) => handleFilterChange('end_date', e.target.value)}
+          size="small"
+          sx={{ minWidth: 170 }}
+        />
+
+        <Button
+          variant="outlined"
+          size="small"
+          startIcon={<RefreshCw size={18} />}
+          onClick={fetchMovements}
+        >
+          Refresh
+        </Button>
+
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={() => setFilters({ product_id: '', movement_type: '', start_date: '', end_date: '' })}
+        >
+          Clear
+        </Button>
+      </Box>
 
       {/* Movements Table */}
       <div className={styles.tableContainer}>
@@ -315,7 +366,7 @@ const StockMovements: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+    </Box>
   );
 };
 

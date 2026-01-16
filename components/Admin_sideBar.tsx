@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { getApiUrl } from '@/utils/apiUrl';
 import { buildMediaUrl } from '@/utils/media';
 
 import styles from '@/styles/Sidebar.module.css';
@@ -23,8 +22,8 @@ import {
 
 const Sidebar = () => {
   const pathname = usePathname();
-  const [heroBannersUrl, setHeroBannersUrl] = useState('');
-  const [categoryBannersUrl, setCategoryBannersUrl] = useState('');
+  const heroBannersPath = '/admin-dashboard/content/hero-banners';
+  const categoryBannersPath = '/admin-dashboard/content/category-banners';
   const [openMenus, setOpenMenus] = useState<{ [key: string]: boolean }>({
     userManagement: false,
     products: false,
@@ -41,12 +40,6 @@ const Sidebar = () => {
     returns: 0,
   });
 
-  // Calculate banner URLs at runtime to avoid SSR issues
-  useEffect(() => {
-    setHeroBannersUrl(getApiUrl('/api/admin/manage_hero_banners'));
-    setCategoryBannersUrl(getApiUrl('/api/admin/manage_category_banners'));
-  }, []);
-
   useEffect(() => {
     const fetchOrderCounts = async () => {
       try {
@@ -57,8 +50,7 @@ const Sidebar = () => {
           end_date: now.toISOString().slice(0, 10),
         });
 
-        const url = getApiUrl('/api/admin/getDashboardMetrics');
-        const response = await fetch(url, {
+        const response = await fetch(`/api/admin/getDashboardMetrics.php?${params.toString()}`, {
           credentials: 'include',
         });
         
@@ -288,22 +280,12 @@ const Sidebar = () => {
         </div>
         {openMenus.content && (
           <div className={styles.subMenu}>
-            <a 
-              href={heroBannersUrl} 
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.subMenuItem}
-            >
+            <Link href={heroBannersPath} className={styles.subMenuItem}>
               Hero Banners
-            </a>
-            <a 
-              href={categoryBannersUrl} 
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.subMenuItem}
-            >
+            </Link>
+            <Link href={categoryBannersPath} className={styles.subMenuItem}>
               Category Banners
-            </a>
+            </Link>
           </div>
         )}
       </div>

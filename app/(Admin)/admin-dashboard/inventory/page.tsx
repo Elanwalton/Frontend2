@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Box,
+  Grid,
   Stack,
   Card,
   CardContent,
@@ -146,8 +147,8 @@ const InventoryDashboard: React.FC = () => {
       change: '+0%',
       trend: 'neutral',
       period: 'All time',
-      sparklineData: [10, 15, 12, 18, 20, 25, 22],
-      color: '#1976d2',
+      sparklineData: Array(10).fill(stats.totalProducts || 0),
+      color: '#3b82f6',
     },
     {
       title: 'Low Stock Items',
@@ -155,8 +156,8 @@ const InventoryDashboard: React.FC = () => {
       change: stats.lowStockItems > 0 ? '+' + stats.lowStockItems : '0',
       trend: stats.lowStockItems > 0 ? 'up' : 'neutral',
       period: 'Needs attention',
-      sparklineData: [2, 3, 2, 4, 3, 5, 4],
-      color: '#f57c00',
+      sparklineData: Array(10).fill(stats.lowStockItems || 0),
+      color: '#f59e0b',
     },
     {
       title: 'Total Inventory Value',
@@ -164,8 +165,8 @@ const InventoryDashboard: React.FC = () => {
       change: '+0%',
       trend: 'neutral',
       period: 'Current value',
-      sparklineData: [50000, 55000, 52000, 60000, 65000, 70000, 68000],
-      color: '#388e3c',
+      sparklineData: Array(10).fill(stats.totalValue || 0),
+      color: '#10b981',
     },
     {
       title: 'Recent Movements',
@@ -173,8 +174,8 @@ const InventoryDashboard: React.FC = () => {
       change: '+0',
       trend: 'neutral',
       period: 'Last 30 days',
-      sparklineData: [0, 0, 0, 0, 0, 0, 0],
-      color: '#7b1fa2',
+      sparklineData: Array(10).fill(stats.recentMovements || 0),
+      color: '#ef4444',
     },
   ];
 
@@ -200,43 +201,16 @@ const InventoryDashboard: React.FC = () => {
         icon={<Package size={32} />}
       />
 
-      <Box
-        sx={{
-          display: 'grid',
-          gap: 3,
-          mb: 4,
-          gridTemplateColumns: {
-            xs: '1fr',
-            sm: 'repeat(2, 1fr)',
-            lg: 'repeat(4, 1fr)',
-          },
-        }}
-      >
+      <Grid container spacing={3} sx={{ mb: 4 }}>
         {metricCards.map((card) => (
-          <MetricCard
-            key={card.title}
-            title={card.title}
-            value={card.value}
-            change={card.change}
-            trend={card.trend}
-            period={card.period}
-            sparklineData={card.sparklineData}
-            color={card.color}
-          />
+          <Grid size={{ xs: 12, sm: 6, lg: 3 }} key={card.title}>
+            <MetricCard {...card} />
+          </Grid>
         ))}
-      </Box>
+      </Grid>
 
-      <Box
-        sx={{
-          display: 'grid',
-          gap: 3,
-          mb: 4,
-          gridTemplateColumns: {
-            xs: '1fr',
-            md: 'repeat(2, 1fr)',
-          },
-        }}
-      >
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid size={{ xs: 12, lg: 6 }}>
         <Card sx={{ height: '100%' }}>
           <CardHeader
             title="Low Stock Alerts"
@@ -296,7 +270,9 @@ const InventoryDashboard: React.FC = () => {
             )}
           </CardContent>
         </Card>
+        </Grid>
 
+        <Grid size={{ xs: 12, lg: 6 }}>
         <Card sx={{ height: '100%' }}>
           <CardHeader
             title="Top Products by Value"
@@ -356,75 +332,74 @@ const InventoryDashboard: React.FC = () => {
             )}
           </CardContent>
         </Card>
-      </Box>
+        </Grid>
+      </Grid>
 
       <Card>
         <CardHeader title="Quick Actions" />
         <CardContent>
-          <Box
-            sx={{
-              display: 'grid',
-              gap: 2,
-              gridTemplateColumns: {
-                xs: '1fr',
-                sm: 'repeat(2, 1fr)',
-                md: 'repeat(4, 1fr)',
-              },
-            }}
-          >
-            <Stack spacing={1}>
-              <Button
-                fullWidth
-                variant="contained"
-                startIcon={<Plus size={18} />}
-                onClick={() => router.push('/admin-dashboard/inventory/adjustments')}
-              >
-                Adjust Stock
-              </Button>
-              <Typography variant="caption" color="text.secondary" textAlign="center">
-                Record manual stock updates
-              </Typography>
-            </Stack>
-            <Stack spacing={1}>
-              <Button
-                fullWidth
-                variant="outlined"
-                startIcon={<Eye size={18} />}
-                onClick={() => router.push('/admin-dashboard/inventory/movements')}
-              >
-                View Movements
-              </Button>
-              <Typography variant="caption" color="text.secondary" textAlign="center">
-                Review recent transactions
-              </Typography>
-            </Stack>
-            <Stack spacing={1}>
-              <Button
-                fullWidth
-                variant="outlined"
-                startIcon={<AlertTriangle size={18} />}
-                onClick={() => router.push('/admin-dashboard/inventory/low-stock')}
-              >
-                Low Stock
-              </Button>
-              <Typography variant="caption" color="text.secondary" textAlign="center">
-                See all low stock items
-              </Typography>
-            </Stack>
-            <Stack spacing={1}>
-              <Button
-                fullWidth
-                variant="outlined"
-                startIcon={<BarChart3 size={18} />}
-                disabled
-              >
-                Reports
-              </Button>
-              <Typography variant="caption" color="text.secondary" textAlign="center">
-                Analytics (coming soon)
-              </Typography>
-            </Stack>
-          </Box>
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <Stack spacing={1}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  startIcon={<Plus size={18} />}
+                  onClick={() => router.push('/admin-dashboard/inventory/adjustments')}
+                >
+                  Adjust Stock
+                </Button>
+                <Typography variant="caption" color="text.secondary" textAlign="center">
+                  Record manual stock updates
+                </Typography>
+              </Stack>
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <Stack spacing={1}>
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  startIcon={<Eye size={18} />}
+                  onClick={() => router.push('/admin-dashboard/inventory/movements')}
+                >
+                  View Movements
+                </Button>
+                <Typography variant="caption" color="text.secondary" textAlign="center">
+                  Review recent transactions
+                </Typography>
+              </Stack>
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <Stack spacing={1}>
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  startIcon={<AlertTriangle size={18} />}
+                  onClick={() => router.push('/admin-dashboard/inventory/low-stock')}
+                >
+                  Low Stock
+                </Button>
+                <Typography variant="caption" color="text.secondary" textAlign="center">
+                  See all low stock items
+                </Typography>
+              </Stack>
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <Stack spacing={1}>
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  startIcon={<BarChart3 size={18} />}
+                  disabled
+                >
+                  Reports
+                </Button>
+                <Typography variant="caption" color="text.secondary" textAlign="center">
+                  Analytics (coming soon)
+                </Typography>
+              </Stack>
+            </Grid>
+          </Grid>
         </CardContent>
       </Card>
     </Box>

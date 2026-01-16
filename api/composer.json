@@ -1,0 +1,26 @@
+{
+    "name": "sunleaf-tech/api",
+    "description": "Sunleaf Tech E-Commerce API",
+    "type": "project",
+    "require": {
+        "predis/predis": "^3.0",
+        "composer/semver": "^3.4",
+        "vlucas/phpdotenv": "^5.6",
+        "google/analytics-data": "^0.23.1",
+        "firebase/php-jwt": "^6.11",
+        "dompdf/dompdf": "3.0"
+    },
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "SunleafTech\\Api\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Elan Walton",
+            "email": "elanwalton@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable"
+}

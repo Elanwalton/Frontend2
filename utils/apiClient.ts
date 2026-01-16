@@ -12,10 +12,12 @@ export interface FetchOptions extends RequestInit {
  * Always calls PHP backend directly
  */
 export function getApiEndpoint(path: string): string {
-  const backendUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, '') || 'http://localhost/sunleaf-tech';
+  const backendUrl =
+    process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, '') ||
+    (typeof window !== 'undefined' ? window.location.origin : '');
   const cleanPath = path.replace(/^\/+api\/+/, '').replace(/^\/+/, ''); // Remove leading /api/ and any leading /
   const phpPath = cleanPath.endsWith('.php') ? cleanPath : `${cleanPath}.php`;
-  return `${backendUrl}/api/${phpPath}`;
+  return backendUrl ? `${backendUrl}/api/${phpPath}` : `/api/${phpPath}`;
 }
 
 /**
@@ -67,8 +69,33 @@ export async function apiCall<T = any>(
       return doFetch(false);
     }
 
+    const contentType = response.headers.get('content-type') || '';
+    const isJson = contentType.includes('application/json');
+
     if (!response.ok) {
-      throw new Error(`API request failed with status ${response.status}`);
+      let message = `API request failed with status ${response.status}`;
+
+      if (isJson) {
+        try {
+          const errBody: any = await response.json();
+          message = errBody?.message || errBody?.error || message;
+        } catch {
+          // ignore JSON parse errors
+        }
+      } else {
+        try {
+          const text = await response.text();
+          if (text) message = text;
+        } catch {
+          // ignore
+        }
+      }
+
+      throw new Error(message);
+    }
+
+    if (!isJson) {
+      throw new Error('API returned non-JSON response');
     }
 
     const data = await response.json();

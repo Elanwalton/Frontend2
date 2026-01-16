@@ -448,10 +448,74 @@
     max-width: 100%;
     min-width: 0;
   }
-  
-  /* Reduce height and content size for blue theme on mobile */
-  .card .bgGradientBlue {
-    height: calc(120px * 0.75); /* Reduce by 25% for blue theme on mobile */
+
+  /* Mobile: match compact card height by tightening content (do not change image height) */
+  .content {
+    padding: 0.65rem;
+    gap: 0.5rem;
+  }
+
+  .rating {
+    gap: 0.35rem;
+  }
+
+  .ratingText {
+    font-size: 0.75rem;
+  }
+
+  .ecoBadge {
+    font-size: 0.65rem;
+  }
+
+  .title {
+    font-size: 0.95rem;
+    margin-bottom: 0.15rem;
+  }
+
+  .description {
+    font-size: 0.7rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .price {
+    font-size: 1.05rem;
+  }
+
+  .specs {
+    gap: 0.4rem;
+  }
+
+  .specCard {
+    padding: 0.4rem;
+  }
+
+  .specHeader {
+    gap: 0.35rem;
+    margin-bottom: 0.15rem;
+  }
+
+  .specHeader svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .specLabel {
+    font-size: 0.6rem;
+  }
+
+  .specValue {
+    font-size: 0.7rem;
+  }
+
+  .ctaButton {
+    padding: 0.55rem;
+    font-size: 0.8rem;
+  }
+
+  .footer {
+    padding-top: 0.15rem;
+    font-size: 0.58rem;
+    gap: 0.3rem;
   }
   
   .themeSelector {
@@ -469,58 +533,6 @@
     right: 0.5rem;
     width: 1.75rem;
     height: 1.75rem;
-  }
-  
-  .productImage {
-    /* Further reduce hero image height to shrink card vertically */
-    height: calc(180px * 0.75); /* Reduce by 25% */
-  }
-  
-  .productIcon {
-    /* Slightly smaller icon container again */
-    width: calc(120px * 0.75); /* Reduce by 25% */
-    height: calc(120px * 0.75); /* Reduce by 25% */
-  }
-  
-  .content {
-    /* Even tighter inner spacing */
-    padding: 0.55rem;
-    gap: 0.35rem;
-  }
-  
-  .title {
-    font-size: 0.85rem; /* Smaller font for mobile */
-    margin-bottom: 0.15rem;
-  }
-  
-  .description {
-    font-size: 0.68rem;
-    margin-bottom: 0.25rem;
-  }
-  
-  .price {
-    font-size: 1.1rem;
-  }
-  
-  .specs {
-    gap: 0.35rem;
-  }
-  
-  .specCard {
-    padding: 0.35rem;
-  }
-  
-  .specLabel {
-    font-size: 0.6rem;
-  }
-  
-  .specValue {
-    font-size: 0.7rem;
-  }
-  
-  .ctaButton {
-    padding: 0.55rem;
-    font-size: 0.78rem;
   }
   
   .footer {

@@ -28,6 +28,7 @@ export default function PageHeader({ title, subtitle, breadcrumbs, action, icon 
     <Paper 
       elevation={0}
       sx={{ 
+        mt: { xs: 2, sm: 3 },
         mb: 4,
         p: { xs: 2, sm: 3 },
         background: (theme) => `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.05)} 0%, ${alpha(theme.palette.primary.main, 0.02)} 100%)`,

@@ -6,3 +6,6 @@ export { default as StatusBadge } from './StatusBadge';
 export { default as DataTable } from './DataTable';
 export type { Column } from './DataTable';
 export { default as PageHeader } from './PageHeader';
+export { default as OrderDetailsModal } from './OrderDetailsModal';
+export { default as OrderEditModal } from './OrderEditModal';
+export { default as ConfirmDialog } from './ConfirmDialog';

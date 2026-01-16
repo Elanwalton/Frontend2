@@ -38,11 +38,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const checkAuth = async () => {
     try {
-      const response = await fetch(getApiEndpoint('/api/check-auth'), {
+      const response = await fetch(getApiEndpoint('/check-auth'), {
         credentials: 'include'
       });
       const data = await response.json();
-      console.log('checkAuth: Response from /api/check-auth:', data);
+      console.log('checkAuth: Response from /check-auth:', data);
 
       if ((data.authenticated === true || data.success === true) && data.user) {
         const userData = {

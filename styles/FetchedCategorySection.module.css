@@ -344,7 +344,7 @@
   }
 
   .bannerImageWrapper {
-    padding-top: 70%;
+    padding-top: 61.6%;
   }
 
   .subheading {
@@ -376,6 +376,10 @@
 
   .bannerRow {
     gap: 0.75rem;
+  }
+
+  .bannerImageWrapper {
+    padding-top: 52.8%;
   }
 
   .subheading {

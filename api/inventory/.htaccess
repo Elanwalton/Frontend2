@@ -1,0 +1,35 @@
+# api/inventory/.htaccess - Production-ready routing
+RewriteEngine On
+RewriteBase /api/inventory/
+
+# Security headers
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options nosniff
+    Header always set X-Frame-Options DENY
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Handle trailing slashes - remove them before processing
+RewriteRule ^(.*)/$ $1 [L,R=301]
+
+# API v1 routes (production-ready)
+RewriteRule ^v1/stock-levels$ stock-levels-v1.php [L,QSA]
+RewriteRule ^v1/adjust$ adjust-v1.php [L,QSA]
+RewriteRule ^v1/low-stock$ low-stock-v1.php [L,QSA]
+RewriteRule ^v1/movements$ movements-v1.php [L,QSA]
+
+# Legacy routes (backward compatibility)
+RewriteRule ^stock-levels$ stock-levels.php [L,QSA]
+RewriteRule ^adjust$ adjust.php [L,QSA]
+RewriteRule ^low-stock$ low-stock.php [L,QSA]
+RewriteRule ^movements$ movements-list.php [L,QSA]
+RewriteRule ^history$ history.php [L,QSA]
+
+# Handle movements for a product (legacy)
+RewriteRule ^movements/(\d+)$ index.php?endpoint=movements&product_id=$1 [L,QSA]
+
+# Default to index.php for other routes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?endpoint=$1 [L,QSA]

@@ -8,6 +8,7 @@ import ProductCard from '@/components/ProductCard';
 import HomePag from '@/components/TEST';
 import FetchedCategorySection from '@/components/FetchedCategorySection';
 import Header from '@/components/NavBarReusable';
+import Footer from '@/components/Footer';
 import MobileBottomNav from '@/components/MobileBottomNav';
 import { CategoryProvider } from '@/context/CategoryContext';
 import sectionStyles from '@/styles/HomeSections.module.css';
@@ -32,6 +33,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [initialLoad, setInitialLoad] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
 
   const RAW_API = process.env.NEXT_PUBLIC_API_URL || "";
   const API_BASE = RAW_API.replace(/\/?api\/?$/i, "");
@@ -88,6 +90,16 @@ export default function HomePage() {
       cancelled = true;
     };
   }, [API_BASE]);
+
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 768px)');
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+
+    setIsMobile(media.matches);
+    media.addEventListener('change', handler);
+
+    return () => media.removeEventListener('change', handler);
+  }, []);
 
   if (initialLoad) {
     return <PageLoadingSpinner isLoading={initialLoad} />;
@@ -167,9 +179,12 @@ export default function HomePage() {
           viewAllLink="/categories?category=Inverters"
           fetchUrl={`${API_BASE}/api/getProductsClients.php?page=1&limit=8&q=inverter`}
         />
+
+        <div style={{ display: isMobile ? 'none' : 'block' }}>
+          <Footer />
+        </div>
       </CategoryProvider>
-      
-      {/* Mobile Bottom Navigation - Only visible on mobile */}
+
       <div className="md:hidden">
         <MobileBottomNav />
       </div>

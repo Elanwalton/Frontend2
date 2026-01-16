@@ -33,6 +33,7 @@ const Profile: React.FC = () => {
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [notifAnchor, setNotifAnchor] = useState<null | HTMLElement>(null);
+  const [unreadCount, setUnreadCount] = useState<number>(0);
   const [notifications, setNotifications] = useState<Array<{
     id: number;
     title: string;
@@ -46,7 +47,8 @@ const Profile: React.FC = () => {
   };
 
   const handleNotifClick = (event: React.MouseEvent<HTMLElement>) => {
-    setNotifAnchor(event.currentTarget);
+    setNotifAnchor(null);
+    router.push('/admin-dashboard/notifications');
   };
 
   const handleClose = () => {
@@ -70,6 +72,8 @@ const Profile: React.FC = () => {
         const items = Array.isArray(data.notifications)
           ? data.notifications
           : [];
+
+        setUnreadCount(Number(data.unread_count ?? data.unreadCount ?? 0));
 
         setNotifications(
           items.map((n: any, index: number) => ({
@@ -148,7 +152,7 @@ const Profile: React.FC = () => {
       {/* Notifications */}
       <Tooltip title="Notifications">
         <IconButton color="inherit" onClick={handleNotifClick}>
-          <Badge badgeContent={notifications.length} color="error">
+          <Badge badgeContent={unreadCount} color="error">
             <NotificationsIcon />
           </Badge>
         </IconButton>

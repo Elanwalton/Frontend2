@@ -395,7 +395,7 @@ const ProductManagement = () => {
   const handleDeleteConfirm = async () => {
     if (!productToDelete) return;
     
-    const deleteUrl = `/api/deleteproduct.php?id=${productToDelete}`;
+    const deleteUrl = `${getApiUrl('/api/deleteproduct')}?id=${productToDelete}`;
     console.log('Deleting product with ID:', productToDelete, 'Type:', typeof productToDelete);
     console.log('Delete URL:', deleteUrl);
     
@@ -852,17 +852,25 @@ const ProductManagement = () => {
                   </TableCell>
                   <TableCell>{product.category}</TableCell>
                   <TableCell>
-                    <span 
-                      className={styles.statusBadge}
-                      style={{ 
+                    <Box
+                      sx={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 0.75,
+                        px: 1.25,
+                        py: 0.5,
+                        borderRadius: '999px',
+                        fontSize: '0.8125rem',
+                        fontWeight: 600,
+                        textTransform: 'capitalize',
                         backgroundColor: `${getBadgeColor(product.status)}15`,
+                        border: `1px solid ${getBadgeColor(product.status)}30`,
                         color: getBadgeColor(product.status),
-                        borderColor: `${getBadgeColor(product.status)}30` 
                       }}
                     >
                       {getStatusIcon(product.status)}
                       {product.status}
-                    </span>
+                    </Box>
                   </TableCell>
                   <TableCell align="right" sx={{ fontWeight: 500 }}>
                     {formatCurrency(product.revenue || 0)}
@@ -897,26 +905,6 @@ const ProductManagement = () => {
                   </TableCell>
                   <TableCell align="center">
                     <div className={styles.actionIcons}>
-                      <Tooltip title="View Details">
-                        <button 
-                          className={styles.iconBtn}
-                          onClick={() => {
-                            setViewingProduct(product);
-                          }}
-                        >
-                          <VisibilityIcon fontSize="small" />
-                        </button>
-                      </Tooltip>
-                      <Tooltip title="Edit">
-                        <button 
-                          className={styles.iconBtn}
-                          onClick={() => {
-                            setEditingProduct(product);
-                          }}
-                        >
-                          <EditIcon fontSize="small" />
-                        </button>
-                      </Tooltip>
                       <Tooltip title="More Actions">
                         <button 
                           className={styles.iconBtn}
@@ -931,6 +919,24 @@ const ProductManagement = () => {
                       open={Boolean(anchorEl) && selectedProductId === product.id}
                       onClose={handleMenuClose}
                     >
+                      <MenuItem
+                        onClick={() => {
+                          setViewingProduct(product);
+                          handleMenuClose();
+                        }}
+                      >
+                        <VisibilityIcon fontSize="small" sx={{ mr: 1 }} />
+                        View Details
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => {
+                          setEditingProduct(product);
+                          handleMenuClose();
+                        }}
+                      >
+                        <EditIcon fontSize="small" sx={{ mr: 1 }} />
+                        Edit
+                      </MenuItem>
                       <MenuItem onClick={handleDuplicate}>
                         <ContentCopyIcon fontSize="small" sx={{ mr: 1 }} />
                         Duplicate

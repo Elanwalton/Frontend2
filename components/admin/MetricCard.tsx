@@ -68,7 +68,10 @@ export default function MetricCard({
           cursor: onClick ? 'pointer' : 'default'
         },
         border: '1px solid',
-        borderColor: 'divider'
+        borderColor: 'divider',
+        borderTop: `3px solid ${color}` ,
+        bgcolor: 'background.paper',
+        overflow: 'hidden'
       }}
     >
       <CardContent sx={{ pb: 2 }}>

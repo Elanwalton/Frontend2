@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { getApiUrl } from '@/utils/apiUrl';
-import { Box, Grid, Button, TextField, InputAdornment, MenuItem, Select, FormControl, InputLabel, Chip } from '@mui/material';
+import { Box, Grid, Button, TextField, InputAdornment, MenuItem, Select, FormControl, InputLabel, Snackbar, Alert } from '@mui/material';
 import { Search as SearchIcon, FileDownload as ExportIcon, LocalShipping as ShippingIcon } from '@mui/icons-material';
-import { PageHeader, DataTable, StatusBadge, MetricCard, Column } from '@/components/admin';
+import { PageHeader, DataTable, MetricCard, Column, OrderDetailsModal } from '@/components/admin';
 import { 
   Clock as ClockIcon, 
   Package as PackageIcon, 
@@ -32,6 +32,15 @@ export default function CompletedOrdersPage() {
   const [search, setSearch] = useState('');
   const [dateFilter, setDateFilter] = useState('all');
   const [orders, setOrders] = useState<Order[]>([]);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [orderDetails, setOrderDetails] = useState<any | null>(null);
+  const [orderItems, setOrderItems] = useState<any[]>([]);
+  const [actionPendingByOrder, setActionPendingByOrder] = useState<Record<string, boolean>>({});
+  const [snackbar, setSnackbar] = useState<{ open: boolean; severity: 'success' | 'error' | 'info'; message: string }>({
+    open: false,
+    severity: 'info',
+    message: ''
+  });
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 20,
@@ -170,23 +179,82 @@ export default function CompletedOrdersPage() {
       label: 'Status',
       minWidth: 120,
       format: (value) => (
-        <span 
-          className={styles.statusBadge}
-          style={{ 
-            backgroundColor: `${getStatusColor(value)}15`,
-            color: getStatusColor(value),
-            borderColor: `${getStatusColor(value)}30` 
-          }}
-        >
-          {getStatusIcon(value)}
-          {value}
-        </span>
+        <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
+          <Box
+            sx={{
+              width: 28,
+              height: 28,
+              borderRadius: '999px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: `${getStatusColor(value)}15`,
+              border: `1px solid ${getStatusColor(value)}30`,
+              color: getStatusColor(value),
+            }}
+          >
+            {getStatusIcon(value)}
+          </Box>
+          <Box
+            sx={{
+              fontSize: '0.8125rem',
+              fontWeight: 600,
+              textTransform: 'capitalize',
+              color: getStatusColor(value),
+            }}
+          >
+            {String(value)}
+          </Box>
+        </Box>
       ),
     },
   ];
 
   const handleExport = () => {
-    console.log('Exporting completed orders...');
+    const header = ['order_number', 'customer', 'items', 'amount', 'status', 'order_date', 'completed_date'];
+    const rows = filteredOrders.map((o) => [o.id, o.customer, o.items, o.amount, o.status, o.date, o.completedDate]);
+    const csv = [header, ...rows]
+      .map((r) => r.map((v) => `"${String(v ?? '').replace(/\"/g, '""')}"`).join(','))
+      .join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `completed-orders-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  const withPending = async (orderNumber: string, fn: () => Promise<void>) => {
+    if (actionPendingByOrder[orderNumber]) return;
+    setActionPendingByOrder((prev) => ({ ...prev, [orderNumber]: true }));
+    try {
+      await fn();
+    } finally {
+      setActionPendingByOrder((prev) => ({ ...prev, [orderNumber]: false }));
+    }
+  };
+
+  const handleView = (order: Order) => {
+    withPending(order.id, async () => {
+      try {
+        const res = await fetch(`${getApiUrl('/api/admin/getOrderDetails')}?order_number=${encodeURIComponent(order.id)}`, {
+          credentials: 'include',
+          headers: { Accept: 'application/json' },
+        });
+        const json = await res.json();
+        if (!res.ok || !json?.success) {
+          throw new Error(json?.message || 'Failed to load order details');
+        }
+        setOrderDetails(json.order);
+        setOrderItems(json.items || []);
+        setDetailsOpen(true);
+      } catch (e) {
+        setSnackbar({ open: true, severity: 'error', message: e instanceof Error ? e.message : 'Failed to load order details' });
+      }
+    });
   };
 
   const getStatusColor = (status: string) => {
@@ -219,6 +287,28 @@ export default function CompletedOrdersPage() {
 
   return (
     <Box sx={{ pt: 6 }}>
+      <OrderDetailsModal
+        open={detailsOpen}
+        onClose={() => {
+          setDetailsOpen(false);
+          setOrderDetails(null);
+          setOrderItems([]);
+        }}
+        order={orderDetails}
+        items={orderItems}
+      />
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3500}
+        onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert severity={snackbar.severity} onClose={() => setSnackbar((s) => ({ ...s, open: false }))}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+
       <PageHeader
         title="Completed Orders"
         subtitle="View and manage completed customer orders"
@@ -270,6 +360,7 @@ export default function CompletedOrdersPage() {
         <Button
           variant="outlined"
           startIcon={<ExportIcon />}
+          onClick={handleExport}
         >
           Export
         </Button>
@@ -278,7 +369,7 @@ export default function CompletedOrdersPage() {
       <DataTable
         columns={columns}
         rows={filteredOrders}
-        onView={(order) => console.log('View', order)}
+        onView={handleView}
         loading={loading}
       />
     </Box>

@@ -2,6 +2,7 @@
 import { getApiUrl } from '@/utils/apiUrl';
 
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { 
   Search, 
   Plus,
@@ -15,6 +16,11 @@ import {
 } from 'lucide-react';
 import styles from './adjustments.module.css';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import PageHeader from '@/components/admin/PageHeader';
+import MetricCard from '@/components/admin/MetricCard';
+import { Box, Grid, TextField, Button, Typography } from '@mui/material';
+
+type MetricTrend = 'up' | 'down' | 'neutral';
 
 interface Product {
   id: number;
@@ -41,6 +47,10 @@ interface Adjustment {
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 const StockAdjustments: React.FC = () => {
+  const searchParams = useSearchParams();
+  const productIdParam = searchParams.get('productId');
+  const preselectProductId = productIdParam ? Number(productIdParam) : null;
+
   const [products, setProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -48,16 +58,31 @@ const StockAdjustments: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [autoAddedFromQuery, setAutoAddedFromQuery] = useState(false);
 
   useEffect(() => {
     fetchProducts();
   }, []);
 
+  useEffect(() => {
+    if (!preselectProductId || autoAddedFromQuery) return;
+    if (!products.length) return;
+
+    const product = products.find((p) => p.id === preselectProductId);
+    if (!product) return;
+
+    setSearchTerm(product.name);
+    addAdjustment(product, 'purchase');
+    setAutoAddedFromQuery(true);
+  }, [preselectProductId, products, autoAddedFromQuery]);
+
   const fetchProducts = async () => {
     try {
       setLoading(true);
       console.log('Fetching products from /inventory/stock-levels.php...');
-      const response = await fetch(`${getApiUrl('/api/inventory/stock-levels.php')}`);
+      const response = await fetch(`${getApiUrl('/api/inventory/stock-levels.php')}`, {
+      credentials: 'include'
+    });
       console.log('Response status:', response.status);
       
       if (!response.ok) {
@@ -66,7 +91,19 @@ const StockAdjustments: React.FC = () => {
       
       const data = await response.json();
       console.log('Products data:', data);
-      setProducts(data);
+      
+      // Convert string values to proper types
+      const processedData = data.map((product: any) => ({
+        ...product,
+        current_quantity: parseInt(product.current_quantity) || 0,
+        reorder_level: parseInt(product.reorder_level) || 0,
+        price: parseFloat(product.price) || 0,
+        inventory_value: parseFloat(product.inventory_value) || 0,
+        is_low_stock: product.is_low_stock === '1' || product.is_low_stock === true,
+        category_name: product.category_name || ''
+      }));
+      
+      setProducts(processedData);
     } catch (error) {
       console.error('Failed to fetch products:', error);
     } finally {
@@ -142,6 +179,7 @@ const StockAdjustments: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           adjustments: adjustments.map(adjustment => ({
             product_id: adjustment.product_id,
@@ -180,36 +218,110 @@ const StockAdjustments: React.FC = () => {
     }).format(amount);
   };
 
+  const metrics = React.useMemo(() => {
+    const totalProducts = products.length;
+    const lowStockCount = products.filter(p => p.is_low_stock).length;
+    const totalInventoryValue = products.reduce((sum, p) => sum + (Number(p.inventory_value) || 0), 0);
+    const queued = adjustments.length;
+
+    return [
+      {
+        title: 'Products',
+        value: totalProducts.toLocaleString(),
+        change: lowStockCount ? `${lowStockCount} low stock` : 'All healthy',
+        trend: (lowStockCount ? 'down' : 'neutral') as MetricTrend,
+        period: 'Current',
+        sparklineData: Array(10).fill(totalProducts),
+        color: '#3b82f6'
+      },
+      {
+        title: 'Queued Adjustments',
+        value: queued.toString(),
+        change: queued ? 'Ready to process' : 'None queued',
+        trend: (queued ? 'up' : 'neutral') as MetricTrend,
+        period: 'Current',
+        sparklineData: Array(10).fill(queued),
+        color: '#10b981'
+      },
+      {
+        title: 'Inventory Value',
+        value: formatCurrency(totalInventoryValue),
+        change: 'Stock value',
+        trend: 'neutral' as MetricTrend,
+        period: 'Current',
+        sparklineData: Array(10).fill(totalInventoryValue),
+        color: '#6b7280'
+      },
+      {
+        title: 'Last Sync',
+        value: 'Now',
+        change: 'Products loaded',
+        trend: 'neutral' as MetricTrend,
+        period: 'Current',
+        sparklineData: Array(10).fill(1),
+        color: '#f59e0b'
+      }
+    ];
+  }, [products, adjustments]);
+
   if (loading) {
     return <LoadingSpinner fullScreen message="Loading inventory adjustments" />;
   }
 
   return (
-    <div className={styles.container}>
-      {/* Header */}
-      <div className={styles.header}>
-        <div>
-          <h1>Stock Adjustments</h1>
-          <p>Manually adjust product inventory levels</p>
-        </div>
-        <div className={styles.headerActions}>
-          <button
-            onClick={submitAdjustments}
-            disabled={adjustments.length === 0 || submitting}
-            className={`${styles.btn} ${styles.btnPrimary}`}
-          >
-            <Save size={20} />
-            {submitting ? 'Processing...' : `Process ${adjustments.length} Adjustment${adjustments.length !== 1 ? 's' : ''}`}
-          </button>
-        </div>
-      </div>
+    <Box sx={{ p: 3 }}>
+      <PageHeader
+        title="Stock Adjustments"
+        subtitle="Manually adjust product inventory levels"
+        icon={<Package size={24} />}
+        action={{
+          label: submitting ? 'Processing...' : `Process ${adjustments.length} Adjustment${adjustments.length !== 1 ? 's' : ''}`,
+          onClick: submitAdjustments,
+          icon: <Save size={18} />,
+          variant: 'contained'
+        }}
+      />
 
-      {/* Success Message */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        {metrics.map((metric) => (
+          <Grid size={{ xs: 12, sm: 6, lg: 3 }} key={metric.title}>
+            <MetricCard {...metric} loading={loading} />
+          </Grid>
+        ))}
+      </Grid>
+
+      <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
+        <TextField
+          placeholder="Search products..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          size="small"
+          sx={{ flexGrow: 1, minWidth: 250 }}
+          InputProps={{
+            startAdornment: (
+              <Box component="span" sx={{ mr: 1, display: 'flex', alignItems: 'center' }}>
+                <Search size={18} />
+              </Box>
+            )
+          }}
+        />
+
+        <Button
+          variant="outlined"
+          size="small"
+          startIcon={<RefreshCw size={18} />}
+          onClick={fetchProducts}
+        >
+          Refresh
+        </Button>
+      </Box>
+
       {successMessage && (
-        <div className={styles.successMessage}>
-          <CheckCircle size={20} />
-          <span className={styles.successMessageText}>{successMessage}</span>
-        </div>
+        <Box sx={{ mb: 3 }}>
+          <Typography color={successMessage.startsWith('Error:') ? 'error' : 'success.main'}>
+            {successMessage}
+          </Typography>
+        </Box>
       )}
 
       <div className={styles.contentGrid}>
@@ -220,19 +332,7 @@ const StockAdjustments: React.FC = () => {
             <p className={styles.cardSubtitle}>Search and select products to adjust</p>
           </div>
           
-          {/* Search */}
           <div className={styles.cardContent}>
-            <div className={styles.searchWrapper}>
-              <Search className={styles.searchIcon} size={20} />
-              <input
-                type="text"
-                placeholder="Search by name or SKU..."
-                className={styles.searchInput}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-
             {/* Product List */}
             <div className={styles.productList}>
               {filteredProducts.length === 0 ? (
@@ -374,7 +474,7 @@ const StockAdjustments: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+    </Box>
   );
 };
 

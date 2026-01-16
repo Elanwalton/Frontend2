@@ -77,19 +77,19 @@ export default function MobileBottomNav() {
   ];
 
   // Only show on mobile screens
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia('(max-width: 768px)').matches;
+  });
 
   useEffect(() => {
-    const checkMobile = () => {
-      const mobile = window.innerWidth <= 768;
-      setIsMobile(mobile);
-      console.log('Mobile detection:', mobile, 'Window width:', window.innerWidth);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
+    const media = window.matchMedia('(max-width: 768px)');
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+
+    setIsMobile(media.matches);
+    media.addEventListener('change', handler);
+
+    return () => media.removeEventListener('change', handler);
   }, []);
 
   // Only show on mobile screens
@@ -106,7 +106,7 @@ export default function MobileBottomNav() {
       background: 'rgba(15, 23, 42, 0.95)',
       backdropFilter: 'blur(20px)',
       borderTop: '1px solid rgba(245, 158, 11, 0.2)',
-      padding: '0.675rem 1rem 0.45rem',
+      padding: '0.58rem 1rem 0.4rem',
       boxShadow: '0 -10px 40px rgba(0, 0, 0, 0.3)',
       zIndex: 1000
     }}>
@@ -129,21 +129,21 @@ export default function MobileBottomNav() {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                gap: '0.35rem',
+                gap: '0.3rem',
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
-                padding: '0.5rem',
+                padding: '0.44rem',
                 position: 'relative',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                transform: isActive ? 'translateY(-4px)' : 'translateY(0)',
+                transform: isActive ? 'translateY(-3px)' : 'translateY(0)',
                 minWidth: '60px'
               }}
             >
               <div style={{
                 position: 'relative',
-                width: '48px',
-                height: '48px',
+                width: '42px',
+                height: '42px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -191,7 +191,7 @@ export default function MobileBottomNav() {
               </div>
               
               <span style={{
-                fontSize: '0.7rem',
+                fontSize: '0.64rem',
                 fontWeight: isActive ? '700' : '500',
                 color: isActive ? item.color : 'rgba(255, 255, 255, 0.6)',
                 transition: 'all 0.3s ease',
@@ -245,7 +245,7 @@ export default function MobileBottomNav() {
 
         @media (max-width: 380px) {
           nav {
-            padding: 0.5rem 0.5rem 0.25rem;
+            padding: 0.44rem 0.5rem 0.3rem;
           }
         }
       `}</style>

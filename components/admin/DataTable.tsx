@@ -13,11 +13,16 @@ import {
   Tooltip,
   Box,
   Typography,
+  IconButton,
+  Menu,
+  MenuItem,
 } from '@mui/material';
 import {
   Edit as EditIcon,
   Delete as DeleteIcon,
   Visibility as ViewIcon,
+  Cancel as CancelIcon,
+  MoreVert as MoreVertIcon,
 } from '@mui/icons-material';
 import styles from '@/styles/adminDashboard.module.css';
 
@@ -35,7 +40,10 @@ interface DataTableProps {
   rows: any[];
   onEdit?: (row: any) => void;
   onDelete?: (row: any) => void;
+  onDeleteRecord?: (row: any) => void;
   onView?: (row: any) => void;
+  deleteLabel?: string;
+  deleteIcon?: 'delete' | 'cancel';
   selectable?: boolean;
   onSelectionChange?: (selected: any[]) => void;
   loading?: boolean;
@@ -53,7 +61,10 @@ export default function DataTable({
   rows,
   onEdit,
   onDelete,
+  onDeleteRecord,
   onView,
+  deleteLabel = 'Delete',
+  deleteIcon = 'delete',
   selectable = false,
   onSelectionChange,
   loading = false,
@@ -65,6 +76,8 @@ export default function DataTable({
   const [orderBy, setOrderBy] = useState<string>('');
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const [selected, setSelected] = useState<any[]>([]);
+  const [actionMenuAnchorEl, setActionMenuAnchorEl] = useState<HTMLElement | null>(null);
+  const [actionMenuRow, setActionMenuRow] = useState<any | null>(null);
 
   // Use pagination from props if provided, otherwise use internal state
   const currentPage = pagination?.page || page + 1;
@@ -133,6 +146,11 @@ export default function DataTable({
   const paginatedRows = (sortedRows || []).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   const hasActions = onEdit || onDelete || onView;
+
+  const closeActionMenu = () => {
+    setActionMenuAnchorEl(null);
+    setActionMenuRow(null);
+  };
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -216,38 +234,18 @@ export default function DataTable({
                     })}
                     {hasActions && (
                       <TableCell align="center">
-                        <div className={styles.actionIcons}>
-                          {onView && (
-                            <Tooltip title="View">
-                              <button 
-                                className={styles.iconBtn}
-                                onClick={() => onView(row)}
-                              >
-                                <ViewIcon fontSize="small" />
-                              </button>
-                            </Tooltip>
-                          )}
-                          {onEdit && (
-                            <Tooltip title="Edit">
-                              <button 
-                                className={styles.iconBtn}
-                                onClick={() => onEdit(row)}
-                              >
-                                <EditIcon fontSize="small" />
-                              </button>
-                            </Tooltip>
-                          )}
-                          {onDelete && (
-                            <Tooltip title="Delete">
-                              <button 
-                                className={`${styles.iconBtn} ${styles.dangerAction}`}
-                                onClick={() => onDelete(row)}
-                              >
-                                <DeleteIcon fontSize="small" />
-                              </button>
-                            </Tooltip>
-                          )}
-                        </div>
+                        <Tooltip title="Actions">
+                          <IconButton
+                            size="small"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActionMenuAnchorEl(e.currentTarget);
+                              setActionMenuRow(row);
+                            }}
+                          >
+                            <MoreVertIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
                       </TableCell>
                     )}
                   </TableRow>
@@ -257,6 +255,64 @@ export default function DataTable({
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Menu
+        anchorEl={actionMenuAnchorEl}
+        open={Boolean(actionMenuAnchorEl)}
+        onClose={closeActionMenu}
+      >
+        {onView && (
+          <MenuItem
+            onClick={() => {
+              const r = actionMenuRow;
+              closeActionMenu();
+              if (r) onView(r);
+            }}
+          >
+            <ViewIcon fontSize="small" style={{ marginRight: 8 }} />
+            View
+          </MenuItem>
+        )}
+        {onEdit && (
+          <MenuItem
+            onClick={() => {
+              const r = actionMenuRow;
+              closeActionMenu();
+              if (r) onEdit(r);
+            }}
+          >
+            <EditIcon fontSize="small" style={{ marginRight: 8 }} />
+            Edit
+          </MenuItem>
+        )}
+        {onDelete && (
+          <MenuItem
+            sx={{ color: 'error.main' }}
+            onClick={() => {
+              const r = actionMenuRow;
+              closeActionMenu();
+              if (r) onDelete(r);
+            }}
+          >
+            {(deleteIcon === 'cancel' ? <CancelIcon fontSize="small" style={{ marginRight: 8 }} /> : <DeleteIcon fontSize="small" style={{ marginRight: 8 }} />)}
+            {deleteLabel}
+          </MenuItem>
+        )}
+        {onDeleteRecord && (
+          <MenuItem
+            sx={{ color: 'error.main' }}
+            onClick={() => {
+              const r = actionMenuRow;
+              closeActionMenu();
+              if (r) onDeleteRecord(r);
+            }}
+          >
+            <DeleteIcon fontSize="small" style={{ marginRight: 8 }} />
+            Delete
+          </MenuItem>
+        )}
+      </Menu>
+
       <TablePagination
         rowsPerPageOptions={[5, 10, 25, 50]}
         component="div"

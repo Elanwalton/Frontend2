@@ -1,6 +1,7 @@
 /* Container Styles */
 .authContainer {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -414,7 +415,8 @@
   /* Ensure no scrolling needed on mobile */
   .authContainer {
     padding: 10px;
-    min-height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
   }
 }
 

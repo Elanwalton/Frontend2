@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
+import { getApiUrl } from '@/utils/apiUrl';
 import styles from '@/styles/CreateProduct.module.css';
 
 const DEFAULT_CATEGORIES = [
@@ -56,8 +57,9 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ product, onClose, o
     try {
       setIsUploading(true);
       const res = await axios.post<{ success: boolean; urls: string[]; message?: string }>(
-        "/api/upload_images.php", 
-        fd
+        getApiUrl('/api/upload_images'),
+        fd,
+        { withCredentials: true }
       );
       if (!res.data.success) throw new Error(res.data.message);
       setMainImage(res.data.urls[0]);
@@ -76,8 +78,9 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ product, onClose, o
     try {
       setIsUploading(true);
       const res = await axios.post<{ success: boolean; urls: string[]; message?: string }>(
-        "/api/upload_images.php", 
-        fd
+        getApiUrl('/api/upload_images'),
+        fd,
+        { withCredentials: true }
       );
       if (!res.data.success) throw new Error(res.data.message);
       setThumbnails(prev => [...prev, ...res.data.urls]);
@@ -114,8 +117,9 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ product, onClose, o
 
     try {
       const res = await axios.post<{ success: boolean; message?: string }>(
-        "/api/updateProduct.php", 
-        payload
+        getApiUrl('/api/updateProduct'),
+        payload,
+        { withCredentials: true }
       );
       if (!res.data.success) throw new Error(res.data.message);
       onProductUpdated({ ...product, ...payload });

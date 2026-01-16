@@ -225,7 +225,7 @@ export default function DashboardOverview() {
           status: Number(item.stock || 0) <= Number(item.reorder_level || 0) / 2 ? 'critical' : 'warning',
         })));
 
-        setRecentOrders((payload.recent_orders || []).map((item: any) => ({
+        setRecentOrders((payload.recent_orders || []).slice(0, 5).map((item: any) => ({
           id: item.id,
           order_number: item.order_number,
           customer: item.customer,

@@ -15,6 +15,12 @@ import {
   InputLabel,
   InputAdornment,
   Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { 
   Search as SearchIcon, 
@@ -41,7 +47,7 @@ export type User = {
   email: string;
   phone: string;
   role: "admin" | "staff" | "customer";
-  status: "Active" | "Suspended";
+  status: "Active" | "Unverified" | "Suspended";
   joined: string; // ISO date
 };
 
@@ -61,6 +67,31 @@ export default function UserManagement() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [orderBy, setOrderBy] = useState<keyof User>("name");
   const [order, setOrder] = useState<"asc" | "desc">("asc");
+
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const [actionPending, setActionPending] = useState<Record<number, boolean>>({});
+  const [globalPending, setGlobalPending] = useState(false);
+
+  const [viewUser, setViewUser] = useState<User | null>(null);
+  const [editUser, setEditUser] = useState<User | null>(null);
+  const [deleteUser, setDeleteUser] = useState<User | null>(null);
+
+  const [addOpen, setAddOpen] = useState(false);
+  const [addFirstName, setAddFirstName] = useState('');
+  const [addSecondName, setAddSecondName] = useState('');
+  const [addEmail, setAddEmail] = useState('');
+  const [addPhone, setAddPhone] = useState('');
+  const [addRole, setAddRole] = useState<User['role']>('customer');
+  const [addStatus, setAddStatus] = useState<User['status']>('Unverified');
+  const [addPassword, setAddPassword] = useState('');
+
+  const [editRole, setEditRole] = useState<User["role"]>("customer");
+  const [editStatus, setEditStatus] = useState<User["status"]>("Active");
+
+  const [toast, setToast] = useState<{ open: boolean; severity: "success" | "error" | "info"; message: string }>(
+    { open: false, severity: "info", message: "" }
+  );
 
   /* fetch on mount */
   useEffect(() => {
@@ -85,7 +116,56 @@ export default function UserManagement() {
         setLoading(false);
       }
     })();
-  }, [logout, router]);
+  }, [logout, router, refreshKey]);
+
+  const refetchUsers = () => setRefreshKey((k) => k + 1);
+
+  const closeToast = () => setToast((t) => ({ ...t, open: false }));
+
+  const withRowLock = async (userId: number, fn: () => Promise<void>) => {
+    if (actionPending[userId]) return;
+    setActionPending((m) => ({ ...m, [userId]: true }));
+    try {
+      await fn();
+    } finally {
+      setActionPending((m) => ({ ...m, [userId]: false }));
+    }
+  };
+
+  const resetAddForm = () => {
+    setAddFirstName('');
+    setAddSecondName('');
+    setAddEmail('');
+    setAddPhone('');
+    setAddRole('customer');
+    setAddStatus('Unverified');
+    setAddPassword('');
+  };
+
+  const withGlobalLock = async (fn: () => Promise<void>) => {
+    if (globalPending) return;
+    setGlobalPending(true);
+    try {
+      await fn();
+    } finally {
+      setGlobalPending(false);
+    }
+  };
+
+  const apiPost = async (path: string, body: any) => {
+    const url = getApiUrl(path);
+    const res = await fetch(url, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data?.success) {
+      throw new Error(data?.message || `HTTP ${res.status}`);
+    }
+    return data;
+  };
 
   /* live filtering and sorting */
   const visible = useMemo(() => {
@@ -115,17 +195,19 @@ export default function UserManagement() {
     r.charAt(0).toUpperCase() + r.slice(1);
 
   const getStatusColor = (status: User["status"]) => {
-    const colors = {
+    const colors: Record<User['status'], string> = {
       Active: '#10b981',
-      Suspended: '#ef4444'
+      Unverified: '#f59e0b',
+      Suspended: '#ef4444',
     };
     return colors[status];
   };
 
   const getStatusIcon = (status: User["status"]) => {
-    const icons = {
+    const icons: Record<User['status'], React.ReactElement> = {
       Active: <CheckCircleIcon size={14} />,
-      Suspended: <XCircleIcon size={14} />
+      Unverified: <CheckCircleIcon size={14} />,
+      Suspended: <XCircleIcon size={14} />,
     };
     return icons[status];
   };
@@ -183,17 +265,25 @@ export default function UserManagement() {
       label: 'Role',
       minWidth: 100,
       format: (value, row) => (
-        <span 
-          className={styles.statusBadge}
-          style={{ 
-            backgroundColor: `${getRoleColor(value as User["role"])}15`,
-            color: getRoleColor(value as User["role"]),
-            borderColor: `${getRoleColor(value as User["role"])}30` 
+        <Box
+          sx={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 0.75,
+            px: 1.25,
+            py: 0.5,
+            borderRadius: '999px',
+            fontSize: '0.8125rem',
+            fontWeight: 600,
+            textTransform: 'capitalize',
+            backgroundColor: `${getRoleColor(value as User['role'])}15`,
+            border: `1px solid ${getRoleColor(value as User['role'])}30`,
+            color: getRoleColor(value as User['role']),
           }}
         >
-          {getRoleIcon(value as User["role"])}
-          {prettyRole(value as User["role"])}
-        </span>
+          {getRoleIcon(value as User['role'])}
+          {prettyRole(value as User['role'])}
+        </Box>
       ),
     },
     {
@@ -201,17 +291,25 @@ export default function UserManagement() {
       label: 'Status',
       minWidth: 100,
       format: (value) => (
-        <span 
-          className={styles.statusBadge}
-          style={{ 
-            backgroundColor: `${getStatusColor(value as User["status"])}15`,
-            color: getStatusColor(value as User["status"]),
-            borderColor: `${getStatusColor(value as User["status"])}30` 
+        <Box
+          sx={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 0.75,
+            px: 1.25,
+            py: 0.5,
+            borderRadius: '999px',
+            fontSize: '0.8125rem',
+            fontWeight: 600,
+            textTransform: 'capitalize',
+            backgroundColor: `${getStatusColor(value as User['status'])}15`,
+            border: `1px solid ${getStatusColor(value as User['status'])}30`,
+            color: getStatusColor(value as User['status']),
           }}
         >
-          {getStatusIcon(value as User["status"])}
-          {value as User["status"]}
-        </span>
+          {getStatusIcon(value as User['status'])}
+          {String(value as User['status'])}
+        </Box>
       ),
     },
     {
@@ -223,19 +321,38 @@ export default function UserManagement() {
   ];
 
   const handleEdit = (user: User) => {
-    console.log('Edit user:', user);
+    setEditUser(user);
+    setEditRole(user.role);
+    setEditStatus(user.status);
   };
 
   const handleDelete = (user: User) => {
-    console.log('Delete user:', user);
+    setDeleteUser(user);
   };
 
   const handleView = (user: User) => {
-    console.log('View user:', user);
+    setViewUser(user);
   };
 
   const handleExport = () => {
-    console.log('Export users');
+    void withGlobalLock(async () => {
+      const header = ['id', 'name', 'email', 'phone', 'role', 'status', 'joined'];
+      const rows = visible.map((u) => [u.id, u.name, u.email, u.phone, u.role, u.status, u.joined]);
+      const escape = (v: any) => {
+        const s = String(v ?? '');
+        if (/[",\n]/.test(s)) return `"${s.replaceAll('"', '""')}"`;
+        return s;
+      };
+      const csv = [header, ...rows].map((r) => r.map(escape).join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `users_${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setToast({ open: true, severity: 'success', message: 'Export generated' });
+    });
   };
 
   /* Calculate metrics */
@@ -348,6 +465,7 @@ export default function UserManagement() {
           variant="outlined"
           startIcon={<ExportIcon />}
           onClick={handleExport}
+          disabled={globalPending}
         >
           Export
         </Button>
@@ -355,6 +473,11 @@ export default function UserManagement() {
         <Button
           variant="contained"
           startIcon={<PersonAddIcon />}
+          disabled={globalPending}
+          onClick={() => {
+            resetAddForm();
+            setAddOpen(true);
+          }}
         >
           Add User
         </Button>
@@ -370,6 +493,222 @@ export default function UserManagement() {
         selectable
         loading={loading}
       />
+
+      {/* View dialog */}
+      <Dialog open={!!viewUser} onClose={() => setViewUser(null)} maxWidth="sm" fullWidth>
+        <DialogTitle>User Details</DialogTitle>
+        <DialogContent dividers>
+          {viewUser && (
+            <Box sx={{ display: 'grid', gap: 1 }}>
+              <Typography><strong>Name:</strong> {viewUser.name}</Typography>
+              <Typography><strong>Email:</strong> {viewUser.email}</Typography>
+              <Typography><strong>Phone:</strong> {viewUser.phone}</Typography>
+              <Typography><strong>Role:</strong> {prettyRole(viewUser.role)}</Typography>
+              <Typography><strong>Status:</strong> {viewUser.status}</Typography>
+              <Typography><strong>Joined:</strong> {new Date(viewUser.joined).toLocaleString()}</Typography>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setViewUser(null)}>Close</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Edit dialog */}
+      <Dialog open={!!editUser} onClose={() => setEditUser(null)} maxWidth="sm" fullWidth>
+        <DialogTitle>Edit User</DialogTitle>
+        <DialogContent dividers>
+          {editUser && (
+            <Box sx={{ display: 'grid', gap: 2 }}>
+              <Typography><strong>{editUser.name}</strong> ({editUser.email})</Typography>
+              <FormControl size="small">
+                <InputLabel>Role</InputLabel>
+                <Select value={editRole} label="Role" onChange={(e) => setEditRole(e.target.value as User['role'])}>
+                  <MenuItem value="admin">Admin</MenuItem>
+                  <MenuItem value="staff">Staff</MenuItem>
+                  <MenuItem value="customer">Customer</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl size="small">
+                <InputLabel>Status</InputLabel>
+                <Select value={editStatus} label="Status" onChange={(e) => setEditStatus(e.target.value as User['status'])}>
+                  <MenuItem value="Active">Active</MenuItem>
+                  <MenuItem value="Unverified">Unverified</MenuItem>
+                  <MenuItem value="Suspended">Suspended</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setEditUser(null)} disabled={!!editUser && actionPending[editUser.id]}>Cancel</Button>
+          <Button
+            variant="contained"
+            disabled={!editUser || !!actionPending[editUser.id]}
+            onClick={() => {
+              if (!editUser) return;
+              void withRowLock(editUser.id, async () => {
+                // NOTE: API endpoints for these actions may not exist yet.
+                // We'll attempt conventional endpoints; if missing you will see a toast.
+                try {
+                  await apiPost('/api/admin/updateUser', {
+                    id: editUser.id,
+                    role: editRole,
+                    status: editStatus,
+                  });
+                  setToast({ open: true, severity: 'success', message: 'User updated' });
+                  setEditUser(null);
+                  refetchUsers();
+                } catch (e: any) {
+                  setToast({ open: true, severity: 'error', message: e?.message || 'Failed to update user' });
+                }
+              });
+            }}
+          >
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete confirmation */}
+      <Dialog open={!!deleteUser} onClose={() => setDeleteUser(null)} maxWidth="xs" fullWidth>
+        <DialogTitle>Delete User</DialogTitle>
+        <DialogContent dividers>
+          {deleteUser && (
+            <Typography>
+              Delete <strong>{deleteUser.name}</strong> ({deleteUser.email})? This action cannot be undone.
+            </Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteUser(null)} disabled={!!deleteUser && actionPending[deleteUser.id]}>Cancel</Button>
+          <Button
+            color="error"
+            variant="contained"
+            disabled={!deleteUser || !!actionPending[deleteUser.id]}
+            onClick={() => {
+              if (!deleteUser) return;
+              void withRowLock(deleteUser.id, async () => {
+                try {
+                  await apiPost('/api/admin/deleteUser', { id: deleteUser.id });
+                  setToast({ open: true, severity: 'success', message: 'User deleted' });
+                  setDeleteUser(null);
+                  refetchUsers();
+                } catch (e: any) {
+                  setToast({ open: true, severity: 'error', message: e?.message || 'Failed to delete user' });
+                }
+              });
+            }}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Add user dialog */}
+      <Dialog open={addOpen} onClose={() => setAddOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>Add User</DialogTitle>
+        <DialogContent dividers>
+          <Box sx={{ display: 'grid', gap: 2 }}>
+            <TextField
+              label="First name"
+              value={addFirstName}
+              onChange={(e) => setAddFirstName(e.target.value)}
+              size="small"
+            />
+            <TextField
+              label="Second name"
+              value={addSecondName}
+              onChange={(e) => setAddSecondName(e.target.value)}
+              size="small"
+            />
+            <TextField
+              label="Email"
+              type="email"
+              value={addEmail}
+              onChange={(e) => setAddEmail(e.target.value)}
+              size="small"
+            />
+            <TextField
+              label="Phone (optional)"
+              value={addPhone}
+              onChange={(e) => setAddPhone(e.target.value)}
+              size="small"
+            />
+            <TextField
+              label="Temporary password"
+              type="password"
+              value={addPassword}
+              onChange={(e) => setAddPassword(e.target.value)}
+              size="small"
+              helperText="User can change later"
+            />
+            <FormControl size="small">
+              <InputLabel>Role</InputLabel>
+              <Select value={addRole} label="Role" onChange={(e) => setAddRole(e.target.value as User['role'])}>
+                <MenuItem value="admin">Admin</MenuItem>
+                <MenuItem value="staff">Staff</MenuItem>
+                <MenuItem value="customer">Customer</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl size="small">
+              <InputLabel>Status</InputLabel>
+              <Select value={addStatus} label="Status" onChange={(e) => setAddStatus(e.target.value as User['status'])}>
+                <MenuItem value="Active">Active</MenuItem>
+                <MenuItem value="Unverified">Unverified</MenuItem>
+                <MenuItem value="Suspended">Suspended</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setAddOpen(false)} disabled={globalPending}>Cancel</Button>
+          <Button
+            variant="contained"
+            disabled={globalPending}
+            onClick={() => {
+              void withGlobalLock(async () => {
+                try {
+                  const first_name = addFirstName.trim();
+                  const second_name = addSecondName.trim();
+                  const email = addEmail.trim();
+                  const password = addPassword;
+                  const phone = addPhone.trim();
+
+                  if (!first_name || !second_name || !email || !password) {
+                    setToast({ open: true, severity: 'error', message: 'First name, second name, email and password are required' });
+                    return;
+                  }
+
+                  await apiPost('/api/admin/createUser', {
+                    first_name,
+                    second_name,
+                    email,
+                    phone: phone ? phone : null,
+                    role: addRole,
+                    status: addStatus,
+                    password,
+                  });
+
+                  setToast({ open: true, severity: 'success', message: 'User created' });
+                  setAddOpen(false);
+                  refetchUsers();
+                } catch (e: any) {
+                  setToast({ open: true, severity: 'error', message: e?.message || 'Failed to create user' });
+                }
+              });
+            }}
+          >
+            Create
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Snackbar open={toast.open} autoHideDuration={4000} onClose={closeToast}>
+        <Alert onClose={closeToast} severity={toast.severity} sx={{ width: '100%' }}>
+          {toast.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

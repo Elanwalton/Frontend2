@@ -238,14 +238,21 @@ export default function HeroSection() {
                       >
                         <h2>{banner.title}</h2>
                         {banner.subtitle && <p className={styles.subtitle}>{banner.subtitle}</p>}
-                        <motion.button 
-                          className={styles.buyBtn}
-                          whileHover={{ scale: 1.05, x: 5 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          Shop Now
-                          <ChevronRight size={20} className={styles.btnIcon} />
-                        </motion.button>
+                        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                          <motion.button 
+                            className={styles.buyBtn}
+                            whileHover={{ scale: 1.05, x: 5 }}
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            Shop Now
+                            <ChevronRight size={20} className={styles.btnIcon} />
+                          </motion.button>
+
+                          <Link href="/solar-quote" className={styles.buyBtn}>
+                            Get Quote
+                            <ChevronRight size={20} className={styles.btnIcon} />
+                          </Link>
+                        </div>
                       </motion.div>
                     </div>
                   </Link>

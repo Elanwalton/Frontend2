@@ -305,3 +305,44 @@
     font-size: 1.875rem;
   }
 }
+
+@media (max-width: 480px) {
+  .imageContainer {
+    height: calc(280px * 0.67);
+  }
+
+  .content {
+    padding: 1rem;
+    gap: 0.75rem;
+  }
+
+  .title {
+    font-size: 1.05rem;
+  }
+
+  .description {
+    font-size: 0.8rem;
+  }
+
+  .price {
+    font-size: 1.35rem;
+  }
+
+  .oldPrice {
+    font-size: 1rem;
+  }
+
+  .features {
+    gap: 0.75rem;
+    font-size: 0.7rem;
+  }
+
+  .viewButton {
+    padding: 0.75rem;
+  }
+
+  .discountBadge {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+  }
+}

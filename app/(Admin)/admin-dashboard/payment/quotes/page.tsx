@@ -8,11 +8,13 @@ import {
   Button, 
   TextField, 
   InputAdornment, 
-  MenuItem, 
   Select, 
   FormControl, 
   InputLabel,
   Chip,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   Table,
   TableBody,
   TableCell,
@@ -23,7 +25,10 @@ import {
   Checkbox,
   IconButton,
   Menu,
-  Typography
+  MenuItem,
+  Typography,
+  Snackbar,
+  Alert
 } from '@mui/material';
 import {
   Search as SearchIcon,
@@ -45,6 +50,7 @@ import {
   Send as SendIcon,
   ContentCopy as CopyIcon,
   Delete as Trash2Icon,
+  Autorenew as RefreshIcon,
   CalendarToday as CalendarIcon,
   AttachMoney as DollarSignIcon,
   Group as UsersIcon,
@@ -60,6 +66,12 @@ import {
   Clock as ClockLucideIcon 
 } from 'lucide-react';
 import styles from './quotes.module.css';
+import { apiCall, apiGet } from '@/utils/apiClient';
+import { getApiEndpoint } from '@/utils/apiClient';
+import QuotationResult from '@/components/SolarQuotationTool/QuotationResult';
+import type { SolarQuoteResult } from '@/components/SolarQuotationTool/types';
+import { getApiBaseUrl } from '@/utils/apiUrl';
+import CreateQuoteModal from '@/components/QuoteModal';
 
 interface Quote {
   id: string;
@@ -69,6 +81,7 @@ interface Quote {
     email: string;
     company: string;
   };
+  file_path?: string;
   items: {
     name: string;
     quantity: number;
@@ -77,131 +90,203 @@ interface Quote {
   subtotal: number;
   tax: number;
   total: number;
-  status: 'draft' | 'sent' | 'viewed' | 'accepted' | 'rejected' | 'expired';
+  status: 'pending' | 'sent' | 'accepted' | 'expired' | 'rejected';
   createdDate: string;
-  expiryDate: string;
-  validityDays: number;
+  expiryDate?: string;
+  validityDays?: number;
   notes?: string;
 }
 
-// Sample quotes data adapted for Sunleaf Technologies
-const sampleQuotes: Quote[] = [
-  {
-    id: '1',
-    quoteNumber: 'QT-2024-001',
-    client: {
-      name: 'John Kamau',
-      email: 'john@example.com',
-      company: 'TechCorp Ltd'
-    },
-    items: [
-      { name: '200W Solar Panel', quantity: 10, price: 15000 },
-      { name: 'Solar Inverter 5KW', quantity: 2, price: 45000 }
-    ],
-    subtotal: 240000,
-    tax: 38400,
-    total: 278400,
-    status: 'sent',
-    createdDate: '2024-01-15',
-    expiryDate: '2024-02-14',
-    validityDays: 30,
-    notes: 'Bulk order discount applied'
-  },
-  {
-    id: '2',
-    quoteNumber: 'QT-2024-002',
-    client: {
-      name: 'Mary Wanjiku',
-      email: 'mary@example.com',
-      company: 'GreenEnergy Co'
-    },
-    items: [
-      { name: 'Solar Power Bank 20000mAh', quantity: 50, price: 4500 }
-    ],
-    subtotal: 225000,
-    tax: 36000,
-    total: 261000,
-    status: 'accepted',
-    createdDate: '2024-01-10',
-    expiryDate: '2024-02-09',
-    validityDays: 30
-  },
-  {
-    id: '3',
-    quoteNumber: 'QT-2024-003',
-    client: {
-      name: 'David Omondi',
-      email: 'david@example.com',
-      company: 'PowerSolutions'
-    },
-    items: [
-      { name: 'LED Flood Light 150W', quantity: 20, price: 3500 }
-    ],
-    subtotal: 70000,
-    tax: 11200,
-    total: 81200,
-    status: 'viewed',
-    createdDate: '2024-01-08',
-    expiryDate: '2024-02-07',
-    validityDays: 30
-  },
-  {
-    id: '4',
-    quoteNumber: 'QT-2024-004',
-    client: {
-      name: 'Sarah Njeri',
-      email: 'sarah@example.com',
-      company: 'BuildTech'
-    },
-    items: [
-      { name: 'Garden Light 250W', quantity: 15, price: 5500 }
-    ],
-    subtotal: 82500,
-    tax: 13200,
-    total: 95700,
-    status: 'draft',
-    createdDate: '2024-01-05',
-    expiryDate: '2024-02-04',
-    validityDays: 30
-  },
-  {
-    id: '5',
-    quoteNumber: 'QT-2023-058',
-    client: {
-      name: 'James Mwangi',
-      email: 'james@example.com',
-      company: 'Solar Innovations'
-    },
-    items: [
-      { name: 'Gel Battery 12V', quantity: 8, price: 35000 }
-    ],
-    subtotal: 280000,
-    tax: 44800,
-    total: 324800,
-    status: 'expired',
-    createdDate: '2023-12-20',
-    expiryDate: '2024-01-19',
-    validityDays: 30
-  }
-];
+type SendQuoteResult = {
+  success: boolean;
+  data?: {
+    quote_number: string;
+    customer_name?: string;
+    customer_email?: string;
+    customer_phone?: string;
+    file_path?: string;
+  };
+  message?: string;
+};
 
 export default function QuotesPage() {
   const router = useRouter();
-  const [quotes, setQuotes] = useState<Quote[]>(sampleQuotes);
+  const [quotes, setQuotes] = useState<Quote[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [selectedQuotes, setSelectedQuotes] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState<'date' | 'amount' | 'client'>('date');
   const [showActionMenu, setShowActionMenu] = useState<string | null>(null);
+  const [actionMenuAnchorEl, setActionMenuAnchorEl] = useState<HTMLElement | null>(null);
+  const [viewOpen, setViewOpen] = useState(false);
+  const [viewLoading, setViewLoading] = useState(false);
+  const [viewError, setViewError] = useState<string | null>(null);
+  const [viewData, setViewData] = useState<SolarQuoteResult | null>(null);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>(
+    { open: false, message: '', severity: 'success' }
+  );
+
+  const [statusMenuAnchorEl, setStatusMenuAnchorEl] = useState<HTMLElement | null>(null);
+  const [statusMenuQuote, setStatusMenuQuote] = useState<Quote | null>(null);
+
+  const apiBaseUrl = getApiBaseUrl().replace(/\/+$/, '');
+
+  const buildPdfUrl = (filePath?: string) => {
+    if (!filePath) return '';
+    // file_path is stored relative to the PHP backend (typically under /api/quotes/...)
+    // so we build the URL off the API base.
+    const normalized = String(filePath).replace(/^\/+/, '').replace(/^api\//i, '');
+    return `${apiBaseUrl}/${normalized}`;
+  };
+
+  const loadQuotes = async () => {
+    try {
+      // Primary: quotations table (includes solar quotes)
+      const res = await apiGet<{ success: boolean; data: any[] }>('/getQuote');
+      const rows: Quote[] = (res?.data || []).map((q: any) => ({
+        id: String(q.quote_number || q.id),
+        quoteNumber: String(q.quote_number || q.id),
+        client: {
+          name: String(q.customer_name || ''),
+          email: String(q.customer_email || ''),
+          company: '',
+        },
+        file_path: q.file_path || '',
+        items: Array.isArray(q.items) ? q.items : [],
+        subtotal: typeof q.subtotal === 'number' ? q.subtotal : 0,
+        tax: typeof q.tax === 'number' ? q.tax : 0,
+        total: typeof q.total === 'number' ? q.total : 0,
+        status: (q.status as any) || 'pending',
+        createdDate: String(q.created_at || ''),
+        expiryDate: q.expiry_date || '',
+        validityDays: 0,
+      }));
+      setQuotes(rows);
+    } catch {
+      // Fallback: legacy quote_requests admin endpoint
+      const res = await apiGet<any>('/admin/getQuotes');
+      const rows: Quote[] = (res?.data || []).map((q: any) => ({
+        id: String(q.quote_number || q.id),
+        quoteNumber: String(q.quote_number || q.id),
+        client: {
+          name: String(q.customer || q.customer_name || ''),
+          email: String(q.email || q.customer_email || ''),
+          company: String(q.company || q.company_name || ''),
+        },
+        file_path: q.file_path || '',
+        items: [],
+        subtotal: 0,
+        tax: 0,
+        total: typeof q.estimated_value === 'number' ? q.estimated_value : 0,
+        status: (String(q.status || 'sent') as Quote['status']) || 'sent',
+        createdDate: String(q.date || q.created_at || ''),
+        expiryDate: String(q.valid_until || ''),
+        validityDays: 0,
+        notes: q.notes || undefined,
+      }));
+      setQuotes(rows);
+    }
+  };
+
+  const handleDownload = async (row: Quote) => {
+    // Prefer using already-loaded PDF path
+    const url = buildPdfUrl(row.file_path);
+    if (!url) {
+      // Resolve via details endpoint (includes file_path)
+      try {
+        const res = await apiGet<{ success: boolean; data: SolarQuoteResult }>(
+          `/admin/getQuotationDetails?quote_number=${encodeURIComponent(row.quoteNumber)}`
+        );
+        const resolved = buildPdfUrl(res?.data?.file_path);
+        if (resolved) window.open(resolved, '_blank', 'noreferrer');
+      } catch {
+        // ignore
+      }
+      return;
+    }
+    window.open(url, '_blank', 'noreferrer');
+  };
+
+  const handleShare = async (row: Quote) => {
+    let url = buildPdfUrl(row.file_path);
+    if (!url) {
+      try {
+        const res = await apiGet<{ success: boolean; data: SolarQuoteResult }>(
+          `/admin/getQuotationDetails?quote_number=${encodeURIComponent(row.quoteNumber)}`
+        );
+        url = buildPdfUrl(res?.data?.file_path);
+      } catch {
+        // ignore
+      }
+    }
+
+    const text = url || row.quoteNumber;
+    const title = `Quote ${row.quoteNumber}`;
+
+    try {
+      if (url && typeof navigator !== 'undefined' && 'share' in navigator) {
+        await (navigator as any).share({ title, text: url, url });
+
+        try {
+          await apiCall('/updateQuoteStatus', {
+            method: 'POST',
+            body: JSON.stringify({ quote_number: row.quoteNumber, status: 'sent' }),
+          });
+          setQuotes(prev => prev.map(q => (q.quoteNumber === row.quoteNumber ? { ...q, status: 'sent' } : q)));
+        } catch {
+          // ignore
+        }
+
+        return;
+      }
+    } catch {
+      // fall back to clipboard
+    }
+
+    try {
+      await navigator.clipboard.writeText(text);
+
+      try {
+        await apiCall('/updateQuoteStatus', {
+          method: 'POST',
+          body: JSON.stringify({ quote_number: row.quoteNumber, status: 'sent' }),
+        });
+        setQuotes(prev => prev.map(q => (q.quoteNumber === row.quoteNumber ? { ...q, status: 'sent' } : q)));
+      } catch {
+        // ignore
+      }
+    } catch {
+      const el = document.createElement('textarea');
+      el.value = text;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+
+      try {
+        await apiCall('/updateQuoteStatus', {
+          method: 'POST',
+          body: JSON.stringify({ quote_number: row.quoteNumber, status: 'sent' }),
+        });
+        setQuotes(prev => prev.map(q => (q.quoteNumber === row.quoteNumber ? { ...q, status: 'sent' } : q)));
+      } catch {
+        // ignore
+      }
+    }
+  };
+
+  useEffect(() => {
+    void loadQuotes();
+  }, []);
 
   // Calculate statistics
   const stats = {
     total: quotes.length,
-    sent: quotes.filter(q => q.status === 'sent').length,
+    pending: quotes.filter(q => q.status === 'pending').length,
     accepted: quotes.filter(q => q.status === 'accepted').length,
-    revenue: quotes
-      .reduce((sum, q) => sum + q.total, 0)
+    revenue: quotes.reduce((sum, q) => sum + (q.total || 0), 0)
   };
 
   // Filter quotes
@@ -246,26 +331,24 @@ export default function QuotesPage() {
 
   const getStatusColor = (status: Quote['status']) => {
     const colors = {
-      draft: '#6b7280',
-      sent: '#3b82f6',
-      viewed: '#f59e0b',
+      pending: '#f59e0b',
+      sent: '#0ea5e9',
       accepted: '#10b981',
       rejected: '#ef4444',
       expired: '#9ca3af'
     };
-    return colors[status];
+    return colors[status] || '#6b7280';
   };
 
   const getStatusIcon = (status: Quote['status']) => {
     const icons = {
-      draft: <EditLucideIcon size={14} />,
+      pending: <ClockLucideIcon size={14} />,
       sent: <SendLucideIcon size={14} />,
-      viewed: <EyeLucideIcon size={14} />,
       accepted: <CheckCircleLucideIcon size={14} />,
       rejected: <XCircleLucideIcon size={14} />,
       expired: <ClockLucideIcon size={14} />
     };
-    return icons[status];
+    return icons[status] || <ClockLucideIcon size={14} />;
   };
 
   const handleExportCSV = () => {
@@ -273,9 +356,75 @@ export default function QuotesPage() {
     console.log('Exporting CSV...');
   };
 
-  const handleSendEmail = (quoteId: string) => {
-    // Email sending logic
-    console.log('Sending email for quote:', quoteId);
+  const updateQuoteStatus = async (quoteNumber: string, status: Quote['status']) => {
+    try {
+      await apiCall('/updateQuoteStatus', {
+        method: 'POST',
+        body: JSON.stringify({ quote_number: quoteNumber, status }),
+      });
+      setQuotes(prev => prev.map(q => (q.quoteNumber === quoteNumber ? { ...q, status } : q)));
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleSend = async (row: Quote, channel: 'whatsapp' | 'email') => {
+    try {
+      const res = await apiCall<SendQuoteResult>('/admin/sendQuote', {
+        method: 'POST',
+        body: JSON.stringify({ quote_number: row.quoteNumber, channel }),
+      });
+
+      const contact = res?.data;
+      if (!contact) throw new Error(res?.message || 'Failed to prepare send');
+
+      if (channel === 'whatsapp') {
+        const phone = String(contact.customer_phone || '').trim();
+        if (!phone) throw new Error('Customer phone not available');
+
+        const text = `Quote ${row.quoteNumber}`;
+        const waUrl = `https://wa.me/${encodeURIComponent(phone.replace(/\D/g, ''))}?text=${encodeURIComponent(text)}`;
+        window.open(waUrl, '_blank', 'noreferrer');
+      }
+
+      if (channel === 'email') {
+        const email = String(contact.customer_email || '').trim();
+        if (!email) throw new Error('Customer email not available');
+
+        const subject = `Quote ${row.quoteNumber}`;
+        const body = `Hello ${contact.customer_name || ''},\n\nPlease find your quote attached/linked: ${buildPdfUrl(contact.file_path || row.file_path)}\n\nRegards`;
+        window.location.href = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      }
+
+      await updateQuoteStatus(row.quoteNumber, 'sent');
+      setSnackbar({ open: true, severity: 'success', message: `Prepared ${channel} send for ${row.quoteNumber}` });
+    } catch (e: any) {
+      setSnackbar({ open: true, severity: 'error', message: String(e?.message || 'Failed to send') });
+    }
+  };
+
+  const handleOpenStatusMenu = (e: React.MouseEvent<HTMLElement>, row: Quote) => {
+    e.stopPropagation();
+    setStatusMenuAnchorEl(e.currentTarget);
+    setStatusMenuQuote(row);
+  };
+
+  const handleCloseStatusMenu = () => {
+    setStatusMenuAnchorEl(null);
+    setStatusMenuQuote(null);
+  };
+
+  const handleSetStatus = async (status: Quote['status']) => {
+    if (!statusMenuQuote) return;
+    const quoteNumber = statusMenuQuote.quoteNumber;
+    handleCloseStatusMenu();
+
+    try {
+      await updateQuoteStatus(quoteNumber, status);
+      setSnackbar({ open: true, severity: 'success', message: `Quote ${quoteNumber} updated to ${status}` });
+    } catch (e: any) {
+      setSnackbar({ open: true, severity: 'error', message: String(e?.message || 'Failed to update status') });
+    }
   };
 
   const handleGeneratePDF = (quoteId: string) => {
@@ -293,8 +442,38 @@ export default function QuotesPage() {
     console.log('Duplicating quote:', quoteId);
   };
 
+  const handleEditQuote = (row: Quote) => {
+    console.log('Editing quote:', row);
+  };
+
   const handleDeleteQuote = (quoteId: string) => {
     setQuotes(prev => prev.filter(q => q.id !== quoteId));
+  };
+
+  const handleViewQuote = async (row: Quote) => {
+    setViewError(null);
+    setViewData(null);
+    setViewOpen(true);
+    setViewLoading(true);
+    try {
+      const url = getApiEndpoint('/admin/getQuotationDetails') + `?quote_number=${encodeURIComponent(row.quoteNumber)}`;
+      const response = await fetch(url, {
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (!response.ok) {
+        throw new Error(`Failed to fetch: ${response.status}`);
+      }
+      const res = await response.json();
+      if (!res.success) {
+        throw new Error(res.message || 'Failed to load quote');
+      }
+      setViewData(res.data);
+    } catch (e: any) {
+      setViewError(String(e?.message || 'Failed to load quote'));
+    } finally {
+      setViewLoading(false);
+    }
   };
 
   const columns: Column[] = [
@@ -335,17 +514,25 @@ export default function QuotesPage() {
       label: 'Status',
       minWidth: 120,
       format: (value) => (
-        <span 
-          className={styles.statusBadge}
-          style={{ 
+        <Box
+          sx={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 0.75,
+            px: 1.25,
+            py: 0.5,
+            borderRadius: '999px',
+            fontSize: '0.8125rem',
+            fontWeight: 600,
+            textTransform: 'capitalize',
             backgroundColor: `${getStatusColor(value)}15`,
+            border: `1px solid ${getStatusColor(value)}30`,
             color: getStatusColor(value),
-            borderColor: `${getStatusColor(value)}30` 
           }}
         >
           {getStatusIcon(value)}
-          {value}
-        </span>
+          {String(value)}
+        </Box>
       ),
     },
     {
@@ -398,6 +585,139 @@ export default function QuotesPage() {
         </Box>
       ),
     },
+    {
+      id: 'id',
+      label: 'Action',
+      minWidth: 220,
+      format: (_value, row: any) => (
+        <>
+          <IconButton
+            size="small"
+            aria-label="More actions"
+            id={`quote-actions-button-${String(row.id)}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              setActionMenuAnchorEl(e.currentTarget);
+              setShowActionMenu(String(row.id));
+            }}
+          >
+            <MoreVerticalIcon fontSize="small" />
+          </IconButton>
+
+          <Menu
+            anchorEl={actionMenuAnchorEl}
+            open={showActionMenu === String(row.id)}
+            onClose={() => {
+              setShowActionMenu(null);
+              setActionMenuAnchorEl(null);
+            }}
+            MenuListProps={{
+              id: `quote-actions-${String(row.id)}`,
+              'aria-labelledby': `quote-actions-button-${String(row.id)}`,
+            }}
+          >
+            <MenuItem
+              onClick={() => {
+                setShowActionMenu(null);
+                setActionMenuAnchorEl(null);
+                handleViewQuote(row);
+              }}
+            >
+              <EyeIcon sx={{ fontSize: 18, mr: 1 }} />
+              View
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                setShowActionMenu(null);
+                setActionMenuAnchorEl(null);
+                handleDownload(row);
+              }}
+            >
+              <DownloadIcon sx={{ fontSize: 18, mr: 1 }} />
+              Download
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                setShowActionMenu(null);
+                setActionMenuAnchorEl(null);
+                handleShare(row);
+              }}
+            >
+              <SendIcon sx={{ fontSize: 18, mr: 1 }} />
+              Share
+            </MenuItem>
+            <MenuItem
+              onClick={(e) => {
+                setShowActionMenu(null);
+                setActionMenuAnchorEl(null);
+                handleOpenStatusMenu(e as any, row);
+              }}
+            >
+              <RefreshIcon sx={{ fontSize: 18, mr: 1 }} />
+              Change Status
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                setShowActionMenu(null);
+                setActionMenuAnchorEl(null);
+                handleEditQuote(row);
+              }}
+            >
+              <EditIcon sx={{ fontSize: 18, mr: 1 }} />
+              Edit
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                setShowActionMenu(null);
+                setActionMenuAnchorEl(null);
+                void handleSend(row, 'email');
+              }}
+            >
+              <MailIcon sx={{ fontSize: 18, mr: 1 }} />
+              Email
+            </MenuItem>
+            <MenuItem
+              sx={{ color: 'error.main' }}
+              onClick={() => {
+                setShowActionMenu(null);
+                setActionMenuAnchorEl(null);
+                handleDeleteQuote(String(row.id));
+              }}
+            >
+              <Trash2Icon sx={{ fontSize: 18, mr: 1 }} />
+              Delete
+            </MenuItem>
+          </Menu>
+
+          <Menu
+            anchorEl={statusMenuAnchorEl}
+            open={Boolean(statusMenuAnchorEl) && statusMenuQuote?.id === row.id}
+            onClose={handleCloseStatusMenu}
+          >
+            <MenuItem onClick={() => void handleSetStatus('pending')}>
+              <ClockIcon sx={{ fontSize: 18, mr: 1 }} />
+              Pending
+            </MenuItem>
+            <MenuItem onClick={() => void handleSetStatus('sent')}>
+              <SendIcon sx={{ fontSize: 18, mr: 1 }} />
+              Sent
+            </MenuItem>
+            <MenuItem onClick={() => void handleSetStatus('accepted')}>
+              <CheckCircleIcon sx={{ fontSize: 18, mr: 1 }} />
+              Accepted
+            </MenuItem>
+            <MenuItem onClick={() => void handleSetStatus('rejected')}>
+              <XCircleIcon sx={{ fontSize: 18, mr: 1 }} />
+              Rejected
+            </MenuItem>
+            <MenuItem onClick={() => void handleSetStatus('expired')}>
+              <AlertCircleIcon sx={{ fontSize: 18, mr: 1 }} />
+              Expired
+            </MenuItem>
+          </Menu>
+        </>
+      ),
+    },
   ];
 
   return (
@@ -429,12 +749,12 @@ export default function QuotesPage() {
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <MetricCard
             title="Pending Quotes"
-            value={stats.sent.toString()}
+            value={stats.pending.toString()}
             change="Requires attention"
             trend="down"
             period="Current"
             color="#ef4444"
-            sparklineData={[12, 15, 18, 14, 20, 16, 22, 19, 25, stats.sent]}
+            sparklineData={[12, 15, 18, 14, 20, 16, 22, 19, 25, stats.pending]}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
@@ -485,9 +805,8 @@ export default function QuotesPage() {
             label="Status"
           >
             <MenuItem value="all">All Statuses</MenuItem>
-            <MenuItem value="draft">Draft</MenuItem>
             <MenuItem value="sent">Sent</MenuItem>
-            <MenuItem value="viewed">Viewed</MenuItem>
+            <MenuItem value="pending">Pending</MenuItem>
             <MenuItem value="accepted">Accepted</MenuItem>
             <MenuItem value="rejected">Rejected</MenuItem>
             <MenuItem value="expired">Expired</MenuItem>
@@ -509,6 +828,7 @@ export default function QuotesPage() {
               background: 'linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%)',
             }
           }}
+          onClick={() => setCreateOpen(true)}
         >
           New Quote
         </Button>
@@ -522,6 +842,50 @@ export default function QuotesPage() {
           loading={false}
         />
       </Box>
+
+      <Dialog open={viewOpen} onClose={() => setViewOpen(false)} fullWidth maxWidth="lg">
+        <DialogTitle>Quote Preview</DialogTitle>
+        <DialogContent>
+          {viewLoading ? (
+            <Typography variant="body2">Loading...</Typography>
+          ) : viewError ? (
+            <Typography variant="body2" color="error">
+              {viewError}
+            </Typography>
+          ) : viewData ? (
+            <QuotationResult data={viewData} onStartOver={() => setViewOpen(false)} />
+          ) : (
+            <Typography variant="body2">No data</Typography>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3500}
+        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))} 
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      >
+        <Alert
+          severity={snackbar.severity}
+          variant="filled"
+          onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))} 
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+
+      {createOpen && (
+        <CreateQuoteModal
+          onClose={() => setCreateOpen(false)}
+          onSuccessMessage={(message) => setSnackbar({ open: true, severity: 'success', message })}
+          onQuoteCreated={() => {
+            setCreateOpen(false);
+            void loadQuotes();
+          }}
+        />
+      )}
     </Box>
   );
 }

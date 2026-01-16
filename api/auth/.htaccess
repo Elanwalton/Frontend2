@@ -1,0 +1,9 @@
+RewriteEngine On
+
+# Handle OPTIONS preflight
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^$ login.php [L]
+
+# Route /api/auth → login.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^$ login.php [L]

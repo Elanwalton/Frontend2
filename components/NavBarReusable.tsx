@@ -23,6 +23,16 @@ const Header: React.FC = () => {
   const navRef = useRef<HTMLElement | null>(null);
   const toggleRef = useRef<HTMLButtonElement | null>(null);
 
+  const categories = [
+    { id: "solar-inverters", name: "Solar Inverters", href: "/categories?category=Inverters" },
+    { id: "solar-panels", name: "Solar Panels", href: "/categories?category=Solar%20Panels" },
+    { id: "water-heaters", name: "Solar Water Heaters", href: "/categories?category=Water%20Heaters" },
+    { id: "batteries", name: "Batteries & ESS", href: "/categories?category=Batteries" },
+    { id: "outdoor-lights", name: "Solar Outdoor Lights", href: "/categories?category=Solar%20Lights" },
+    { id: "charge-controllers", name: "Charge Controllers", href: "/categories?category=Charge%20Controllers" },
+    { id: "accessories", name: "Accessories", href: "/categories?category=Mounting%20Accesories" },
+  ];
+
   const toggleMobileMenu = () => setIsMobileOpen((prev) => !prev);
   const closeMobileMenu = () => setIsMobileOpen(false);
 
@@ -167,7 +177,26 @@ const Header: React.FC = () => {
         role="dialog"
         ref={navRef}
       >
-        <ul>
+        <div className={styles.mobileSidebarHeader}>
+          <span>Categories</span>
+        </div>
+
+        <ul className={styles.mobileMenuList}>
+          {categories.map((c) => (
+            <li key={c.id} className={styles.mobileMenuItem}>
+              <Link href={c.href} onClick={closeMobileMenu}>
+                <span className={styles.mobileMenuChevron}>›</span>
+                {c.name}
+              </Link>
+            </li>
+          ))}
+        </ul>
+
+        <div className={styles.mobileQuickLinksHeader}>
+          <span>Quick Links</span>
+        </div>
+
+        <ul className={styles.mobileQuickLinksList}>
           <li><Link href="/" onClick={closeMobileMenu}>Home</Link></li>
           <li><Link href="/categories" onClick={closeMobileMenu}>Shop</Link></li>
           <li>

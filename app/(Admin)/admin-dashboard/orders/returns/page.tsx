@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { getApiUrl } from '@/utils/apiUrl';
-import { Box, Grid, Button, TextField, InputAdornment, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Box, Grid, Button, TextField, InputAdornment, FormControl, InputLabel, Select, MenuItem, Snackbar, Alert } from '@mui/material';
 import { Search as SearchIcon, FileDownload as ExportIcon } from '@mui/icons-material';
-import { PageHeader, DataTable, StatusBadge, MetricCard, Column } from '@/components/admin';
+import { PageHeader, DataTable, StatusBadge, MetricCard, Column, OrderDetailsModal } from '@/components/admin';
 
 interface Return {
   id: string;
@@ -23,6 +23,15 @@ export default function ReturnsPage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [returns, setReturns] = useState<Return[]>([]);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [orderDetails, setOrderDetails] = useState<any | null>(null);
+  const [orderItems, setOrderItems] = useState<any[]>([]);
+  const [actionPendingByOrder, setActionPendingByOrder] = useState<Record<string, boolean>>({});
+  const [snackbar, setSnackbar] = useState<{ open: boolean; severity: 'success' | 'error' | 'info'; message: string }>({
+    open: false,
+    severity: 'info',
+    message: ''
+  });
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 20,
@@ -161,8 +170,82 @@ export default function ReturnsPage() {
     return matchesSearch && matchesStatus;
   });
 
+  const withPending = async (orderNumber: string, fn: () => Promise<void>) => {
+    if (actionPendingByOrder[orderNumber]) return;
+    setActionPendingByOrder((prev) => ({ ...prev, [orderNumber]: true }));
+    try {
+      await fn();
+    } finally {
+      setActionPendingByOrder((prev) => ({ ...prev, [orderNumber]: false }));
+    }
+  };
+
+  const handleView = (ret: Return) => {
+    withPending(ret.orderId, async () => {
+      try {
+        const res = await fetch(`${getApiUrl('/api/admin/getOrderDetails')}?order_number=${encodeURIComponent(ret.orderId)}`, {
+          credentials: 'include',
+          headers: { Accept: 'application/json' },
+        });
+        const json = await res.json();
+        if (!res.ok || !json?.success) {
+          throw new Error(json?.message || 'Failed to load order details');
+        }
+        setOrderDetails(json.order);
+        setOrderItems(json.items || []);
+        setDetailsOpen(true);
+      } catch (e) {
+        setSnackbar({ open: true, severity: 'error', message: e instanceof Error ? e.message : 'Failed to load order details' });
+      }
+    });
+  };
+
+  const handleEdit = (ret: Return) => {
+    // Return workflows are not implemented in backend yet.
+    setSnackbar({ open: true, severity: 'info', message: 'Return processing actions are not implemented yet.' });
+  };
+
+  const handleExport = () => {
+    const header = ['return_id', 'order_number', 'customer', 'amount', 'reason', 'status', 'refund_status', 'request_date'];
+    const rows = filteredReturns.map((r) => [r.id, r.orderId, r.customer, r.amount, r.reason, r.status, r.refundStatus, r.requestDate]);
+    const csv = [header, ...rows]
+      .map((r) => r.map((v) => `"${String(v ?? '').replace(/\"/g, '""')}"`).join(','))
+      .join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `returns-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <Box sx={{ pt: 6 }}>
+      <OrderDetailsModal
+        open={detailsOpen}
+        onClose={() => {
+          setDetailsOpen(false);
+          setOrderDetails(null);
+          setOrderItems([]);
+        }}
+        order={orderDetails}
+        items={orderItems}
+      />
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3500}
+        onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert severity={snackbar.severity} onClose={() => setSnackbar((s) => ({ ...s, open: false }))}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+
       <PageHeader
         title="Returns & Refunds"
         subtitle="Manage product returns and refund requests"
@@ -212,7 +295,7 @@ export default function ReturnsPage() {
           </Select>
         </FormControl>
 
-        <Button variant="outlined" startIcon={<ExportIcon />}>
+        <Button variant="outlined" startIcon={<ExportIcon />} onClick={handleExport}>
           Export
         </Button>
       </Box>
@@ -220,8 +303,8 @@ export default function ReturnsPage() {
       <DataTable
         columns={columns}
         rows={filteredReturns}
-        onEdit={(ret) => console.log('Edit', ret)}
-        onView={(ret) => console.log('View', ret)}
+        onEdit={handleEdit}
+        onView={handleView}
         loading={loading}
       />
     </Box>
