@@ -415,8 +415,10 @@
   /* Ensure no scrolling needed on mobile */
   .authContainer {
     padding: 10px;
+    padding-top: 20px;
     min-height: 100vh;
     min-height: 100dvh;
+    align-items: flex-start;
   }
 }
 
