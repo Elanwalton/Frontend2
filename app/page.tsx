@@ -195,15 +195,15 @@ export default function HomePage() {
           fetchUrl={`${getApiUrl('/api/getProductsClients')}?page=1&limit=8&q=inverter`}
         />
 
-        <div style={{ display: isMobile ? 'none' : 'block' }}>
-          <Footer />
-        </div>
+        {!isMobile && <Footer />}
       </CategoryProvider>
 
-      <div className="md:hidden">
-        <div style={{ height: '80px' }} /> {/* Spacer for MobileBottomNav */}
-        <MobileBottomNav />
-      </div>
+      {isMobile && (
+        <div className="md:hidden">
+          <div style={{ height: '80px' }} /> {/* Spacer for MobileBottomNav */}
+          <MobileBottomNav />
+        </div>
+      )}
     </>
   );
 }

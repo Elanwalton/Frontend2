@@ -26,7 +26,6 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import PasswordSection from '@/components/PasswordSection';
 import AddressSection from '@/components/AddressSection';
 import ServiceHighlights from '@/components/ServicesHighlights';
-import Footer from '@/components/Footer';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuth } from '@/context/AuthContext';
 
@@ -440,7 +439,6 @@ function AccountPageContent() {
       </div>
       <ServiceHighlights />
     </div>
-     <Footer />
      </>
   );
 }
