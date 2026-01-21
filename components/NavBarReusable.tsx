@@ -6,7 +6,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import styles from '@/styles/Header.module.css';
 import { FaShoppingCart } from "react-icons/fa";
-import { UserCircle, Search } from "lucide-react";
+import { UserCircle, Search, X } from "lucide-react";
 import LogoutButton from '@/components/LogoutButton';
 import { useAuth } from '@/context/AuthContext';
 import { buildMediaUrl } from '@/utils/media';
@@ -94,6 +94,8 @@ const Header: React.FC = () => {
         <ul className={styles.navList}>
           <li><Link href="/">Home</Link></li>
           <li><Link href="/categories">Shop</Link></li>
+          <li><Link href="/about">About Us</Link></li>
+          <li><Link href="/contact">Contact Us</Link></li>
           <li>
             <form onSubmit={handleSearch} className={styles.searchContainer}>
               <input
@@ -195,6 +197,13 @@ const Header: React.FC = () => {
         role="dialog"
         ref={navRef}
       >
+        <button 
+          className={styles.mobileCloseBtn} 
+          onClick={closeMobileMenu}
+          aria-label="Close menu"
+        >
+          <X size={24} />
+        </button>
 
         <div className={styles.mobileTopLinks}>
           <Link href="/about" onClick={closeMobileMenu} className={styles.mobileTopLink}>

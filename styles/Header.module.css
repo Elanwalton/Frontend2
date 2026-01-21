@@ -151,6 +151,31 @@
   transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
+.mobileCloseBtn {
+  position: absolute;
+  top: 1rem;
+  right: 1.15rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 2010;
+}
+
+.mobileCloseBtn:hover {
+  background: rgba(247, 200, 67, 0.25);
+  border-color: rgba(247, 200, 67, 0.45);
+  transform: rotate(90deg);
+  color: #f7c843;
+}
+
 .mobile_nav.active {
   transform: translateX(0); /* slide into view */
 }
@@ -393,6 +418,7 @@
   gap: 12px;
   width: 100%;
   padding: 0 4px; /* Adjust padding as needed */
+  margin-top: 1.25rem;
   margin-bottom: 1.5rem;
 }
 
