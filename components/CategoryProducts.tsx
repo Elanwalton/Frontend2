@@ -44,21 +44,23 @@ const CategoryProductsContent: React.FC<CategoryProductsProps> = ({ initialCateg
   const searchParams = useSearchParams();
   // Use initialCategory prop if provided, otherwise fallback to URL params
   const categoryFromUrl = initialCategory || searchParams?.get('category') || 'all';
+  const queryFromUrl = searchParams?.get('q') || '';
   
   const [selectedCategory, setSelectedCategory] = useState<string>(categoryFromUrl);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState<string>('popularity');
   const [showFilters, setShowFilters] = useState<boolean>(false);
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>(queryFromUrl);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   
-  // Update selected category when URL changes
+  // Update selected category and search query when URL changes
   useEffect(() => {
     setSelectedCategory(categoryFromUrl);
-  }, [categoryFromUrl]);
+    setSearchQuery(queryFromUrl);
+  }, [categoryFromUrl, queryFromUrl]);
 
   // API configuration handled by getApiUrl
 

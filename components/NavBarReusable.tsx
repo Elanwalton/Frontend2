@@ -37,8 +37,9 @@ const Header: React.FC = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      router.push(`/Products?q=${encodeURIComponent(searchQuery.trim())}`);
+      router.push(`/categories?q=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery("");
+      closeMobileMenu();
     }
   };
 
