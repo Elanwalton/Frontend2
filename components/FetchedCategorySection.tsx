@@ -133,8 +133,7 @@ const FetchedCategorySection: React.FC<FetchedCategorySectionProps> = ({
   const [loading, setLoading] = useState(true);
   const [bannersLoading, setBannersLoading] = useState(true);
 
-  const API_BASE_RAW = process.env.NEXT_PUBLIC_API_URL || '';
-  const API_BASE = API_BASE_RAW.replace(/\/+$/,'');
+  // API configuration handled by getApiUrl
 
   // Initialize with fallback banners if no props provided
   useEffect(() => {
@@ -211,7 +210,7 @@ const FetchedCategorySection: React.FC<FetchedCategorySectionProps> = ({
 
     loadBanners();
     return () => { cancelled = true; };
-  }, [title, propBanners, API_BASE]);
+  }, [title, propBanners]);
 
   useEffect(() => {
     let cancelled = false;
@@ -322,9 +321,6 @@ const FetchedCategorySection: React.FC<FetchedCategorySectionProps> = ({
                     console.log(`[${title}] Image loaded successfully:`, banner.image);
                   }}
                 />
-              </div>
-              <div className={styles.bannerOverlay}>
-                <ArrowRight className={styles.bannerArrow} size={24} />
               </div>
             </Link>
           </motion.div>

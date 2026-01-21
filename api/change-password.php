@@ -1,8 +1,10 @@
 <?php
-require_once __DIR__ . '/ApiHelper.php';
-require 'session-config.php';
+require_once __DIR__ . '/auth-middleware.php'; // Defines $GLOBALS['_AUTH_USER'] and handles unauthorized exit
 
 $conn = getDbConnection();
+
+// Set JSON response header
+header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -10,21 +12,15 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$token = getAuthToken();
-$userData = validateToken($conn, $token);
+// Get User ID from global set by middleware
+$userId = $GLOBALS['_AUTH_USER']['id'] ?? 0;
 
-// If not a regular user, try admin validation
-if (!$userData) {
-    $userData = validateAdminToken($conn, $token);
-}
-
-if (!$userData) {
+if ($userId <= 0) {
+    // Should already be handled by auth-middleware, but as a safeguard
     http_response_code(401);
-    echo json_encode(['success' => false, 'message' => 'Invalid token']);
+    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
 }
-
-$userId = $userData['user_id'];
 
 // Get input data
 $input = json_decode(file_get_contents('php://input'), true);
@@ -34,7 +30,7 @@ $requiredFields = ['current_password', 'new_password', 'confirm_password'];
 foreach ($requiredFields as $field) {
     if (empty($input[$field])) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'message' => "$field is required"]);
+        echo json_encode(['success' => false, 'message' => str_replace('_', ' ', ucfirst($field)) . " is required"]);
         exit;
     }
 }
@@ -59,6 +55,11 @@ if (strlen($newPassword) < 8) {
 // Get current user password
 $sql = "SELECT password FROM users WHERE id = ?";
 $stmt = $conn->prepare($sql);
+if (!$stmt) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Database error']);
+    exit;
+}
 $stmt->bind_param("i", $userId);
 $stmt->execute();
 $result = $stmt->get_result();

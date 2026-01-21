@@ -1,10 +1,27 @@
 <?php
 require_once __DIR__ . '/ApiHelper.php';
+require_once __DIR__ . '/auth_tokens.php';
 
 $conn = getDbConnection();
-$token = getAuthToken();
-$userData = validateToken($conn, $token);
-$userId = $userData['user_id'];
+
+// Get and validate JWT access token
+$accessToken = $_COOKIE['access_token'] ?? '';
+
+if ($accessToken === '') {
+    sendError(401, 'Unauthorized');
+}
+
+try {
+    $payload = validateAccessToken($accessToken);
+    $userId = (int)($payload['sub'] ?? 0);
+    
+    if ($userId <= 0) {
+        sendError(401, 'Invalid access token');
+    }
+} catch (Throwable $e) {
+    error_log('Token validation error in orders.php: ' . $e->getMessage());
+    sendError(401, 'Unauthorized');
+}
 
 // Tables already exist in the database, no need to create them
 

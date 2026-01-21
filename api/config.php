@@ -11,7 +11,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Define base URL
-define('BASE_URL', $_ENV['NEXT_PUBLIC_API_URL'] ?? 'http://localhost/sunleaf-tech');
+define('BASE_URL', $_ENV['NEXT_PUBLIC_API_URL'] ?? 'http://localhost/frontend2-dev');
 
 // Timezone
 date_default_timezone_set('Africa/Nairobi');

@@ -4,10 +4,11 @@ import { Card, CardContent, Typography, Chip, Box, Skeleton } from '@mui/materia
 interface MetricCardProps {
   title: string;
   value: string;
-  change: string;
-  trend: 'up' | 'down' | 'neutral';
+  change?: string;
+  trend?: 'up' | 'down' | 'neutral';
   period: string;
-  sparklineData: number[];
+  sparklineData?: number[];
+  icon?: React.ReactNode;
   color: string;
   loading?: boolean;
   onClick?: () => void;
@@ -17,9 +18,10 @@ export default function MetricCard({
   title,
   value,
   change,
-  trend,
+  trend = 'neutral',
   period,
-  sparklineData,
+  sparklineData = [],
+  icon,
   color,
   loading = false,
   onClick
@@ -43,8 +45,9 @@ export default function MetricCard({
     );
   }
 
-  const maxValue = Math.max(...sparklineData);
-  const minValue = Math.min(...sparklineData);
+  const hasData = sparklineData && sparklineData.length > 0;
+  const maxValue = hasData ? Math.max(...sparklineData) : 0;
+  const minValue = hasData ? Math.min(...sparklineData) : 0;
   const range = maxValue - minValue;
   const isFlat = range === 0;
   const safeRange = range === 0 ? 1 : range;
@@ -61,6 +64,7 @@ export default function MetricCard({
     <Card 
       onClick={onClick}
       sx={{ 
+        height: '100%',
         transition: 'all 0.3s', 
         '&:hover': { 
           boxShadow: 4, 
@@ -76,73 +80,78 @@ export default function MetricCard({
     >
       <CardContent sx={{ pb: 2 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-          <Typography variant="body2" color="text.secondary" fontWeight={500}>
-            {title}
-          </Typography>
-          <Chip 
-            label={change} 
-            size="small" 
-            sx={{
-              height: 24,
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              bgcolor: trend === 'up' ? '#dcfce7' : trend === 'down' ? '#fee2e2' : '#e5e7eb',
-              color: trend === 'up' ? '#16a34a' : trend === 'down' ? '#dc2626' : '#374151',
-              border: 'none'
-            }}
-          />
+          <Box display="flex" alignItems="center" gap={1}>
+            {icon && <Box sx={{ color: color, display: 'flex' }}>{icon}</Box>}
+            <Typography variant="body2" color="text.secondary" fontWeight={500}>
+              {title}
+            </Typography>
+          </Box>
+          {change && (
+            <Chip 
+              label={change} 
+              size="small" 
+              sx={{
+                height: 24,
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                bgcolor: trend === 'up' ? '#dcfce7' : trend === 'down' ? '#fee2e2' : '#e5e7eb',
+                color: trend === 'up' ? '#16a34a' : trend === 'down' ? '#dc2626' : '#374151',
+                border: 'none'
+              }}
+            />
+          )}
         </Box>
         
         <Typography variant="h4" fontWeight="bold" sx={{ mb: 0.5 }}>
           {value}
         </Typography>
         
-        <Typography variant="caption" color="text.secondary" sx={{ mb: 2, display: 'block' }}>
+        <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
           {period}
         </Typography>
 
-        {/* Sparkline - Made longer with more height */}
-        <Box sx={{ height: 80, mt: 2, position: 'relative' }}>
-          <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 80">
-            <defs>
-              <linearGradient id={`gradient-${title.replace(/\s/g, '-')}`} x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor={color} stopOpacity="0.3" />
-                <stop offset="100%" stopColor={color} stopOpacity="0.05" />
-              </linearGradient>
-            </defs>
-            
-            {/* Area fill */}
-            <path
-              d={`
-                M 0 80
-                ${sparklineData.map((value, i) => {
-                  const x = (i / (sparklineData.length - 1 || 1)) * 100;
-                  const y = computeY(value);
-                  return `L ${x} ${y}`;
-                }).join(' ')}
-                L 100 80
-                Z
-              `}
-              fill={`url(#gradient-${title.replace(/\s/g, '-')})`}
-            />
-            
-            {/* Line */}
-            <path
-              d={`
-                ${sparklineData.map((value, i) => {
-                  const x = (i / (sparklineData.length - 1 || 1)) * 100;
-                  const y = computeY(value);
-                  return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
-                }).join(' ')}
-              `}
-              fill="none"
-              stroke={color}
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </Box>
+        {/* Sparkline - Only show if data is available */}
+        {hasData && (
+          <Box sx={{ height: 60, mt: 2, position: 'relative' }}>
+            <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 80">
+              <defs>
+                <linearGradient id={`gradient-${title.replace(/[^\w]/g, '-')}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor={color} stopOpacity="0.3" />
+                  <stop offset="100%" stopColor={color} stopOpacity="0.05" />
+                </linearGradient>
+              </defs>
+              
+              <path
+                d={`
+                  M 0 80
+                  ${sparklineData.map((value, i) => {
+                    const x = (i / (sparklineData.length - 1 || 1)) * 100;
+                    const y = computeY(value);
+                    return `L ${x} ${y}`;
+                  }).join(' ')}
+                  L 100 80
+                  Z
+                `}
+                fill={`url(#gradient-${title.replace(/[^\w]/g, '-')})`}
+              />
+              
+              <path
+                d={`
+                  ${sparklineData.map((value, i) => {
+                    const x = (i / (sparklineData.length - 1 || 1)) * 100;
+                    const y = computeY(value);
+                    return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+                  }).join(' ')}
+                `}
+                fill="none"
+                stroke={color}
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </Box>
+        )}
       </CardContent>
     </Card>
   );

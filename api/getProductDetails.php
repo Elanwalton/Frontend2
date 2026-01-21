@@ -3,24 +3,32 @@ require_once __DIR__ . '/ApiHelper.php';
 
 $conn = getDbConnection();
 
-// Get product ID from query parameter
+// Get product ID or Slug from query parameter
 $productId = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$slug = isset($_GET['slug']) ? trim($_GET['slug']) : '';
 
-if ($productId <= 0) {
+if ($productId <= 0 && empty($slug)) {
     echo json_encode([
         'success' => false,
-        'message' => 'Invalid product ID'
+        'message' => 'Invalid product ID or Slug'
     ]);
     exit();
 }
+
+// Prepare query based on ID or Slug
+$whereClause = $productId > 0 ? "id = ?" : "slug = ?";
+$paramType = $productId > 0 ? "i" : "s";
+$paramValue = $productId > 0 ? $productId : $slug;
 
 // Fetch product details
 $sql = "SELECT 
     id,
     name,
+    slug,
     description,
     price,
     main_image_url,
+    alt_text,
     category,
     stock_quantity,
     rating,
@@ -29,14 +37,17 @@ $sql = "SELECT
     features,
     images,
     short_description,
+    meta_title,
+    meta_description,
+    focus_keyword,
     created_at,
     updated_at
 FROM products 
-WHERE id = ?
+WHERE $whereClause
 LIMIT 1";
 
 $stmt = mysqli_prepare($conn, $sql);
-mysqli_stmt_bind_param($stmt, 'i', $productId);
+mysqli_stmt_bind_param($stmt, $paramType, $paramValue);
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 $product = mysqli_fetch_assoc($result);
@@ -51,7 +62,19 @@ $product = mysqli_fetch_assoc($result);
     
     // Parse JSON fields if they exist
     if (isset($product['specifications']) && !empty($product['specifications'])) {
-        $product['specifications'] = json_decode($product['specifications'], true);
+        $rawSpecs = json_decode($product['specifications'], true);
+        $formattedSpecs = [];
+        if (is_array($rawSpecs)) {
+            foreach ($rawSpecs as $label => $value) {
+                // If it's already in {label, value} format, keep it
+                if (is_array($value) && isset($value['label']) && isset($value['value'])) {
+                    $formattedSpecs[] = $value;
+                } else {
+                    $formattedSpecs[] = ['label' => $label, 'value' => (string)$value];
+                }
+            }
+        }
+        $product['specifications'] = $formattedSpecs;
     } else {
         $product['specifications'] = [];
     }
@@ -81,12 +104,30 @@ $product = mysqli_fetch_assoc($result);
         $product['short_description'] = substr($product['description'], 0, 150) . '...';
     }
     
+    // Schema Markup (Basic Product)
+    $product['schema_markup'] = [
+        "@context" => "https://schema.org/",
+        "@type" => "Product",
+        "name" => $product['name'],
+        "image" => $product['main_image_url'],
+        "description" => $product['short_description'],
+        "sku" => "SKU-" . $product['id'],
+        "offers" => [
+            "@type" => "Offer",
+            "url" => "https://sunleaftechnologies.co.ke/product/" . ($product['slug'] ?? $product['id']),
+            "priceCurrency" => "KES",
+            "price" => $product['price'],
+            "availability" => $product['stock_quantity'] > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+            "itemCondition" => "https://schema.org/NewCondition"
+        ]
+    ];
+    
     // Add default specifications if none exist
     if (empty($product['specifications'])) {
         $product['specifications'] = [
-            'Category' => $product['category'],
-            'Stock Status' => $product['stock_quantity'] > 0 ? 'In Stock' : 'Out of Stock',
-            'Availability' => $product['stock_quantity'] > 10 ? 'Available' : ($product['stock_quantity'] > 0 ? 'Limited Stock' : 'Out of Stock')
+            ['label' => 'Category', 'value' => $product['category']],
+            ['label' => 'Stock Status', 'value' => $product['stock_quantity'] > 0 ? 'In Stock' : 'Out of Stock'],
+            ['label' => 'Availability', 'value' => $product['stock_quantity'] > 10 ? 'Available' : ($product['stock_quantity'] > 0 ? 'Limited Stock' : 'Out of Stock')]
         ];
     }
     

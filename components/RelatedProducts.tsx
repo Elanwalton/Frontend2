@@ -6,6 +6,7 @@ import { Sparkles, ArrowRight } from "lucide-react";
 import ProductCard from "./ProductCard";
 import styles from '@/styles/RelatedProducts.module.css';
 import { buildMediaUrl } from '@/utils/media';
+import { getApiUrl } from "@/utils/apiUrl";
 
 interface Product {
   id: number;
@@ -32,16 +33,16 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const RAW_API = process.env.NEXT_PUBLIC_API_URL || "";
-  const API_BASE = RAW_API.replace(/\/?api\/?$/i, "");
+  // API configuration handled by getApiUrl
 
   useEffect(() => {
     let cancelled = false;
 
     async function fetchRelatedProducts() {
       try {
+        const url = getApiUrl('/api/getProductsClients');
         const response = await fetch(
-          `${API_BASE}/api/getProductsClients.php?page=1&limit=${limit}`,
+          `${url}?page=1&limit=${limit}`,
           { credentials: "include" }
         );
         const data = await response.json();
@@ -78,7 +79,7 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({
     return () => {
       cancelled = true;
     };
-  }, [API_BASE, limit]);
+  }, [limit]);
 
   if (loading) {
     return (

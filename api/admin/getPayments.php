@@ -43,7 +43,7 @@ try {
     }
     
     if (!empty($search)) {
-        $whereConditions[] = "(p.transaction_id LIKE ? OR p.customer_email LIKE ? OR p.customer_name LIKE ?)";
+        $whereConditions[] = "(p.checkout_request_id LIKE ? OR p.customer_email LIKE ? OR p.customer_name LIKE ?)";
         $searchTerm = "%{$search}%";
         $params[] = $searchTerm;
         $params[] = $searchTerm;
@@ -68,7 +68,7 @@ try {
     $paymentsQuery = "
         SELECT 
             p.id,
-            p.transaction_id,
+            p.checkout_request_id as transaction_id,
             p.order_id,
             o.order_number,
             p.amount,
@@ -121,7 +121,7 @@ try {
             COALESCE(SUM(CASE WHEN status = 'success' THEN amount ELSE 0 END), 0) as total_successful,
             COALESCE(SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END), 0) as total_pending,
             COALESCE(SUM(CASE WHEN status = 'failed' THEN amount ELSE 0 END), 0) as total_failed
-        FROM payments
+        FROM payments p
         {$whereClause}
     ";
     

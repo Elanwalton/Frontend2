@@ -495,4 +495,81 @@ function sendPasswordResetEmailSMTP($to, $firstName, $resetLink) {
         return false;
     }
 }
+
+function sendContactFormEmailSMTP($name, $userEmail, $phone, $userMessage) {
+    $mail = new PHPMailer(true);
+    
+    try {
+        // Server settings from environment variables
+        $mail->isSMTP();
+        $mail->Host       = $_ENV['MAIL_HOST'] ?? 'smtp.gmail.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = $_ENV['MAIL_USERNAME'] ?? '';
+        $mail->Password   = $_ENV['MAIL_PASSWORD'] ?? '';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = (int)($_ENV['MAIL_PORT'] ?? 587);
+        $mail->SMTPDebug  = 0;
+        $mail->Debugoutput = 'error_log';
+        
+        // System Sender
+        $fromEmail = $_ENV['MAIL_FROM_EMAIL'] ?? 'noreply@sunleaftechnologies.co.ke';
+        $fromName  = $_ENV['MAIL_FROM_NAME'] ?? 'Sunleaf Tech System';
+        
+        // Recipient (Admin/Support)
+        $adminEmail = $_ENV['MAIL_REPLY_TO_EMAIL'] ?? 'support@sunleaftechnologies.co.ke';
+        
+        $mail->setFrom($fromEmail, $fromName);
+        $mail->addAddress($adminEmail, 'Sunleaf Admin'); // Send TO the admin
+        $mail->addReplyTo($userEmail, $name); // Reply directly to the customer
+        
+        // Content
+        $mail->isHTML(true);
+        $mail->Subject = "New Contact Inqury from $name";
+        
+        $mail->Body = "
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 5px; }
+                .header { background-color: #f8fafc; padding: 15px; border-bottom: 1px solid #e2e8f0; margin-bottom: 20px; }
+                .label { font-weight: bold; color: #64748b; font-size: 0.9em; text-transform: uppercase; margin-top: 15px; }
+                .value { margin-bottom: 15px; font-size: 1.1em; }
+                .message-box { background-color: #f1f5f9; padding: 15px; border-radius: 5px; border-left: 4px solid #0ea5e9; }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='header'>
+                    <h2 style='margin:0; color:#0f172a;'>New Website Inquiry</h2>
+                </div>
+                
+                <div class='label'>Name</div>
+                <div class='value'>" . htmlspecialchars($name) . "</div>
+                
+                <div class='label'>Email</div>
+                <div class='value'><a href='mailto:" . htmlspecialchars($userEmail) . "'>" . htmlspecialchars($userEmail) . "</a></div>
+                
+                <div class='label'>Phone</div>
+                <div class='value'>" . htmlspecialchars($phone) . "</div>
+                
+                <div class='label'>Message</div>
+                <div class='value message-box'>" . nl2br(htmlspecialchars($userMessage)) . "</div>
+                
+                <hr style='border: 0; border-top: 1px solid #eee; margin: 30px 0;'>
+                <p style='font-size: 0.8em; color: #999;'>This email was sent from the Contact Us form on Sunleaf Technologies.</p>
+            </div>
+        </body>
+        </html>
+        ";
+        
+        $mail->send();
+        return true;
+        
+    } catch (Exception $e) {
+        error_log("PHPMailer Error (Contact Form): " . $mail->ErrorInfo);
+        return false;
+    }
+}
 ?>

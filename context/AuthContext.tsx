@@ -2,7 +2,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { getApiEndpoint } from '@/utils/apiClient';
 import { useToast } from '@/components/ToastProvider';
 
@@ -12,7 +12,7 @@ interface User {
   first_name: string;
   second_name?: string;
   phone?: string;
-  gender?: string;
+  profile_picture?: string;
   role: string;
   is_verified: boolean;
 }
@@ -51,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           first_name: data.user.first_name,
           second_name: data.user.second_name || '',
           phone: data.user.phone || '',
-          gender: data.user.gender || '',
+          profile_picture: data.user.profile_picture || '',
           role: data.user.role,
           is_verified: true
         };
@@ -59,8 +59,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUserRole(userData.role);
         console.log('AuthContext: User authenticated:', userData.email);
       } else {
-        // Don't log error for expected "Missing access token" - it's normal for unauthenticated state
-        if (data.message !== 'Missing access token') {
+        // Don't log error for expected "unauthenticated" states
+        const suppressedMessages = ['Missing access token', 'Not authenticated'];
+        if (!suppressedMessages.includes(data.message)) {
           console.error('Session validation failed:', data.message || 'Unknown error');
         }
         setUser(null);
@@ -80,20 +81,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // Check auth status on initial load only for protected routes
+  const pathname = usePathname();
+
+  // Check auth status on initial load for ALL routes
   useEffect(() => {
-    // Only check auth if we're on a protected route
-    const isProtectedRoute = window.location.pathname.startsWith('/admin-dashboard') || 
-                           window.location.pathname.startsWith('/account') ||
-                           window.location.pathname.startsWith('/cart');
-    
-    if (isProtectedRoute) {
-      checkAuth();
-    } else {
-      // For public routes, don't block with auth errors
-      setIsLoading(false);
-    }
-  }, []);
+    const checkInitialAuth = async () => {
+      // Always check auth to update UI state (navbar profile, etc.)
+      await checkAuth();
+    };
+
+    checkInitialAuth();
+  }, [pathname]);
 
   // Reset loading state when user state changes
   useEffect(() => {
@@ -138,31 +136,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
+    // 1. Clear local state IMMEDIATELY to update the UI
+    const wasAuthenticated = !!user;
+    setUser(null);
+    setUserRole(null);
+    setIsLoading(false);
+
     try {
+      // 2. Trigger navigation right away
+      router.replace('/login');
+
+      // 3. Show success toast (before it unmounts)
+      if (wasAuthenticated) {
+        toast.success('Logged Out', 'You have been successfully logged out.');
+      }
+
+      // 4. Perform backend cleanup (don't STRICTLY wait for this before visual feedback)
       await fetch(getApiEndpoint('/auth/logout'), {
         method: 'POST',
         credentials: 'include'
       });
-      // Give a small delay to ensure cookies are cleared before redirecting
-      await new Promise(resolve => setTimeout(resolve, 100));
       
-      // Show success toast only if user is currently authenticated
-      if (user) {
-        toast.success('Logged Out', 'You have been successfully logged out.');
-      }
+      // Give a small delay to ensure cookies are cleared
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
     } catch (error) {
       console.error('Logout failed:', error);
-      // Show error toast only if user is currently authenticated
-      if (user) {
-        toast.error('Logout Error', 'There was an issue logging out, but you have been logged out for security.');
+      if (wasAuthenticated) {
+        toast.error('Logout Error', 'There was an issue logging out, but you have been cleared locally.');
       }
-    } finally {
-      // Always clear state
-      setUser(null);
-      setUserRole(null);
-      setIsLoading(false); // Reset loading state
-      // Use replace instead of push to prevent back button issues
-      await router.replace('/login');
     }
   };
 

@@ -12,11 +12,8 @@ import {
   Select,
   MenuItem,
   Rating,
-  Avatar,
   Typography,
   Chip,
-  Card,
-  CardContent,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -24,14 +21,28 @@ import {
   Pagination,
   Alert,
   Snackbar,
+  Divider,
+  Tooltip,
+  IconButton,
+  Card,
+  CardContent,
+  Paper,
 } from '@mui/material';
-import { Search as SearchIcon, CheckCircle as ApproveIcon, Block as RejectIcon, Star as StarIcon, Visibility as ViewIcon } from '@mui/icons-material';
-import { PageHeader, DataTable, StatusBadge, MetricCard, Column } from '@/components/admin';
+import { 
+  Search as SearchIcon, 
+  CheckCircle as ApproveIcon, 
+  Block as RejectIcon, 
+  Star as StarIcon, 
+  Visibility as ViewIcon,
+  Reply as ReplyIcon,
+} from '@mui/icons-material';
+import { PageHeader, DataTable, MetricCard, Column } from '@/components/admin';
 import { 
   Clock as ClockIcon, 
   CheckCircle as CheckCircleIcon, 
   XCircle as XCircleIcon,
-  Package as PackageIcon
+  ThumbsUp,
+  MessageSquare,
 } from 'lucide-react';
 import styles from '@/styles/adminDashboard.module.css';
 import { getApiEndpoint } from '@/utils/apiClient';
@@ -44,6 +55,10 @@ interface Review {
   customer_email: string;
   rating: number;
   review_text: string;
+  pros: string;
+  cons: string;
+  would_recommend: boolean;
+  admin_response: string;
   date_submitted: string;
   status: 'pending' | 'approved' | 'rejected';
   verified_purchase: boolean;
@@ -56,12 +71,16 @@ export default function ReviewsPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [paginationData, setPaginationData] = useState<any>(null);
   
   const [reviews, setReviews] = useState<Review[]>([]);
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
   const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [responseModalOpen, setResponseModalOpen] = useState(false);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
-  const [actionType, setActionType] = useState<'approve' | 'reject' | null>(null);
+  const [actionType, setActionType] = useState<'approve' | 'reject' | 'respond' | null>(null);
+  const [adminResponseText, setAdminResponseText] = useState('');
+  
   const [notification, setNotification] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({
     open: false,
     message: '',
@@ -70,7 +89,7 @@ export default function ReviewsPage() {
 
   useEffect(() => {
     fetchReviews();
-  }, [page, statusFilter, ratingFilter]);
+  }, [page, statusFilter, ratingFilter, search]);
 
   const fetchReviews = async () => {
     try {
@@ -90,37 +109,13 @@ export default function ReviewsPage() {
       if (!response.ok) throw new Error('Failed to fetch reviews');
 
       const data = await response.json();
-      setReviews(data.reviews || []);
-      setTotalPages(data.totalPages || 1);
+      if (data.success) {
+        setReviews(data.reviews || []);
+        setTotalPages(data.pagination.totalPages || 1);
+        setPaginationData(data.pagination);
+      }
     } catch (error) {
       console.error('Error fetching reviews:', error);
-      // Fallback to mock data for now
-      setReviews([
-        {
-          id: 'REV-001',
-          product_id: '1',
-          product_name: 'Solar Panel 400W',
-          customer_name: 'John Doe',
-          customer_email: 'john@example.com',
-          rating: 5,
-          review_text: 'Excellent product! Works great and easy to install. The installation process was straightforward and the performance has been outstanding.',
-          date_submitted: '2024-11-08',
-          status: 'pending',
-          verified_purchase: true
-        },
-        {
-          id: 'REV-002',
-          product_id: '2',
-          product_name: 'LiFePO4 Battery 5kWh',
-          customer_name: 'Jane Smith',
-          customer_email: 'jane@example.com',
-          rating: 4,
-          review_text: 'Good battery, but shipping took longer than expected. Otherwise, the quality is excellent.',
-          date_submitted: '2024-11-07',
-          status: 'approved',
-          verified_purchase: true
-        },
-      ]);
     } finally {
       setLoading(false);
     }
@@ -129,38 +124,34 @@ export default function ReviewsPage() {
   const metrics = [
     {
       title: 'Total Reviews',
-      value: reviews.length.toString(),
-      change: '+15%',
+      value: paginationData?.total.toString() || '0',
       trend: 'up' as const,
       period: 'All time',
-      sparklineData: [1000, 1050, 1100, 1120, 1150, 1170, 1190, 1210, 1220, 1234],
+      icon: <StarIcon fontSize="small" />,
       color: '#3b82f6'
     },
     {
       title: 'Avg. Rating',
       value: reviews.length > 0 ? (reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1) : '0.0',
-      change: '+0.2',
       trend: 'up' as const,
       period: 'Overall',
-      sparklineData: [4.3, 4.4, 4.4, 4.5, 4.5, 4.5, 4.6, 4.6, 4.6, 4.6],
+      icon: <CheckCircleIcon />,
       color: '#f59e0b'
     },
     {
       title: 'Pending Reviews',
       value: reviews.filter(r => r.status === 'pending').length.toString(),
-      change: '+5',
       trend: 'up' as const,
       period: 'Awaiting moderation',
-      sparklineData: [15, 16, 17, 18, 19, 20, 21, 22, 23, 23],
+      icon: <ClockIcon />,
       color: '#ef4444'
     },
     {
-      title: 'Response Rate',
-      value: '87%',
-      change: '+3%',
+      title: 'Responses',
+      value: reviews.filter(r => r.admin_response).length.toString(),
       trend: 'up' as const,
-      period: 'This month',
-      sparklineData: [80, 81, 82, 83, 84, 85, 85, 86, 87, 87],
+      period: 'Replied by admin',
+      icon: <ReplyIcon fontSize="small" />,
       color: '#10b981'
     },
   ];
@@ -185,7 +176,7 @@ export default function ReviewsPage() {
       format: (value) => (
         <Box display="flex" alignItems="center" gap={1}>
           <Rating value={value} readOnly size="small" />
-          <Typography variant="body2">({value})</Typography>
+          <Typography variant="body2" color="text.secondary">({value})</Typography>
         </Box>
       ),
     },
@@ -193,15 +184,20 @@ export default function ReviewsPage() {
       id: 'review_text', 
       label: 'Review', 
       minWidth: 250,
-      format: (value) => (
-        <Typography variant="body2" sx={{ 
-          overflow: 'hidden', 
-          textOverflow: 'ellipsis', 
-          whiteSpace: 'nowrap',
-          maxWidth: '250px'
-        }}>
-          {value}
-        </Typography>
+      format: (value, row) => (
+        <Box>
+          <Typography variant="body2" sx={{ 
+            overflow: 'hidden', 
+            textOverflow: 'ellipsis', 
+            whiteSpace: 'nowrap',
+            maxWidth: '250px'
+          }}>
+            {value}
+          </Typography>
+          {row.admin_response && (
+            <Chip label="Replied" size="small" color="info" variant="outlined" sx={{ height: 16, fontSize: '0.625rem', mt: 0.5 }} />
+          )}
+        </Box>
       )
     },
     {
@@ -226,38 +222,36 @@ export default function ReviewsPage() {
     {
       id: 'actions',
       label: 'Actions',
-      minWidth: 150,
+      minWidth: 180,
       align: 'center',
       format: (_, row) => (
-        <Box display="flex" gap={1} justifyContent="center">
-          <Button
-            size="small"
-            variant="outlined"
-            startIcon={<ViewIcon />}
-            onClick={() => handleViewReview(row)}
-          >
-            View
-          </Button>
+        <Box display="flex" gap={0.5} justifyContent="center">
+          <Tooltip title="View Details">
+            <IconButton size="small" color="primary" onClick={() => handleViewReview(row)}>
+              <ViewIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          
           {row.status === 'pending' && (
             <>
-              <Button
-                size="small"
-                variant="contained"
-                color="success"
-                onClick={() => handleApproveAction(row)}
-              >
-                Approve
-              </Button>
-              <Button
-                size="small"
-                variant="outlined"
-                color="error"
-                onClick={() => handleRejectAction(row)}
-              >
-                Reject
-              </Button>
+              <Tooltip title="Approve">
+                <IconButton size="small" sx={{ color: 'success.main' }} onClick={() => handleApproveAction(row)}>
+                  <CheckCircleIcon size={18} />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Reject">
+                <IconButton size="small" color="error" onClick={() => handleRejectAction(row)}>
+                  <XCircleIcon size={18} />
+                </IconButton>
+              </Tooltip>
             </>
           )}
+          
+          <Tooltip title="Reply">
+            <IconButton size="small" sx={{ color: 'info.main' }} onClick={() => handleRespondAction(row)}>
+              <ReplyIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
         </Box>
       ),
     },
@@ -280,54 +274,58 @@ export default function ReviewsPage() {
     setConfirmDialogOpen(true);
   };
 
+  const handleRespondAction = (review: Review) => {
+    setSelectedReview(review);
+    setAdminResponseText(review.admin_response || '');
+    setResponseModalOpen(true);
+  };
+
   const confirmAction = async () => {
     if (!selectedReview || !actionType) return;
+    executeReviewAction(selectedReview.id, actionType);
+    setConfirmDialogOpen(false);
+  };
 
+  const executeReviewAction = async (reviewId: string, action: 'approve' | 'reject' | 'respond', responseBody?: string) => {
     try {
-      const response = await fetch(getApiEndpoint('/admin/reviews/update-status'), {
+      const response = await fetch(getApiEndpoint('/admin/updateReview'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
-          review_id: selectedReview.id,
-          status: actionType === 'approve' ? 'approved' : 'rejected'
+          review_id: reviewId,
+          action: action,
+          ...(responseBody && { response: responseBody })
         })
       });
 
-      if (!response.ok) throw new Error('Failed to update review');
-
-      // Update local state
-      setReviews(reviews.map(r => 
-        r.id === selectedReview.id 
-          ? { ...r, status: actionType === 'approve' ? 'approved' : 'rejected' }
-          : r
-      ));
-
+      const data = await response.json();
+      if (data.success) {
+        setNotification({
+          open: true,
+          message: `Review updated successfully`,
+          severity: 'success'
+        });
+        fetchReviews();
+        if (selectedReview?.id === reviewId) {
+          setSelectedReview(null);
+        }
+      } else {
+        throw new Error(data.message);
+      }
+    } catch (error: any) {
       setNotification({
         open: true,
-        message: `Review ${actionType === 'approve' ? 'approved' : 'rejected'} successfully`,
-        severity: 'success'
-      });
-    } catch (error) {
-      setNotification({
-        open: true,
-        message: `Failed to ${actionType} review`,
+        message: error.message || `Failed to ${action} review`,
         severity: 'error'
       });
-    } finally {
-      setConfirmDialogOpen(false);
-      setSelectedReview(null);
-      setActionType(null);
     }
   };
 
-  const getStatusColor = (status: string) => {
-    const colors: Record<string, string> = {
-      pending: '#f59e0b',
-      approved: '#34c759',
-      rejected: '#ef4444'
-    };
-    return colors[status] || '#6b7280';
+  const handleSaveResponse = () => {
+    if (!selectedReview) return;
+    executeReviewAction(selectedReview.id, 'respond', adminResponseText);
+    setResponseModalOpen(false);
   };
 
   return (
@@ -417,65 +415,122 @@ export default function ReviewsPage() {
 
       {/* View Review Modal */}
       <Dialog open={viewModalOpen} onClose={() => setViewModalOpen(false)} maxWidth="md" fullWidth>
-        <DialogTitle>Review Details</DialogTitle>
-        <DialogContent>
+        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          Review Details
+          <Box>
+            {selectedReview?.status === 'pending' && (
+              <>
+                <Button size="small" color="success" startIcon={<ApproveIcon />} onClick={() => handleApproveAction(selectedReview)} sx={{ mr: 1 }}>
+                  Approve
+                </Button>
+                <Button size="small" color="error" startIcon={<RejectIcon />} onClick={() => handleRejectAction(selectedReview)}>
+                  Reject
+                </Button>
+              </>
+            )}
+          </Box>
+        </DialogTitle>
+        <DialogContent dividers>
           {selectedReview && (
             <Box>
-              <Grid container spacing={2} sx={{ mb: 3 }}>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <Typography variant="subtitle2" color="text.secondary">Product</Typography>
-                  <Typography variant="body1" fontWeight={500}>{selectedReview.product_name}</Typography>
+              <Grid container spacing={3} sx={{ mb: 3 }}>
+                <Grid size={{ xs: 12, md: 8 }}>
+                  <Typography variant="h6" gutterBottom>{selectedReview.product_name}</Typography>
+                  <Box sx={{ mb: 2 }}>
+                    <Rating value={selectedReview.rating} readOnly />
+                    <Typography variant="body2" color="text.secondary">
+                      {new Date(selectedReview.date_submitted).toLocaleString()}
+                    </Typography>
+                  </Box>
+                  
+                  <Paper variant="outlined" sx={{ p: 2, bgcolor: 'grey.50', mb: 2 }}>
+                    <Typography variant="body1" sx={{ fontStyle: 'italic' }}>
+                      "{selectedReview.review_text}"
+                    </Typography>
+                  </Paper>
+
+                  <Grid container spacing={2}>
+                    <Grid size={{ xs: 12, sm: 6 }}>
+                      <Typography variant="subtitle2" color="success.main" display="flex" alignItems="center" gap={1}>
+                        <ThumbsUp size={16} /> Pros
+                      </Typography>
+                      <Typography variant="body2">{selectedReview.pros || 'No pros listed'}</Typography>
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 6 }}>
+                      <Typography variant="subtitle2" color="error.main" display="flex" alignItems="center" gap={1}>
+                        <ClockIcon size={16} /> Cons
+                      </Typography>
+                      <Typography variant="body2">{selectedReview.cons || 'No cons listed'}</Typography>
+                    </Grid>
+                  </Grid>
                 </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <Typography variant="subtitle2" color="text.secondary">Reviewer</Typography>
-                  <Typography variant="body1">{selectedReview.customer_name}</Typography>
-                  <Typography variant="caption" color="text.secondary">{selectedReview.customer_email}</Typography>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <Typography variant="subtitle2" color="text.secondary">Rating</Typography>
-                  <Rating value={selectedReview.rating} readOnly />
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <Typography variant="subtitle2" color="text.secondary">Date</Typography>
-                  <Typography variant="body1">{new Date(selectedReview.date_submitted).toLocaleDateString()}</Typography>
+                
+                <Grid size={{ xs: 12, md: 4 }}>
+                  <Card variant="outlined">
+                    <CardContent>
+                      <Typography variant="subtitle2" color="text.secondary" gutterBottom>Reviewer Information</Typography>
+                      <Typography variant="body1" fontWeight={700}>{selectedReview.customer_name}</Typography>
+                      <Typography variant="body2" color="text.secondary">{selectedReview.customer_email}</Typography>
+                      
+                      <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
+                        <Chip 
+                          label={selectedReview.status.toUpperCase()} 
+                          color={selectedReview.status === 'approved' ? 'success' : selectedReview.status === 'rejected' ? 'error' : 'warning'}
+                          size="small"
+                        />
+                        {selectedReview.verified_purchase && (
+                          <Chip label="Verified Purchase" color="primary" icon={<CheckCircleIcon size={14} />} size="small" variant="outlined" />
+                        )}
+                        {selectedReview.would_recommend && (
+                          <Chip label="Recommends Product" color="success" size="small" variant="outlined" />
+                        )}
+                      </Box>
+                    </CardContent>
+                  </Card>
                 </Grid>
               </Grid>
-              
-              <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>Review</Typography>
-              <Typography variant="body1" sx={{ mb: 2 }}>{selectedReview.review_text}</Typography>
-              
-              <Box display="flex" gap={2} alignItems="center">
-                <Typography variant="subtitle2" color="text.secondary">Status:</Typography>
-                <Chip
-                  label={selectedReview.status.charAt(0).toUpperCase() + selectedReview.status.slice(1)}
-                  color={selectedReview.status === 'approved' ? 'success' : selectedReview.status === 'rejected' ? 'error' : 'warning'}
-                  variant="outlined"
-                />
-                {selectedReview.verified_purchase && (
-                  <Chip label="Verified Purchase" color="primary" variant="outlined" size="small" />
-                )}
-              </Box>
+
+              {selectedReview.admin_response && (
+                <Box sx={{ mt: 3, p: 2, borderLeft: '4px solid', borderColor: 'primary.main', bgcolor: 'primary.50' }}>
+                  <Typography variant="subtitle2" color="primary.main" gutterBottom>Admin Response</Typography>
+                  <Typography variant="body2">{selectedReview.admin_response}</Typography>
+                </Box>
+              )}
             </Box>
           )}
         </DialogContent>
         <DialogActions>
+          <Button onClick={() => handleRespondAction(selectedReview!)} color="primary" startIcon={<ReplyIcon />}>
+            {selectedReview?.admin_response ? 'Update Response' : 'Reply to Review'}
+          </Button>
           <Button onClick={() => setViewModalOpen(false)}>Close</Button>
-          {selectedReview?.status === 'pending' && (
-            <>
-              <Button onClick={() => {
-                setViewModalOpen(false);
-                handleApproveAction(selectedReview);
-              }} color="success">
-                Approve
-              </Button>
-              <Button onClick={() => {
-                setViewModalOpen(false);
-                handleRejectAction(selectedReview);
-              }} color="error">
-                Reject
-              </Button>
-            </>
-          )}
+        </DialogActions>
+      </Dialog>
+
+      {/* Response Modal */}
+      <Dialog open={responseModalOpen} onClose={() => setResponseModalOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>Reply to {selectedReview?.customer_name}</DialogTitle>
+        <DialogContent>
+          <Box sx={{ mt: 1 }}>
+            <Typography variant="body2" color="text.secondary" gutterBottom>
+              Your response will be visible publicly under the review.
+            </Typography>
+            <TextField
+              fullWidth
+              multiline
+              rows={4}
+              placeholder="Thank the customer or address their concerns..."
+              value={adminResponseText}
+              onChange={(e) => setAdminResponseText(e.target.value)}
+              sx={{ mt: 1 }}
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setResponseModalOpen(false)}>Cancel</Button>
+          <Button onClick={handleSaveResponse} variant="contained" color="primary">
+            Save Response
+          </Button>
         </DialogActions>
       </Dialog>
 
@@ -484,21 +539,8 @@ export default function ReviewsPage() {
         <DialogTitle>Confirm Action</DialogTitle>
         <DialogContent>
           <Typography>
-            Are you sure you want to {actionType} this review by {selectedReview?.customer_name}?
+            Are you sure you want to {actionType} this review?
           </Typography>
-          {selectedReview && (
-            <Box sx={{ mt: 2, p: 2, bgcolor: 'grey.50', borderRadius: 1 }}>
-              <Typography variant="body2" sx={{ mb: 1 }}>
-                <strong>Product:</strong> {selectedReview.product_name}
-              </Typography>
-              <Typography variant="body2" sx={{ mb: 1 }}>
-                <strong>Rating:</strong> <Rating value={selectedReview.rating} readOnly size="small" />
-              </Typography>
-              <Typography variant="body2">
-                <strong>Review:</strong> {selectedReview.review_text.substring(0, 100)}...
-              </Typography>
-            </Box>
-          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setConfirmDialogOpen(false)}>Cancel</Button>
@@ -507,24 +549,21 @@ export default function ReviewsPage() {
             color={actionType === 'approve' ? 'success' : 'error'}
             variant="contained"
           >
-            {actionType === 'approve' ? 'Approve' : 'Reject'}
+            Confirm
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* Notification Snackbar */}
       <Snackbar
         open={notification.open}
         autoHideDuration={6000}
         onClose={() => setNotification({ ...notification, open: false })}
       >
-        <Alert 
-          severity={notification.severity} 
-          onClose={() => setNotification({ ...notification, open: false })}
-        >
+        <Alert severity={notification.severity} onClose={() => setNotification({ ...notification, open: false })}>
           {notification.message}
         </Alert>
       </Snackbar>
     </Box>
   );
 }
+

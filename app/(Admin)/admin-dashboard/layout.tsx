@@ -1,10 +1,12 @@
 // src/app/(admin)/layout.tsx
 "use client";
 import { ReactNode, useEffect, useState } from "react";
+import { Box } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { AuthProvider, useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 import AdminShell from '@/components/admin/AdminShell';
 import AdminProviders from '@/components/admin/AdminProviders';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 // ---------------------------
 // Admin layout content
@@ -29,8 +31,14 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
     }
   }, [userRole, isLoading, router]);
 
-  if (isLoading || !authorized) {
-    return <div style={{ padding: "2rem" }}>Loading...</div>;
+  if (isLoading) {
+    return <LoadingSpinner fullScreen message="Verifying access..." />;
+  }
+
+  if (!authorized) {
+    // Return a subtle box or nothing while redirecting, instead of a full-screen spinner
+    // This prevents the "stuck on loading" feeling during logout
+    return <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }} />;
   }
 
   return (
@@ -45,8 +53,6 @@ function AdminLayoutContent({ children }: { children: ReactNode }) {
 // ---------------------------
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
-    <AuthProvider>
-      <AdminLayoutContent>{children}</AdminLayoutContent>
-    </AuthProvider>
+    <AdminLayoutContent>{children}</AdminLayoutContent>
   );
 }

@@ -1,16 +1,23 @@
-/* Modern Orders Section Styles */
+/* ClientOrders.module.css */
+
 .container {
-  padding: 0;
+  background: white;
+  border-radius: 24px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 2px solid #e5e7eb;
+  min-height: 400px;
 }
 
-/* Section Header */
 .sectionHeader {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
   border-bottom: 2px solid #f3f4f6;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .sectionHeader h2 {
@@ -35,45 +42,171 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.25rem;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
-  border-radius: 12px;
-  color: #081e31;
+  padding: 0.5rem 1rem;
+  background: #f1f5f9;
+  border-radius: 50px;
   font-weight: 600;
+  color: #475569;
+  font-size: 0.9rem;
 }
 
-.stat svg {
+/* Loading & Error States */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  color: #6b7280;
+  gap: 1rem;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
   color: #081e31;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.errorState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  color: #ef4444;
+}
+
+.errorState h3 {
+  margin: 1rem 0 0.5rem;
+  color: #0f172a;
+}
+
+.errorActions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.retryBtn, .loginBtn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.retryBtn {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.retryBtn:hover {
+  background: #e2e8f0;
+}
+
+.loginBtn {
+  background: #0ea5e9;
+  color: white;
+}
+
+.loginBtn:hover {
+  background: #0284c7;
+}
+
+/* Filter Tabs */
+.filterTabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  scrollbar-width: thin;
+}
+
+.filterTab {
+  padding: 0.6rem 1.2rem;
+  border: 1px solid #e2e8f0;
+  background: white;
+  border-radius: 50px;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.filterTab:hover {
+  background: #f8fafc;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+.filterTab.active {
+  background: #0f172a;
+  color: white;
+  border-color: #0f172a;
+}
+
+/* Empty State */
+.emptyOrders {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  background-color: #f8f9fa;
+  border-radius: 16px;
+  border: 2px dashed #e5e7eb;
+  color: #6b7280;
+  text-align: center;
+}
+
+.emptyOrders svg {
+  color: #cbd5e1;
+  margin-bottom: 1rem;
+}
+
+.emptyOrders h3 {
+  color: #081e31;
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
 }
 
 /* Orders Grid */
 .ordersGrid {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 1.5rem;
 }
 
-/* Order Card */
 .orderCard {
   background: white;
-  border: 2px solid #e5e7eb;
-  border-radius: 20px;
-  padding: 1.5rem;
-  transition: all 0.3s ease;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.2s ease;
 }
 
 .orderCard:hover {
-  border-color: #081e31;
-  box-shadow: 0 8px 30px rgba(8, 30, 49, 0.15);
-  transform: translateY(-2px);
+  border-color: #0ea5e9;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.1);
 }
 
 .orderHeader {
+  padding: 1.5rem;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 2px solid #f3f4f6;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .orderInfo {
@@ -85,205 +218,352 @@
 .orderImage {
   width: 60px;
   height: 60px;
-  border-radius: 12px;
+  border-radius: 8px;
   object-fit: cover;
-  border: 2px solid #e5e7eb;
+  border: 1px solid #e2e8f0;
+  background: white;
 }
 
 .orderInfo h3 {
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: #081e31;
   margin: 0 0 0.25rem;
+  font-size: 1.1rem;
+  color: #0f172a;
 }
 
-.orderInfo p {
-  font-size: 0.875rem;
-  color: #6b7280;
-  margin: 0;
-}
-
-/* Status Badge */
-.statusBadge {
+.orderDate {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 1rem;
+  color: #64748b;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.orderStatus {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.statusBadge, .paymentBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.8rem;
   border-radius: 50px;
+  font-size: 0.8rem;
   font-weight: 600;
-  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.statusDelivered {
-  background: #d1fae5;
-  color: #065f46;
-}
+/* Status Colors */
+.statusDelivered { background: #dcfce7; color: #166534; }
+.statusShipped { background: #e0f2fe; color: #0369a1; }
+.statusProcessing { background: #fef9c3; color: #854d0e; }
+.statusPending { background: #f1f5f9; color: #475569; }
+.statusCancelled { background: #fee2e2; color: #991b1b; }
 
-.statusShipped {
-  background: #dbeafe;
-  color: #1e40af;
-}
+/* Payment Status Colors */
+.paymentPaid { background: #dcfce7; color: #166534; }
+.paymentPending { background: #fff7ed; color: #9a3412; }
+.paymentFailed { background: #fee2e2; color: #991b1b; }
+.paymentRefunded { background: #f3e8ff; color: #6b21a8; }
 
-.statusProcessing {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.statusPending {
-  background: #f3f4f6;
-  color: #4b5563;
-}
-
-/* Order Details */
 .orderDetails {
+  padding: 1.5rem;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 2rem;
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .detailItem {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 12px;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .label {
-  font-size: 0.875rem;
-  color: #6b7280;
-  font-weight: 500;
+  font-size: 0.8rem;
+  color: #64748b;
+  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .value {
   font-size: 1rem;
-  color: #081e31;
-  font-weight: 700;
+  color: #0f172a;
+  font-weight: 500;
 }
 
-/* Order Actions */
 .orderActions {
+  padding: 1rem 1.5rem;
   display: flex;
-  gap: 1rem;
-}
-
-.actionBtn {
-  flex: 1;
-  display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.875rem;
-  background: linear-gradient(135deg, #081e31 0%, #0a2640 100%);
-  border: none;
-  border-radius: 12px;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.actionBtn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(8, 30, 49, 0.3);
-}
-
-.actionBtnSecondary {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.875rem;
   background: white;
-  border: 2px solid #081e31;
-  border-radius: 12px;
-  color: #081e31;
+}
+
+.actionBtn, .expandBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: white;
+  border: 1px solid #e2e8f0;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
   font-weight: 600;
+  font-size: 0.9rem;
+  color: #475569;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s;
 }
 
-.actionBtnSecondary:hover {
-  background: #081e31;
-  color: white;
+.actionBtn:hover, .expandBtn:hover {
+  background: #f8fafc;
+  color: #0f172a;
+  border-color: #cbd5e1;
 }
 
-/* Empty Orders */
-.emptyOrders {
+.orderItems {
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  padding: 1.5rem;
+  overflow: hidden;
+}
+
+.orderItems h4 {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  color: #334155;
+}
+
+.orderItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 0.75rem;
+}
+
+.itemImage {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid #f1f5f9;
+}
+
+.itemDetails {
+  flex: 1;
+}
+
+.itemDetails h5 {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+  color: #0f172a;
+}
+
+.itemDetails p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.itemTotal {
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 1rem;
+}
+
+/* Modal */
+.orderModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modalContent {
+  background: white;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+.modalHeader {
+  padding: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modalHeader h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #0f172a;
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+  display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  padding: 4rem 2rem;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
-  border-radius: 20px;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.2s;
 }
 
-.emptyOrders svg {
-  color: #6b7280;
-  margin-bottom: 1.5rem;
+.closeBtn:hover {
+  background: #f1f5f9;
+  color: #ef4444;
 }
 
-.emptyOrders h3 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #081e31;
-  margin: 0 0 0.5rem;
+.modalBody {
+  padding: 2rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
-.emptyOrders p {
+.orderSummary {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.summaryItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.addressSection h4, .itemsSection h4, .notesSection h4 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #334155;
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+}
+
+.addressDetails {
+  padding-left: 1.5rem;
+  border-left: 2px solid #e2e8f0;
+}
+
+.addressDetails p {
+  margin: 0.25rem 0;
+  color: #475569;
+}
+
+.modalItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.modalItem:last-child {
+  border-bottom: none;
+}
+
+.modalItemImage {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid #e2e8f0;
+}
+
+.modalItemDetails {
+  flex: 1;
+}
+
+.modalItemDetails h5 {
+  margin: 0 0 0.25rem;
   font-size: 1rem;
-  color: #6b7280;
-  margin: 0;
+  color: #0f172a;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+.modalItemDetails p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.modalItemTotal {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.notesSection {
+  background: #fffbeb;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid #fef3c7;
+}
+
+.notesSection p {
+  margin: 0;
+  color: #92400e;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+@media (max-width: 640px) {
   .sectionHeader {
     flex-direction: column;
-    gap: 1rem;
+    align-items: flex-start;
   }
-
+  
   .orderHeader {
     flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
   }
-
-  .orderDetails {
-    grid-template-columns: 1fr;
-  }
-
+  
   .orderActions {
     flex-direction: column;
   }
-}
-
-@media (max-width: 480px) {
-  .sectionHeader h2 {
-    font-size: 1.5rem;
+  
+  .actionBtn, .expandBtn {
+    width: 100%;
+    justify-content: center;
   }
-
-  .orderCard {
-    padding: 1rem;
-  }
-
-  .orderImage {
-    width: 50px;
-    height: 50px;
-  }
-
-  .orderInfo h3 {
-    font-size: 1rem;
-  }
-
-  .actionBtn,
-  .actionBtnSecondary {
-    font-size: 0.875rem;
-    padding: 0.75rem;
+  
+  .modalContent {
+    max-height: 100vh;
+    border-radius: 0;
   }
 }

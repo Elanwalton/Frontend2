@@ -39,7 +39,7 @@ try {
     }
 
     if ($search) {
-        $whereConditions[] = "(p.name LIKE ? OR r.customer_name LIKE ? OR r.customer_email LIKE ? OR r.review_text LIKE ?)";
+        $whereConditions[] = "(p.name LIKE ? OR r.customer_name LIKE ? OR r.customer_email LIKE ? OR r.comment LIKE ?)";
         $searchParam = '%' . $search . '%';
         $params[] = $searchParam;
         $params[] = $searchParam;
@@ -75,14 +75,18 @@ try {
             r.customer_name,
             r.customer_email,
             r.rating,
-            r.review_text,
-            r.date_submitted,
+            r.comment as review_text,
+            r.pros,
+            r.cons,
+            r.would_recommend,
+            r.admin_response,
+            r.created_at as date_submitted,
             r.status,
             r.verified_purchase
         FROM reviews r
         LEFT JOIN products p ON r.product_id = p.id
         $whereClause
-        ORDER BY r.date_submitted DESC
+        ORDER BY r.created_at DESC
         LIMIT ? OFFSET ?
     ";
 
@@ -108,6 +112,10 @@ try {
             'customer_email' => $row['customer_email'],
             'rating' => intval($row['rating']),
             'review_text' => $row['review_text'],
+            'pros' => $row['pros'],
+            'cons' => $row['cons'],
+            'would_recommend' => (bool)$row['would_recommend'],
+            'admin_response' => $row['admin_response'],
             'date_submitted' => $row['date_submitted'],
             'status' => $row['status'],
             'verified_purchase' => (bool)$row['verified_purchase']

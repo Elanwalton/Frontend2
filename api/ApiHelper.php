@@ -184,7 +184,53 @@ function getAuthToken(): string
         return trim(substr($header, 7));
     }
 
-    return trim($header);
+    if ($header) {
+        return trim($header);
+    }
+
+    // Fallback: Check for access_token cookie
+    return $_COOKIE['access_token'] ?? '';
+}
+
+/*
+|--------------------------------------------------------------------------
+| User Authentication
+|--------------------------------------------------------------------------
+*/
+function validateToken(mysqli $conn, string $token): array
+{
+    if (!$token) {
+        sendError(401, 'Unauthorized');
+    }
+
+    $now = time();
+
+    $stmt = $conn->prepare(
+        'SELECT user_id, role 
+         FROM session_tokens 
+         WHERE token = ? AND expires_at > ? 
+         LIMIT 1'
+    );
+
+    if (!$stmt) {
+        error_log('Auth query prepare failed: ' . $conn->error);
+        sendError(500, 'Authentication failure');
+    }
+
+    $stmt->bind_param('si', $token, $now);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result ? $result->fetch_assoc() : null;
+    $stmt->close();
+
+    if (!$user) {
+        sendError(401, 'Unauthorized');
+    }
+
+    return [
+        'user_id' => (int) $user['user_id'],
+        'role'    => $user['role']
+    ];
 }
 
 /*

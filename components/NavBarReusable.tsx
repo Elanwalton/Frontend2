@@ -26,10 +26,8 @@ const Header: React.FC = () => {
   const categories = [
     { id: "solar-inverters", name: "Solar Inverters", href: "/categories?category=Inverters" },
     { id: "solar-panels", name: "Solar Panels", href: "/categories?category=Solar%20Panels" },
-    { id: "water-heaters", name: "Solar Water Heaters", href: "/categories?category=Water%20Heaters" },
     { id: "batteries", name: "Batteries & ESS", href: "/categories?category=Batteries" },
     { id: "outdoor-lights", name: "Solar Outdoor Lights", href: "/categories?category=Solar%20Lights" },
-    { id: "charge-controllers", name: "Charge Controllers", href: "/categories?category=Charge%20Controllers" },
     { id: "accessories", name: "Accessories", href: "/categories?category=Mounting%20Accesories" },
   ];
 
@@ -140,9 +138,29 @@ const Header: React.FC = () => {
               )}
             </Link>
           </li>
-          <li><Link href="/Account"><UserCircle size={24} /></Link></li>
+          <li>
+            <Link href="/Account" style={{ position: 'relative', display: 'inline-block' }}>
+              {/* @ts-ignore - profile_picture may not be in User type yet */}
+              {user?.profile_picture ? (
+                <img 
+                  src={`/images/${user.profile_picture}`} 
+                  alt="Profile" 
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                    border: '2px solid #facc15',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+                  }}
+                />
+              ) : (
+                <UserCircle size={24} />
+              )}
+            </Link>
+          </li>
           {userRole ? (
-            <li><LogoutButton /></li>
+            <li><LogoutButton className={styles["logout-button"]} /></li>
           ) : (
             <li>
               <Link href="/login">
@@ -177,6 +195,16 @@ const Header: React.FC = () => {
         role="dialog"
         ref={navRef}
       >
+
+        <div className={styles.mobileTopLinks}>
+          <Link href="/about" onClick={closeMobileMenu} className={styles.mobileTopLink}>
+            About Us
+          </Link>
+          <Link href="/contact" onClick={closeMobileMenu} className={styles.mobileTopLink}>
+            Contact Us
+          </Link>
+        </div>
+
         <div className={styles.mobileSidebarHeader}>
           <span>Categories</span>
         </div>
@@ -192,54 +220,7 @@ const Header: React.FC = () => {
           ))}
         </ul>
 
-        <div className={styles.mobileQuickLinksHeader}>
-          <span>Quick Links</span>
-        </div>
 
-        <ul className={styles.mobileQuickLinksList}>
-          <li><Link href="/" onClick={closeMobileMenu}>Home</Link></li>
-          <li><Link href="/categories" onClick={closeMobileMenu}>Shop</Link></li>
-          <li>
-            <Link href="/Cart" onClick={closeMobileMenu} style={{ position: 'relative', display: 'inline-block' }}>
-              <FaShoppingCart size={24} />
-              {cartCount > 0 && (
-                <span
-                  style={{
-                    position: 'absolute',
-                    top: '-8px',
-                    right: '-8px',
-                    background: '#facc15',
-                    color: '#000000',
-                    fontSize: '0.65rem',
-                    fontWeight: '700',
-                    borderRadius: '50%',
-                    minWidth: '18px',
-                    height: '18px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: '0 2px',
-                    lineHeight: 1,
-                    border: '1px solid white',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                  }}
-                >
-                  {cartCount > 99 ? '99+' : cartCount}
-                </span>
-              )}
-            </Link>
-          </li>
-          <li><Link href="/Account" onClick={closeMobileMenu}><UserCircle size={24} /></Link></li>
-          {userRole ? (
-            <li><LogoutButton /></li>
-          ) : (
-            <li>
-              <Link href="/login" onClick={closeMobileMenu}>
-                <button className={styles["logout-button"]}>Login</button>
-              </Link>
-            </li>
-          )}
-        </ul>
       </nav>
     </header>
   );

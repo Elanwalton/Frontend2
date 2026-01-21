@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { FaEnvelope, FaKey, FaCheck, FaExclamationTriangle } from 'react-icons/fa';
+import { FaEnvelope, FaKey, FaCheck, FaExclamationTriangle, FaEye, FaEyeSlash } from 'react-icons/fa';
 import styles from '../../app/styles/Auth.module.css';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/components/ToastProvider';
@@ -16,6 +16,7 @@ function LoginContent() {
   const [isLoadingForm, setIsLoadingForm] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const { login, isAuthenticated, userRole, isLoading } = useAuth();
   const { toast } = useToast();
@@ -33,6 +34,14 @@ function LoginContent() {
       setFormData(prev => ({ ...prev, email: registeredEmail }));
     }
   }, [registered, registeredEmail]);
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (!isLoading && isAuthenticated && userRole) {
+      const destination = userRole === "admin" ? "/admin-dashboard" : "/";
+      router.replace(destination);
+    }
+  }, [isLoading, isAuthenticated, userRole, router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -65,7 +74,8 @@ function LoginContent() {
   };
 
   // ✅ Show full-screen spinner when either initial auth is loading or the login form is submitting
-  if (isLoading || isLoadingForm) {
+  // BUT: IF authenticated is TRUE, we are redirecting, so show spinner too to prevent flash
+  if (isLoading || isLoadingForm || (isAuthenticated && !isLoading)) {
     return <LoadingSpinner fullScreen message={isLoading ? "Checking session" : "Signing you in..."} />;
   }
 
@@ -168,17 +178,35 @@ function LoginContent() {
 
             <div className={styles.formGroup}>
               <label htmlFor="password">Password</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                className={styles.formControl}
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
-                autoComplete="current-password"
-                required
-              />
+              <div style={{ position: 'relative' }}>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  className={styles.formControl}
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Enter your password"
+                  autoComplete="current-password"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: 'absolute',
+                    right: '12px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: '#666'
+                  }}
+                >
+                  {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+                </button>
+              </div>
             </div>
 
             {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}

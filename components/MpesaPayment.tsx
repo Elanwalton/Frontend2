@@ -28,7 +28,7 @@ const MpesaPayment: React.FC<MpesaPaymentProps> = ({
   const [paymentStatus, setPaymentStatus] = useState<'idle' | 'pending' | 'checking'>('idle');
   const [checkoutRequestId, setCheckoutRequestId] = useState('');
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost/sunleaf-tech/api';
+  // API configuration handled by getApiUrl
 
   // Format phone number as user types
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {

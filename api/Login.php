@@ -138,6 +138,11 @@ try {
         "is_verified" => (bool)$user['is_verified']
     ];
 
+    // Generate and set access token
+    require_once __DIR__ . '/auth_tokens.php';
+    $accessToken = generateAccessToken($user);
+    setAccessCookie($accessToken);
+
     // Send success response
     http_response_code(200);
     echo json_encode([

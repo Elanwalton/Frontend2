@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { buildMediaUrl } from '@/utils/media';
+import { getApiUrl } from "@/utils/apiUrl";
 
 import styles from '@/styles/Sidebar.module.css';
 import {
@@ -50,7 +51,8 @@ const Sidebar = () => {
           end_date: now.toISOString().slice(0, 10),
         });
 
-        const response = await fetch(`/api/admin/getDashboardMetrics.php?${params.toString()}`, {
+        const url = getApiUrl('/api/admin/getDashboardMetrics');
+        const response = await fetch(`${url}?${params.toString()}`, {
           credentials: 'include',
         });
         

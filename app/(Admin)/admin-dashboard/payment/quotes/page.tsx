@@ -57,6 +57,8 @@ import {
   Inventory as PackageIcon
 } from '@mui/icons-material';
 import { PageHeader, DataTable, StatusBadge, MetricCard, Column } from '@/components/admin';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import AdminErrorState from '@/components/admin/AdminErrorState';
 import { 
   Edit as EditLucideIcon, 
   Eye as EyeLucideIcon, 
@@ -112,6 +114,8 @@ type SendQuoteResult = {
 export default function QuotesPage() {
   const router = useRouter();
   const [quotes, setQuotes] = useState<Quote[]>([]);
+  const [pageLoading, setPageLoading] = useState(true);
+  const [pageError, setPageError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [selectedQuotes, setSelectedQuotes] = useState<string[]>([]);
@@ -143,6 +147,7 @@ export default function QuotesPage() {
 
   const loadQuotes = async () => {
     try {
+      setPageLoading(true);
       // Primary: quotations table (includes solar quotes)
       const res = await apiGet<{ success: boolean; data: any[] }>('/getQuote');
       const rows: Quote[] = (res?.data || []).map((q: any) => ({
@@ -164,7 +169,8 @@ export default function QuotesPage() {
         validityDays: 0,
       }));
       setQuotes(rows);
-    } catch {
+    } catch (err: any) {
+      console.warn('Primary quote fetch failed:', err);
       // Fallback: legacy quote_requests admin endpoint
       const res = await apiGet<any>('/admin/getQuotes');
       const rows: Quote[] = (res?.data || []).map((q: any) => ({
@@ -187,6 +193,8 @@ export default function QuotesPage() {
         notes: q.notes || undefined,
       }));
       setQuotes(rows);
+    } finally {
+      setPageLoading(false);
     }
   };
 
@@ -719,6 +727,9 @@ export default function QuotesPage() {
       ),
     },
   ];
+
+  if (pageLoading) return <LoadingSpinner fullScreen key="quotes-loading" />;
+  if (pageError) return <AdminErrorState error={pageError} onRetry={() => loadQuotes()} />;
 
   return (
     <Box sx={{ pt: 6 }}>

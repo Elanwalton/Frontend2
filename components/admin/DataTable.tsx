@@ -16,6 +16,7 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  CircularProgress,
 } from '@mui/material';
 import {
   Edit as EditIcon,
@@ -197,9 +198,9 @@ export default function DataTable({
             {loading ? (
               <TableRow>
                 <TableCell colSpan={columns.length + (selectable ? 1 : 0) + (hasActions ? 1 : 0)} align="center">
-                  <Typography variant="body2" color="text.secondary" sx={{ py: 4 }}>
-                    Loading...
-                  </Typography>
+                  <Box sx={{ py: 4, display: 'flex', justifyContent: 'center' }}>
+                    <CircularProgress />
+                  </Box>
                 </TableCell>
               </TableRow>
             ) : paginatedRows.length === 0 ? (

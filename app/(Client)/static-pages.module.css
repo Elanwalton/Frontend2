@@ -1,0 +1,261 @@
+/* static-pages.module.css */
+
+.container {
+  min-height: 100vh;
+  background-color: var(--bg-light);
+  padding: 4rem 1rem;
+}
+
+.inner {
+  max-width: 64rem;
+  margin: 0 auto;
+}
+
+.innerNarrow {
+  max-width: 48rem;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #081e31;
+  margin-bottom: 1rem;
+  background: linear-gradient(to right, #081e31, #0ea5e9);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  font-size: 1.125rem;
+  color: #64748b;
+  max-width: 36rem;
+  margin: 0 auto;
+}
+
+.card {
+  background-color: white;
+  padding: 2.5rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f1f5f9;
+}
+
+.cardOrange { background-color: #fff7ed; border: 1px solid #fed7aa; }
+.cardRed { background-color: #fef2f2; border: 1px solid #fee2e2; }
+
+.content h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #081e31;
+  margin: 2rem 0 1rem;
+}
+
+.content p {
+  color: #475569;
+  line-height: 1.7;
+  margin-bottom: 1.25rem;
+}
+
+.cardTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #081e31;
+  margin-bottom: 2rem;
+  margin-top: 0;
+}
+
+.grid {
+  display: grid;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+@media (min-width: 768px) {
+  .grid2 { grid-template-columns: repeat(2, 1fr); }
+  .grid3 { grid-template-columns: repeat(3, 1fr); }
+}
+
+.iconBox {
+  width: 3.5rem;
+  height: 3.5rem;
+  background: #f0f9ff;
+  color: #0ea5e9;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.iconBoxCenter {
+  margin: 0 auto 1.5rem;
+}
+
+.iconGreen { background: #f0fdf4; color: #16a34a; }
+.iconAmber { background: #fffbeb; color: #d97706; }
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.contactLabel { font-size: 0.875rem; color: #64748b; }
+.contactValue { font-weight: 600; color: #081e31; }
+
+.supportBox {
+  margin-top: 3rem;
+  padding: 1.5rem;
+  background-color: #f8fafc;
+  border-radius: 1rem;
+}
+
+.supportTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+  color: #081e31;
+}
+
+.supportText {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.form {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.inputGroup {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.inputLabel {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 0.875rem;
+}
+
+.input {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+}
+
+.submitBtn {
+  background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+  color: white;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.submitBtn:hover {
+  transform: translateY(-2px);
+}
+
+.flexCenter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* FAQ Specific */
+.accordion {
+  background: white;
+  border: 1px solid #f1f5f9;
+  border-radius: 1rem;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.accordionHeader {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 700;
+  color: #081e31;
+}
+
+.textOrangeDark { color: #9a3412; }
+.textOrangeNormal { color: #ea580c; }
+.textOrangeLight { background-color: #ffedd5; }
+.textAmberDark { color: #7c2d12; }
+.textRedDark { color: #991b1b; }
+.textRedDeep { color: #7f1d1d; }
+.textGreenNormal { color: #10b981; }
+
+.flexStart { display: flex; align-items: flex-start; gap: 1rem; }
+.flexCol { display: flex; flex-direction: column; gap: 1rem; }
+.listDisc { padding-left: 1.5rem; list-style: disc; display: flex; flex-direction: column; gap: 0.5rem; }
+
+.borderTop { margin-top: 3rem; border-top: 1px solid #e2e8f0; padding-top: 2rem; }
+
+.accordionContent {
+  padding: 0 1.5rem 1.5rem;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.accordionIcon {
+  transition: transform 0.3s ease;
+}
+
+.iconRotated {
+  transform: rotate(180deg);
+}
+
+.cardBlue {
+  background-color: #f0f9ff;
+}
+
+.cardNarrow {
+  max-width: 48rem;
+  margin: 0 auto;
+}
+
+.textCenter {
+  text-align: center;
+}
+
+.marginTop4 {
+  margin-top: 4rem;
+}
+
+.textSmallGray {
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+.primaryText {
+  color: #0ea5e9;
+  font-weight: 700;
+}

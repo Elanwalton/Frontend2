@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Typography, Breadcrumbs, Link, Button, Paper, Divider, alpha } from '@mui/material';
 import { NavigateNext as NavigateNextIcon } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
+import NextLink from 'next/link';
 
 interface Breadcrumb {
   label: string;
@@ -17,6 +18,7 @@ interface PageHeaderProps {
     onClick: () => void;
     icon?: React.ReactNode;
     variant?: 'contained' | 'outlined' | 'text';
+    disabled?: boolean;
   };
   icon?: React.ReactNode;
 }
@@ -62,12 +64,8 @@ export default function PageHeader({ title, subtitle, breadcrumbs, action, icon 
             ) : (
               <Link
                 key={index}
-                color="inherit"
+                component={NextLink}
                 href={crumb.href}
-                onClick={(e) => {
-                  e.preventDefault();
-                  router.push(crumb.href!);
-                }}
                 sx={{ 
                   cursor: 'pointer', 
                   textDecoration: 'none',
@@ -159,6 +157,7 @@ export default function PageHeader({ title, subtitle, breadcrumbs, action, icon 
               },
               transition: 'all 0.2s'
             }}
+            disabled={action.disabled}
           >
             {action.label}
           </Button>

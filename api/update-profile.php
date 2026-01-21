@@ -1,117 +1,138 @@
 <?php
-require __DIR__ . '/cors.php';
-require 'connection.php';
-require 'session-config.php';
+/**
+ * update-profile.php
+ * Client profile update endpoint
+ */
 
-header('Content-Type: application/json');
+require_once __DIR__ . '/ApiHelper.php';
+require_once __DIR__ . '/auth_tokens.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(204);
-    exit;
+$conn = getDbConnection();
+
+// Get and validate JWT access token
+$accessToken = $_COOKIE['access_token'] ?? '';
+
+if ($accessToken === '') {
+    sendError(401, 'Unauthorized');
 }
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['success' => false, 'message' => 'Method not allowed']);
-    exit;
-}
-
-// Get session token from Authorization header
-$authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
-$token = str_replace('Bearer ', '', $authHeader);
-
-if (!$token) {
-    http_response_code(401);
-    echo json_encode(['success' => false, 'message' => 'No token provided']);
-    exit;
-}
-
-// Validate token
-$tokenSql = "SELECT * FROM session_tokens WHERE token = ? AND expires_at > ?";
-$stmt = $conn->prepare($tokenSql);
-$currentTime = time();
-$stmt->bind_param("si", $token, $currentTime);
-$stmt->execute();
-$tokenResult = $stmt->get_result();
-
-if ($tokenResult->num_rows === 0) {
-    http_response_code(401);
-    echo json_encode(['success' => false, 'message' => 'Invalid or expired token']);
-    exit;
-}
-
-$sessionData = $tokenResult->fetch_assoc();
-$userId = $sessionData['user_id'];
-
-// Get input data
-$input = json_decode(file_get_contents('php://input'), true);
-
-// Validate required fields
-$requiredFields = ['first_name', 'second_name', 'email'];
-foreach ($requiredFields as $field) {
-    if (empty($input[$field])) {
-        http_response_code(400);
-        echo json_encode(['success' => false, 'message' => "$field is required"]);
-        exit;
+try {
+    $payload = validateAccessToken($accessToken);
+    $userId = (int)($payload['sub'] ?? 0);
+    
+    if ($userId <= 0) {
+        sendError(401, 'Invalid access token');
     }
+} catch (Throwable $e) {
+    error_log('Token validation error in update-profile.php: ' . $e->getMessage());
+    sendError(401, 'Unauthorized');
 }
 
-$firstName = trim($input['first_name']);
-$secondName = trim($input['second_name']);
-$email = trim($input['email']);
-$phone = trim($input['phone'] ?? '');
-$gender = trim($input['gender'] ?? '');
-
-// Validate email
-if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Invalid email address']);
-    exit;
+// Only allow POST requests
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    sendError(405, 'Method not allowed');
 }
 
-// Check if email is already used by another user
-$checkEmailSql = "SELECT id FROM users WHERE email = ? AND id != ?";
-$stmt = $conn->prepare($checkEmailSql);
-$stmt->bind_param("si", $email, $userId);
-$stmt->execute();
-$emailCheck = $stmt->get_result();
+// Get request body
+$input = getJsonInput();
 
-if ($emailCheck->num_rows > 0) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Email is already in use by another account']);
-    exit;
-}
-
-// Update user profile
-$updateSql = "UPDATE users SET first_name = ?, second_name = ?, email = ?, phone = ?, gender = ? WHERE id = ?";
-$stmt = $conn->prepare($updateSql);
-$stmt->bind_param("sssssi", $firstName, $secondName, $email, $phone, $gender, $userId);
-
-if ($stmt->execute()) {
-    // Update session token with new email
-    $updateTokenSql = "UPDATE session_tokens SET email = ? WHERE token = ?";
-    $stmt = $conn->prepare($updateTokenSql);
-    $stmt->bind_param("ss", $email, $token);
+try {
+    $conn->begin_transaction();
+    
+    // Validate required fields
+    if (empty($input['first_name']) || empty($input['email'])) {
+        throw new Exception('First name and email are required');
+    }
+    
+    // Prepare update fields
+    $updateFields = [];
+    $params = [];
+    $types = '';
+    
+    // First name (required)
+    $updateFields[] = "first_name = ?";
+    $params[] = trim($input['first_name']);
+    $types .= 's';
+    
+    // Second name (optional)
+    if (isset($input['second_name'])) {
+        $updateFields[] = "second_name = ?";
+        $params[] = trim($input['second_name']);
+        $types .= 's';
+    }
+    
+    // Email (required, check for uniqueness)
+    $email = trim($input['email']);
+    $checkEmailStmt = $conn->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
+    $checkEmailStmt->bind_param('si', $email, $userId);
+    $checkEmailStmt->execute();
+    if ($checkEmailStmt->get_result()->num_rows > 0) {
+        throw new Exception('Email address is already in use');
+    }
+    
+    $updateFields[] = "email = ?";
+    $params[] = $email;
+    $types .= 's';
+    
+    // Phone (optional)
+    if (isset($input['phone'])) {
+        $updateFields[] = "phone = ?";
+        $params[] = trim($input['phone']);
+        $types .= 's';
+    }
+    
+    // Profile picture (optional)
+    if (isset($input['profile_picture'])) {
+        $updateFields[] = "profile_picture = ?";
+        $params[] = trim($input['profile_picture']);
+        $types .= 's';
+    }
+    
+    // Build and execute update query
+    $query = "UPDATE users SET " . implode(', ', $updateFields) . " WHERE id = ?";
+    $params[] = $userId;
+    $types .= 'i';
+    
+    $stmt = $conn->prepare($query);
+    if (!$stmt) {
+        throw new Exception('Failed to prepare update statement');
+    }
+    
+    $stmt->bind_param($types, ...$params);
     $stmt->execute();
     
-    echo json_encode([
-        'success' => true,
+    if ($stmt->affected_rows === 0) {
+        // No changes made, but not an error
+        $conn->commit();
+        sendSuccess(['message' => 'No changes were made']);
+    }
+    
+    $conn->commit();
+    
+    // Fetch updated user data
+    $userStmt = $conn->prepare("SELECT id, email, first_name, second_name, phone, profile_picture, role FROM users WHERE id = ?");
+    $userStmt->bind_param('i', $userId);
+    $userStmt->execute();
+    $result = $userStmt->get_result();
+    $user = $result->fetch_assoc();
+    
+    sendSuccess([
         'message' => 'Profile updated successfully',
         'user' => [
-            'id' => $userId,
-            'first_name' => $firstName,
-            'second_name' => $secondName,
-            'email' => $email,
-            'phone' => $phone,
-            'gender' => $gender,
-            'role' => $sessionData['role']
+            'id' => (int)$user['id'],
+            'email' => $user['email'],
+            'first_name' => $user['first_name'],
+            'second_name' => $user['second_name'],
+            'phone' => $user['phone'],
+            'profile_picture' => $user['profile_picture'],
+            'role' => $user['role']
         ]
     ]);
-} else {
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Failed to update profile']);
+    
+} catch (Exception $e) {
+    $conn->rollback();
+    error_log('Profile update error: ' . $e->getMessage());
+    sendError(400, $e->getMessage());
 }
 
-$stmt->close();
 $conn->close();
-?>

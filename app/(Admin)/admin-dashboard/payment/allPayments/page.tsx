@@ -19,6 +19,8 @@ import {
   Payment as PaymentIcon,
 } from "@mui/icons-material";
 import { PageHeader, DataTable, StatusBadge, MetricCard, Column } from '@/components/admin';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import AdminErrorState from '@/components/admin/AdminErrorState';
 
 export type Payment = {
   id: string
@@ -48,6 +50,7 @@ type Order = "asc" | "desc";
 export default function PaymentsTable() {
   const [data, setData] = React.useState<Payment[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
   const [search, setSearch] = React.useState("");
   const [filterMethod, setFilterMethod] = React.useState<string>("");
   const [filterStatus, setFilterStatus] = React.useState<string>("");
@@ -57,6 +60,7 @@ export default function PaymentsTable() {
     total: 0,
     pages: 0
   });
+  
 
   React.useEffect(() => {
     fetchPayments();
@@ -91,9 +95,11 @@ export default function PaymentsTable() {
         }));
       } else {
         console.error('Failed to fetch payments:', result.error || result.message);
+        setError(result.error || result.message || 'Failed to fetch payments');
       }
     } catch (error) {
       console.error('Error fetching payments:', error);
+      setError(error instanceof Error ? error.message : 'Unknown error occurred');
     } finally {
       setLoading(false);
     }
@@ -203,6 +209,9 @@ export default function PaymentsTable() {
   const handleExport = () => {
     console.log('Export payments');
   };
+
+  if (loading) return <LoadingSpinner fullScreen key="loading-spinner" />;
+  if (error) return <AdminErrorState error={error} onRetry={fetchPayments} />;
 
   return (
     <Box sx={{ pt: 6 }}>

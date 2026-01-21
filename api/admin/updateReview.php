@@ -24,7 +24,7 @@ $response = $input['response'] ?? null;
 
 if (!$reviewId || !$action) {
     http_response_code(400);
-    echo json_encode(['error' => 'Missing required fields']);
+    echo json_encode(['success' => false, 'error' => 'Missing required fields']);
     exit;
 }
 
@@ -32,24 +32,25 @@ try {
     $conn->begin_transaction();
     
     if ($action === 'approve') {
-        $stmt = $conn->prepare("UPDATE reviews SET status = 'approved' WHERE id = ?");
+        $stmt = $conn->prepare("UPDATE reviews SET status = 'approved', updated_at = NOW() WHERE id = ?");
         $stmt->bind_param('i', $reviewId);
         $stmt->execute();
         
     } elseif ($action === 'reject') {
-        $stmt = $conn->prepare("UPDATE reviews SET status = 'rejected' WHERE id = ?");
+        $stmt = $conn->prepare("UPDATE reviews SET status = 'rejected', updated_at = NOW() WHERE id = ?");
         $stmt->bind_param('i', $reviewId);
         $stmt->execute();
         
-    } elseif ($action === 'respond' && $response) {
+    } elseif ($action === 'respond') {
         $stmt = $conn->prepare("
             UPDATE reviews 
             SET admin_response = ?, 
                 responded_by = ?, 
-                responded_at = NOW() 
+                responded_at = NOW(),
+                updated_at = NOW()
             WHERE id = ?
         ");
-        $userId = (int)$userData['user_id'];
+        $userId = (int)$auth['id'];
         $stmt->bind_param('sii', $response, $userId, $reviewId);
         $stmt->execute();
         
@@ -63,11 +64,16 @@ try {
         (user_id, action, entity_type, entity_id, description, ip_address) 
         VALUES (?, ?, 'review', ?, ?, ?)
     ");
-    $userId = (int)$userData['user_id'];
+    $userId = (int)$auth['id'];
     $actionDesc = "Review {$action}";
     $ipAddress = $_SERVER['REMOTE_ADDR'] ?? null;
     $logStmt->bind_param('isiss', $userId, $actionDesc, $reviewId, $actionDesc, $ipAddress);
-    $logStmt->execute();
+    
+    // Check if table exists before logging (safeguard)
+    $tableCheck = $conn->query("SHOW TABLES LIKE 'admin_activity_log'");
+    if ($tableCheck->num_rows > 0) {
+        $logStmt->execute();
+    }
     
     $conn->commit();
     
@@ -77,7 +83,7 @@ try {
     ]);
     
 } catch (Exception $e) {
-    $conn->rollback();
+    if ($conn) $conn->rollback();
     http_response_code(500);
     echo json_encode([
         'success' => false,
@@ -85,3 +91,4 @@ try {
         'message' => $e->getMessage()
     ]);
 }
+?>

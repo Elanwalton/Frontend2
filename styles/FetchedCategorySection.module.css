@@ -88,21 +88,23 @@
 }
 
 .bannerCard {
+  display: block; /* Ensure it behaves as a block container */
   position: relative;
-  border-radius: 20px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Lighter, cleaner shadow */
   cursor: pointer;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border: 2px solid transparent;
+  border: 1px solid rgba(0,0,0,0.05); /* Subtle border */
   transition: all 0.3s ease;
+  height: 100%; /* Ensure card fills grid cell */
 }
 
 .bannerGlow {
   position: absolute;
   inset: -2px;
   background: linear-gradient(135deg, #f7c843, #059669, #2563eb);
-  border-radius: 20px;
+  border-radius: 12px;
   opacity: 0;
   transition: opacity 0.3s ease;
   z-index: -1;
@@ -110,43 +112,17 @@
 }
 
 .bannerCard:hover .bannerGlow {
-  opacity: 0;
+  opacity: 0.15; /* Subtle glow on hover */
 }
 
-.bannerOverlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, transparent 0%, rgba(8, 30, 49, 0.7) 100%);
-  display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
-  padding: 1.5rem;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: 2;
-  pointer-events: none;
-}
 
-.bannerCard:hover .bannerOverlay {
-  opacity: 0;
-}
 
-.bannerArrow {
-  color: #081e31;
-  background: rgba(247, 200, 67, 0.95);
-  padding: 0.625rem;
-  border-radius: 50%;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-}
+/* Removed bannerOverlay and bannerArrow as requested */
 
 .bannerImageWrapper {
   position: relative;
   width: 100%;
-  padding-top: 60%;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio for true rectangular banner look */
   background: #f8f9fa;
 }
 
@@ -192,7 +168,7 @@
 /* Product Grid */
 .productGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 2rem;
   margin-bottom: 3rem;
   justify-items: center;
@@ -287,7 +263,7 @@
   }
 
   .productGrid {
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
     width: 100%;
     max-width: 100%;
@@ -344,7 +320,7 @@
   }
 
   .bannerImageWrapper {
-    padding-top: 61.6%;
+    padding-top: 56.25%;
   }
 
   .subheading {
@@ -379,7 +355,7 @@
   }
 
   .bannerImageWrapper {
-    padding-top: 52.8%;
+    padding-top: 56.25%;
   }
 
   .subheading {

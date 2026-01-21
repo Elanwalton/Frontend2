@@ -53,6 +53,7 @@ import {
 } from "@mui/icons-material";
 import { PageHeader, DataTable, StatusBadge, MetricCard, Column } from '@/components/admin';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import AdminErrorState from '@/components/admin/AdminErrorState';
 import { 
   CheckCircle as CheckCircleIcon, 
   XCircle as XCircleIcon, 
@@ -601,7 +602,7 @@ const ProductManagement = () => {
   );
 
   if (loading) return <LoadingSpinner fullScreen message="Loading products" />;
-  if (error) return <Box sx={{ p: 3 }}><Typography color="error">Error: {error}</Typography></Box>;
+  if (error) return <AdminErrorState error={error} onRetry={() => window.location.reload()} />;
 
   return (
     <Box>
@@ -845,7 +846,7 @@ const ProductManagement = () => {
                           {product.name}
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
-                          {product.description}
+                          {product.description ? (product.description.split(' ').length > 3 ? product.description.split(' ').slice(0, 3).join(' ') + '...' : product.description) : ''}
                         </Typography>
                       </Box>
                     </Box>

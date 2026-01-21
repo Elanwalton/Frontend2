@@ -1,0 +1,381 @@
+/* terms.module.css */
+
+.termsWrapper {
+  min-height: 100vh;
+  background-color: #f8fafc;
+}
+
+/* Hero Section */
+.hero {
+  background: linear-gradient(to right, #081e31, #0ea5e9);
+  color: white;
+  padding: 4rem 1rem;
+}
+
+.heroContent {
+  max-width: 56rem;
+  margin: 0 auto;
+}
+
+.heroHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.heroHeader h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.heroIcon {
+  width: 3rem;
+  height: 3rem;
+  color: white;
+}
+
+@media (min-width: 768px) {
+  .heroHeader h1 {
+    font-size: 3.5rem;
+  }
+}
+
+.heroMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.125rem;
+}
+
+/* Intro Section */
+.intro {
+  padding: 3rem 1rem;
+  background-color: white;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.introContent {
+  max-width: 56rem;
+  margin: 0 auto;
+}
+
+.noticeBox {
+  background-color: #f0f9ff;
+  border-left: 4px solid #0ea5e9;
+  padding: 1.5rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.noticeFlex {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.alertIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #ea580c;
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+}
+
+.noticeText h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #081e31;
+  margin-bottom: 0.5rem;
+  margin-top: 0;
+}
+
+.noticeText p {
+  color: #334155;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Main Sections */
+.mainSections {
+  padding: 3rem 1rem;
+}
+
+.sectionsList {
+  max-width: 56rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sectionItem {
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+.sectionTrigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.sectionTrigger:hover {
+  background-color: #f8fafc;
+}
+
+.triggerLeft {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.iconWrap {
+  width: 3rem;
+  height: 3rem;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0ea5e9;
+}
+
+.triggerLeft h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #081e31;
+  margin: 0;
+  text-align: left;
+}
+
+.chevronIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #94a3b8;
+}
+
+.sectionBody {
+  padding: 0 1.5rem 1.5rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.sectionsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sectionText {
+  padding-top: 1.5rem;
+  color: #475569;
+  line-height: 1.7;
+  white-space: pre-line;
+}
+
+/* Additional Terms */
+.additional {
+  padding: 4rem 1rem;
+  background-color: #f8fafc;
+}
+
+.additionalContent {
+  max-width: 56rem;
+  margin: 0 auto;
+}
+
+.additionalContent h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #081e31;
+  margin-bottom: 2rem;
+}
+
+.termsGrid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .termsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.termCard {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+}
+
+.termCard h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #081e31;
+  margin-bottom: 1rem;
+  margin-top: 0;
+}
+
+.termList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.termPoint {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.checkIcon {
+  color: #0ea5e9;
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+}
+
+.pointText {
+  font-size: 0.875rem;
+  color: #475569;
+}
+
+/* Contact Section */
+.contact {
+  padding: 4rem 1rem;
+  background-color: white;
+}
+
+.contactBox {
+  max-width: 56rem;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #f0f9ff 0%, #f8fafc 100%);
+  padding: 2.5rem;
+  border-radius: 1.5rem;
+  border: 1px solid #e0f2fe;
+}
+
+.contactBox h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #081e31;
+  margin-bottom: 1.5rem;
+}
+
+.contactBox p {
+  color: #475569;
+  margin-bottom: 2rem;
+}
+
+.cardsGrid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .cardsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.miniCard {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.smallIcon {
+  width: 3rem;
+  height: 3rem;
+  background-color: #f0f9ff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0ea5e9;
+}
+
+.cardTitle h3 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.cardTitle span {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.contactLink {
+  color: #0ea5e9;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.locationBar {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #334155;
+}
+
+/* Footer acceptance */
+.acceptance {
+  padding: 4rem 1rem;
+  background-color: #0f172a;
+  color: white;
+  text-align: center;
+}
+
+.acceptanceInner {
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+.shieldIcon {
+  color: #0ea5e9;
+  margin-bottom: 1.5rem;
+  width: 4rem;
+  height: 4rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.acceptanceInner h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.acceptanceInner p {
+  color: #94a3b8;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.updateTimestamp {
+  font-size: 0.875rem;
+  color: #64748b;
+}

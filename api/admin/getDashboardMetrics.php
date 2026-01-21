@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../ApiHelper.php';
 require_once __DIR__ . '/../auth-middleware.php';
+require_once __DIR__ . '/../CacheHelper.php';
 
 $conn = getDbConnection();
 $auth = $GLOBALS['_AUTH_USER'] ?? null;
@@ -15,6 +16,18 @@ $userId = $auth['id'];
 // Get date range from query params
 $startDate = $_GET['start_date'] ?? date('Y-m-d', strtotime('-30 days'));
 $endDate = $_GET['end_date'] ?? date('Y-m-d');
+
+// Check cache first (60 second TTL)
+$cacheKey = CacheHelper::generateKey('dashboard_metrics', [
+    'start' => $startDate,
+    'end' => $endDate
+]);
+
+$cachedData = CacheHelper::get($cacheKey);
+if ($cachedData !== null) {
+    echo json_encode($cachedData);
+    exit;
+}
 
 try {
     // Calculate total revenue and order stats
@@ -296,6 +309,9 @@ try {
             'converted_revenue' => round($convertedRevenue, 2)
         ]
     ];
+    
+    // Cache the response for 60 seconds
+    CacheHelper::set($cacheKey, $response, 60);
     
     echo json_encode($response);
     

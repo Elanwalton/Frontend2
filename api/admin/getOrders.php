@@ -6,6 +6,7 @@
  */
 require_once __DIR__ . '/../ApiHelper.php';
 require_once __DIR__ . '/../auth-middleware.php';
+require_once __DIR__ . '/../CacheHelper.php';
 
 $conn = getDbConnection();
 $auth = $GLOBALS['_AUTH_USER'] ?? null;
@@ -24,6 +25,22 @@ $limit = min(100, max(10, (int)($_GET['limit'] ?? 20)));
 $offset = ($page - 1) * $limit;
 $sortBy = $_GET['sort_by'] ?? 'created_at';
 $sortOrder = strtoupper($_GET['sort_order'] ?? 'DESC') === 'ASC' ? 'ASC' : 'DESC';
+
+// Check cache first (30 second TTL)
+$cacheKey = CacheHelper::generateKey('orders', [
+    'status' => $status,
+    'search' => $search,
+    'page' => $page,
+    'limit' => $limit,
+    'sort_by' => $sortBy,
+    'sort_order' => $sortOrder
+]);
+
+$cachedData = CacheHelper::get($cacheKey);
+if ($cachedData !== null) {
+    echo json_encode($cachedData);
+    exit;
+}
 
 try {
     // Build WHERE clause
@@ -159,6 +176,9 @@ try {
             'avg_order_value' => (float)$metrics['avg_order_value']
         ]
     ];
+    
+    // Cache the response for 30 seconds
+    CacheHelper::set($cacheKey, $response, 30);
     
     echo json_encode($response);
     

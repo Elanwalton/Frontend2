@@ -5,6 +5,8 @@ import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedin, FaYoutube } from 'reac
 import { Mail, CheckCircle, AlertCircle } from 'lucide-react';
 import { getApiEndpoint } from '@/utils/apiClient';
 
+import Link from 'next/link';
+
 const Footer = () => {
   const [email, setEmail] = useState('');
   const [subscriptionStatus, setSubscriptionStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
@@ -95,40 +97,35 @@ const Footer = () => {
         <div className={styles.linkColumn}>
           <h4>Support</h4>
           <ul>
-            <li><a href="#contact">Contact Us</a></li>
-            <li><a href="#team">Meet Our Team</a></li>
-            <li><a href="#shipping">Shipping Info</a></li>
-            <li><a href="#returns">Returns & Exchanges</a></li>
-            <li><a href="#faq">FAQ</a></li>
+            <li><Link href="/contact">Contact Us</Link></li>
+            <li><Link href="/shipping">Shipping Info</Link></li>
+            <li><Link href="/returns">Returns & Exchanges</Link></li>
+            <li><Link href="/faq">FAQ</Link></li>
           </ul>
         </div>
         <div className={styles.linkColumn}>
           <h4>Solutions</h4>
           <ul>
-            <li><a href="#solar">Solar Kits</a></li>
-            <li><a href="#batteries">Battery Systems</a></li>
-            <li><a href="#inverters">Inverters</a></li>
-            <li><a href="#eco">Eco Devices</a></li>
-            <li><a href="#bundles">Bundle Deals</a></li>
+            <li><Link href="/product/solis-5-0kw-off-grid-single-phase-inverter-low-voltage">Inverters</Link></li>
+            <li><Link href="/product/mercer-2-4kwh-lithium-battery">Battery Systems</Link></li>
+            <li><Link href="/product/ph-1-10kw-off-grid-single-phase-inverter-with-built-in-sol">Solar Kits</Link></li>
+            <li><Link href="/product/sunleaf-energy-power-meter-3-phase">Energy Meters</Link></li>
           </ul>
         </div>
         <div className={styles.linkColumn}>
           <h4>Company</h4>
           <ul>
-            <li><a href="#about">About Us</a></li>
-            <li><a href="#blog">Blog</a></li>
-            <li><a href="#careers">Careers</a></li>
-            <li><a href="#press">Press</a></li>
+            <li><Link href="/about">About Us</Link></li>
+            <li><Link href="/contact">Location</Link></li>
           </ul>
         </div>
         <div className={styles.linkColumn}>
           <h4>Connect</h4>
           <div className={styles.socialIcons}>
-            <a href="#facebook" title="Facebook"><FaFacebookF /></a>
-            <a href="#twitter" title="Twitter"><FaTwitter /></a>
-            <a href="#instagram" title="Instagram"><FaInstagram /></a>
-            <a href="#linkedin" title="LinkedIn"><FaLinkedin /></a>
-            <a href="#youtube" title="YouTube"><FaYoutube /></a>
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" title="Facebook"><FaFacebookF /></a>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" title="Twitter"><FaTwitter /></a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" title="Instagram"><FaInstagram /></a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" title="LinkedIn"><FaLinkedin /></a>
           </div>
         </div>
       </div>
@@ -138,11 +135,9 @@ const Footer = () => {
           &copy; {new Date().getFullYear()} Sunleaf Technology Solutions. Empowering Tomorrow. All rights reserved.
         </div>
         <div className={styles.legalLinks}>
-          <a href="#privacy">Privacy Policy</a>
+          <Link href="/privacy">Privacy Policy</Link>
           <span>•</span>
-          <a href="#terms">Terms of Service</a>
-          <span>•</span>
-          <a href="#cookies">Cookie Settings</a>
+          <Link href="/terms">Terms of Service</Link>
         </div>
       </div>
     </footer>

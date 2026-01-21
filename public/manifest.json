@@ -1,0 +1,33 @@
+{
+  "name": "Sunleaf Technologies - Solar Energy Solutions Kenya",
+  "short_name": "Sunleaf Tech",
+  "description": "Leading solar energy solutions provider in Kenya. Shop premium solar panels, hybrid inverters, lithium batteries & solar outdoor lights.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#63B23D",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/remove background.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["shopping", "business"],
+  "lang": "en-KE",
+  "dir": "ltr",
+  "scope": "/",
+  "prefer_related_applications": false
+}

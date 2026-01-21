@@ -11,10 +11,12 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Breadcrumbs from './Breadcrumbs';
 import { buildMediaUrl } from '@/utils/media';
 import LoadingSpinner from './LoadingSpinner';
+import { getApiUrl } from '@/utils/apiUrl';
 
 interface Product {
   id: number;
   name: string;
+  slug: string; // SEO friendly URL
   price: number;
   main_image_url: string;
   category: string;
@@ -33,10 +35,15 @@ interface Category {
   color: string;
 }
 
-const CategoryProductsContent: React.FC = () => {
+interface CategoryProductsProps {
+  initialCategory?: string;
+}
+
+const CategoryProductsContent: React.FC<CategoryProductsProps> = ({ initialCategory }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const categoryFromUrl = searchParams?.get('category') || 'all';
+  // Use initialCategory prop if provided, otherwise fallback to URL params
+  const categoryFromUrl = initialCategory || searchParams?.get('category') || 'all';
   
   const [selectedCategory, setSelectedCategory] = useState<string>(categoryFromUrl);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -53,8 +60,7 @@ const CategoryProductsContent: React.FC = () => {
     setSelectedCategory(categoryFromUrl);
   }, [categoryFromUrl]);
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost/sunleaf-tech';
-  const API_BASE = API_URL.replace(/\/?api\/?$/i, '');
+  // API configuration handled by getApiUrl
 
   const categories: Category[] = [
     { id: 'all', name: 'All Products', icon: Package, count: 0, color: '#6366f1' },
@@ -70,7 +76,7 @@ const CategoryProductsContent: React.FC = () => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const url = new URL(`${API_BASE}/api/getProductsClients.php`);
+        const url = new URL(getApiUrl('/api/getProductsClients'));
         url.searchParams.set('page', String(currentPage));
         url.searchParams.set('limit', '12');
         
@@ -97,6 +103,7 @@ const CategoryProductsContent: React.FC = () => {
           const mappedProducts: Product[] = data.data.map((item: any) => ({
             id: Number(item.id),
             name: item.name,
+            slug: item.slug || item.id.toString(), // Fallback to ID if slug is missing
             price: Number(item.price),
             main_image_url: buildMediaUrl(item.main_image_full_url || item.main_image_url),
             category: item.category || 'Uncategorized',
@@ -109,6 +116,18 @@ const CategoryProductsContent: React.FC = () => {
           
           setProducts(mappedProducts);
           setTotalPages(data.totalPages || 1);
+
+          // Track search if keyword is present and it's the first page
+          if (searchQuery && currentPage === 1 && data.success) {
+            fetch(getApiUrl('/api/trackSearch'), {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                keyword: searchQuery,
+                result_count: data.data.length || 0
+              })
+            }).catch(err => console.error('Search tracking failed:', err));
+          }
         }
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -118,7 +137,7 @@ const CategoryProductsContent: React.FC = () => {
     };
 
     fetchProducts();
-  }, [selectedCategory, searchQuery, currentPage, API_BASE]);
+  }, [selectedCategory, searchQuery, currentPage]);
 
   // Sort products
   const sortedProducts = [...products].sort((a, b) => {
@@ -136,8 +155,10 @@ const CategoryProductsContent: React.FC = () => {
     }
   });
 
-  const handleProductClick = (productId: number) => {
-    router.push(`/product/${productId}`);
+  const handleProductClick = (product: Product) => {
+    // Prefer slug for SEO, fallback to ID if needed
+    const identifier = product.slug || product.id;
+    router.push(`/product/${identifier}`);
   };
 
   const handleAddToCart = (e: React.MouseEvent, product: Product) => {
@@ -311,7 +332,7 @@ const CategoryProductsContent: React.FC = () => {
                 <div 
                   key={product.id}
                   className={styles.productCard}
-                  onClick={() => handleProductClick(product.id)}
+                  onClick={() => handleProductClick(product)}
                   style={{
                     animationDelay: `${index * 0.05}s`
                   }}
@@ -438,10 +459,10 @@ const CategoryProductsContent: React.FC = () => {
   );
 };
 
-const CategoryProducts: React.FC = () => {
+const CategoryProducts: React.FC<CategoryProductsProps> = (props) => {
   return (
     <Suspense fallback={<LoadingSpinner fullScreen message="Loading products..." />}>
-      <CategoryProductsContent />
+      <CategoryProductsContent {...props} />
     </Suspense>
   );
 };

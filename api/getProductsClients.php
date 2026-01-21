@@ -65,6 +65,7 @@ SELECT
   p.id, 
   p.main_image_url, 
   p.name, 
+  p.slug,
   p.price, 
   p.category, 
   MAX(COALESCE(p.stock_quantity, p.quantity, 0)) AS stock_quantity,
@@ -76,7 +77,7 @@ LEFT JOIN
   reviews r ON p.id = r.product_id
 $whereSql
 GROUP BY 
-  p.id, p.main_image_url, p.name, p.price, p.category
+  p.id, p.main_image_url, p.name, p.slug, p.price, p.category
 ORDER BY p.id DESC
 LIMIT $limit OFFSET $offset
 ";
@@ -97,6 +98,13 @@ if ($result) {
         $row['reviewCount'] = $row['review_count'];
         $row['image'] = $row['main_image_url'];
         $row['inStock'] = $row['stock_quantity'] > 0;
+        
+        // Ensure slug is present
+        if (empty($row['slug'])) {
+             // Fallback: create a basic slug from name
+             $row['slug'] = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $row['name']), '-')) . '-' . $row['id'];
+        }
+        
         $products[] = $row;
     }
     

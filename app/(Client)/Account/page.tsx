@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getApiEndpoint } from '@/utils/apiClient';
 import styles from '@/styles/Account.module.css';
@@ -17,7 +17,8 @@ import {
   UserCircle,
   Zap,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Loader2
 } from "lucide-react";
 import OrdersSection from '@/components/Orders';
 import LogoutSection from '@/components/LogoutSection';
@@ -36,11 +37,13 @@ function AccountPageContent() {
     first_name: '',
     second_name: '',
     email: '',
-    phone: '',
-    gender: ''
+    phone: ''
   });
   const [updateStatus, setUpdateStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [updateMessage, setUpdateMessage] = useState('');
+  const [profilePicture, setProfilePicture] = useState<string>('');
+  const [uploadingPicture, setUploadingPicture] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (user) {
@@ -48,9 +51,10 @@ function AccountPageContent() {
         first_name: user.first_name || '',
         second_name: user.second_name || '',
         email: user.email || '',
-        phone: user.phone || '',
-        gender: user.gender || ''
+        phone: user.phone || ''
       });
+      // @ts-ignore - profile_picture may not be in User type yet
+      setProfilePicture(user.profile_picture || '');
     }
   }, [user]);
 
@@ -65,6 +69,7 @@ function AccountPageContent() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setUpdateStatus('idle');
+    setUpdateMessage('');
     
     try {
       const response = await fetch(getApiEndpoint('/update-profile'), {
@@ -81,7 +86,12 @@ function AccountPageContent() {
       if (data.success) {
         setUpdateStatus('success');
         setUpdateMessage('Profile updated successfully!');
-        checkAuth(); // Refresh user data
+        await checkAuth(); // Refresh user data
+        // Clear success message after 5 seconds
+        setTimeout(() => {
+          setUpdateStatus('idle');
+          setUpdateMessage('');
+        }, 5000);
       } else {
         setUpdateStatus('error');
         setUpdateMessage(data.message || 'Failed to update profile');
@@ -89,6 +99,72 @@ function AccountPageContent() {
     } catch (error) {
       setUpdateStatus('error');
       setUpdateMessage('An error occurred while updating profile');
+    }
+  };
+
+  const handleProfilePictureClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      setUpdateStatus('error');
+      setUpdateMessage('Please select a valid image file (JPG, PNG, or WebP)');
+      return;
+    }
+
+    // Validate file size (5MB max)
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      setUpdateStatus('error');
+      setUpdateMessage('Image size must be less than 5MB');
+      return;
+    }
+
+    setUploadingPicture(true);
+    setUpdateStatus('idle');
+    setUpdateMessage('');
+
+    try {
+      const formData = new FormData();
+      formData.append('profile_picture', file);
+
+      const response = await fetch(getApiEndpoint('/upload-profile-picture'), {
+        method: 'POST',
+        credentials: 'include',
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setProfilePicture(data.profile_picture);
+        setUpdateStatus('success');
+        setUpdateMessage('Profile picture updated successfully!');
+        await checkAuth(); // Refresh user data
+        // Clear success message after 5 seconds
+        setTimeout(() => {
+          setUpdateStatus('idle');
+          setUpdateMessage('');
+        }, 5000);
+      } else {
+        setUpdateStatus('error');
+        setUpdateMessage(data.message || 'Failed to upload profile picture');
+      }
+    } catch (error) {
+      setUpdateStatus('error');
+      setUpdateMessage('An error occurred while uploading profile picture');
+    } finally {
+      setUploadingPicture(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
@@ -190,13 +266,30 @@ function AccountPageContent() {
                 <div className={styles.avatarSection}>
                   <div className={styles.avatarWrapper}>
                     <img
-                      src="https://via.placeholder.com/120"
+                      src={profilePicture ? `/images/${profilePicture}` : "https://via.placeholder.com/120"}
                       alt="Profile"
                       className={styles.avatar}
                     />
-                    <button className={styles.editBtn}>
-                      <Camera size={18} />
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
+                      onChange={handleFileChange}
+                      className={styles.fileInput}
+                    />
+                    <button 
+                      className={styles.editBtn}
+                      onClick={handleProfilePictureClick}
+                      disabled={uploadingPicture}
+                      type="button"
+                    >
+                      {uploadingPicture ? <Loader2 size={18} className="animate-spin" /> : <Camera size={18} />}
                     </button>
+                    {uploadingPicture && (
+                      <div className={styles.uploadOverlay}>
+                        Uploading...
+                      </div>
+                    )}
                   </div>
                   <div className={styles.avatarInfo}>
                     <h3>{user?.first_name} {user?.second_name}</h3>
@@ -267,23 +360,6 @@ function AccountPageContent() {
                       onChange={handleInputChange}
                       placeholder="Phone number" 
                     />
-                  </div>
-
-                  <div className={styles.inputGroup}>
-                    <label>
-                      <UserCircle size={16} />
-                      Gender *
-                    </label>
-                    <select 
-                      name="gender"
-                      value={formData.gender}
-                      onChange={handleInputChange}
-                    >
-                      <option value="">Select gender</option>
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
-                      <option value="Other">Other</option>
-                    </select>
                   </div>
 
                   <button type="submit" className={styles.updateBtn}>

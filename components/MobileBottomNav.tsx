@@ -157,13 +157,27 @@ export default function MobileBottomNav() {
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 border: isActive ? 'none' : '1px solid rgba(255, 255, 255, 0.1)'
               }}>
-                <Icon
-                  size={22}
-                  color={isActive ? 'white' : 'rgba(255, 255, 255, 0.6)'}
-                  style={{
-                    transition: 'all 0.3s ease'
-                  }}
-                />
+                {item.id === 'account' && user?.profile_picture ? (
+                  // @ts-ignore - profile_picture may not be in User type yet
+                  <img 
+                    src={`/images/${user.profile_picture}`} 
+                    alt="Profile" 
+                    style={{
+                      width: '22px',
+                      height: '22px',
+                      borderRadius: '50%',
+                      objectFit: 'cover'
+                    }}
+                  />
+                ) : (
+                  <Icon
+                    size={22}
+                    color={isActive ? 'white' : 'rgba(255, 255, 255, 0.6)'}
+                    style={{
+                      transition: 'all 0.3s ease'
+                    }}
+                  />
+                )}
                 
                 {item.badge && item.badge > 0 && (
                   <div style={{

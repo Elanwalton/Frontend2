@@ -69,7 +69,7 @@ const OrdersSection = () => {
     }
   }, [authLoading, user]);
 
-  const fetchOrders = async () => {
+  const fetchOrders = async (retryCount = 0) => {
     try {
       setLoading(true);
       setError(null);
@@ -83,13 +83,50 @@ const OrdersSection = () => {
       });
       
       console.log('Orders: Response status:', response.status);
+      
+      // Handle 401 Unauthorized - try to refresh token
+      if (response.status === 401 && retryCount === 0) {
+        console.log('Orders: Attempting token refresh...');
+        try {
+          const refreshResponse = await fetch(getApiEndpoint('/auth/refresh'), {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          if (refreshResponse.ok) {
+            console.log('Orders: Token refreshed successfully, retrying...');
+            // Wait a bit for cookie to be set
+            await new Promise(resolve => setTimeout(resolve, 100));
+            // Retry the original request
+            return fetchOrders(1);
+          } else {
+            console.error('Orders: Token refresh failed');
+            setError('Your session has expired. Please log in again.');
+            setLoading(false);
+            return;
+          }
+        } catch (refreshError) {
+          console.error('Orders: Token refresh error:', refreshError);
+          setError('Your session has expired. Please log in again.');
+          setLoading(false);
+          return;
+        }
+      }
+      
       const data = await response.json();
       console.log('Orders: Response data:', data);
       
       if (data.success) {
         setOrders(data.orders || []);
       } else {
-        setError(data.message || 'Failed to fetch orders');
+        if (response.status === 401) {
+          setError('Your session has expired. Please log in again.');
+        } else {
+          setError(data.message || 'Failed to fetch orders');
+        }
       }
     } catch (error) {
       console.error('Failed to fetch orders:', error);
@@ -182,7 +219,7 @@ const OrdersSection = () => {
           <h3>Error Loading Orders</h3>
           <p>{error}</p>
           <div className={styles.errorActions}>
-            <button onClick={fetchOrders} className={styles.retryBtn}>
+            <button onClick={() => fetchOrders()} className={styles.retryBtn}>
               Try Again
             </button>
             {error.includes('log in') && (

@@ -37,15 +37,6 @@ const ProductCategories = () => {
       gradient: 'from-blue-500 to-blue-700'
     },
     {
-      id: 'heat-pumps',
-      name: 'Heat Pumps',
-      image: buildMediaUrl('images/non-pressurized-solar-water-heaters-in-kenya.png'),
-      alt: 'Energy-efficient heat pumps and water heaters',
-      icon: Droplets,
-      color: '#0891b2',
-      gradient: 'from-cyan-500 to-blue-600'
-    },
-    {
       id: 'accessories',
       name: 'Accessories',
       image: buildMediaUrl('images/solar-water-pumping-inverters-for-sale-in-nairobi-kenya.webp'),
@@ -62,7 +53,6 @@ const ProductCategories = () => {
       'solar-panels': 'solar panels',
       'batteries': 'Batteries',
       'inverters': 'Inverters',
-      'heat-pumps': 'Solar Water heaters',
       'accessories': 'Mounting Accesories'
     };
     

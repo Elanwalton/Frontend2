@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import { TrendingUp } from "@mui/icons-material";
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { getApiUrl } from "@/utils/apiUrl";
 
 interface TopProduct {
   id: number;
@@ -41,8 +42,9 @@ const TopSellingProducts = ({ limit = 5 }: TopSellingProductsProps) => {
   useEffect(() => {
     const fetchTopProducts = async () => {
       try {
+        const url = getApiUrl('/api/getTopSellingProducts');
         const response = await fetch(
-          `/api/getTopSellingProducts.php?limit=${limit}`
+          `${url}?limit=${limit}`
         );
         const data = await response.json();
 

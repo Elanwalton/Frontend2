@@ -3,7 +3,11 @@
 import { useRouter } from "next/navigation";
 import { useAuth } from '@/context/AuthContext';
 
-const LogoutButton = () => {
+interface LogoutButtonProps {
+  className?: string;
+}
+
+const LogoutButton: React.FC<LogoutButtonProps> = ({ className }) => {
   const router = useRouter();
   const { logout } = useAuth();
 
@@ -11,7 +15,7 @@ const LogoutButton = () => {
     await logout();
   };
 
-  return <button onClick={handleLogout}>Logout</button>;
+  return <button onClick={handleLogout} className={className}>Logout</button>;
 };
 
 export default LogoutButton;

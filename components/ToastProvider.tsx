@@ -1,8 +1,7 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
 import { CheckCircle, XCircle, AlertCircle, Info, X } from 'lucide-react';
-import { useEffect } from 'react';
 
 interface ToastItem {
   id: number;
@@ -30,29 +29,49 @@ export function useToast() {
   return context;
 }
 
+const toastConfigs = {
+  success: {
+    icon: CheckCircle,
+    color: '#10B981',
+    bgColor: '#ECFDF5'
+  },
+  error: {
+    icon: XCircle,
+    color: '#EF4444',
+    bgColor: '#FEF2F2'
+  },
+  warning: {
+    icon: AlertCircle,
+    color: '#F59E0B',
+    bgColor: '#FFFBEB'
+  },
+  info: {
+    icon: Info,
+    color: '#3B82F6',
+    bgColor: '#EFF6FF'
+  }
+};
+
 export default function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
 
-  const addToast = useCallback((type: 'success' | 'error' | 'warning' | 'info', title: string, message: string) => {
-    const id = Date.now();
-    const newToast: ToastItem = { id, type, title, message };
-    setToasts(prev => [...prev, newToast]);
-
-    // Auto remove after 5 seconds
-    setTimeout(() => {
-      removeToast(id);
-    }, 5000);
-  }, []);
-
   const removeToast = useCallback((id: number) => {
-    setToasts(prev => prev.filter(toast => toast.id !== id));
+    setToasts(prev => prev.filter(t => t.id !== id));
   }, []);
+
+  const addToast = useCallback((type: ToastItem['type'], title: string, message: string) => {
+    const id = Date.now();
+    setToasts(prev => [...prev, { id, type, title, message }]);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => removeToast(id), 5000);
+  }, [removeToast]);
 
   const toast = {
-    success: (title: string, message: string) => addToast('success', title, message),
-    error: (title: string, message: string) => addToast('error', title, message),
-    warning: (title: string, message: string) => addToast('warning', title, message),
-    info: (title: string, message: string) => addToast('info', title, message),
+    success: (t: string, m: string) => addToast('success', t, m),
+    error: (t: string, m: string) => addToast('error', t, m),
+    warning: (t: string, m: string) => addToast('warning', t, m),
+    info: (t: string, m: string) => addToast('info', t, m),
   };
 
   return (
@@ -63,212 +82,157 @@ export default function ToastProvider({ children }: { children: ReactNode }) {
   );
 }
 
-interface ToastContainerProps {
-  toasts: ToastItem[];
-  removeToast: (id: number) => void;
-}
-
-function ToastContainer({ toasts, removeToast }: ToastContainerProps) {
+function ToastContainer({ toasts, removeToast }: { toasts: ToastItem[]; removeToast: (id: number) => void }) {
   return (
-    <div style={{
-      position: 'fixed',
-      top: '20px',
-      right: '20px',
-      zIndex: 10000,
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '12px',
-      maxWidth: '420px',
-      width: 'calc(100vw - 40px)',
-      pointerEvents: 'none'
-    }}>
-      {toasts.map(toast => (
-        <Toast
-          key={toast.id}
-          toast={toast}
-          onClose={() => removeToast(toast.id)}
-        />
+    <div className="toast-container">
+      {toasts.map(t => (
+        <ToastItemComponent key={t.id} toast={t} onClose={() => removeToast(t.id)} />
       ))}
+      <style>{`
+        .toast-container {
+          position: fixed;
+          top: 24px;
+          right: 24px;
+          z-index: 10000;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          max-width: 420px;
+          width: calc(100vw - 48px);
+          pointer-events: none;
+        }
+
+        @media (max-width: 640px) {
+          .toast-container {
+            top: 12px;
+            right: 50%;
+            left: auto;
+            transform: translateX(50%);
+            max-width: 90%;
+            width: auto;
+          }
+        }
+      `}</style>
     </div>
   );
 }
 
-interface ToastProps {
-  toast: ToastItem;
-  onClose: () => void;
-}
-
-function Toast({ toast, onClose }: ToastProps) {
-  const [progress, setProgress] = useState(100);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress(prev => {
-        if (prev <= 0) {
-          clearInterval(interval);
-          return 0;
-        }
-        return prev - 2;
-      });
-    }, 100);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const getConfig = () => {
-    switch (toast.type) {
-      case 'success':
-        return {
-          icon: CheckCircle,
-          gradient: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-          bgColor: '#ECFDF5',
-          borderColor: '#10B981',
-          iconColor: '#10B981',
-          progressColor: '#10B981'
-        };
-      case 'error':
-        return {
-          icon: XCircle,
-          gradient: 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
-          bgColor: '#FEF2F2',
-          borderColor: '#EF4444',
-          iconColor: '#EF4444',
-          progressColor: '#EF4444'
-        };
-      case 'warning':
-        return {
-          icon: AlertCircle,
-          gradient: 'linear-gradient(135deg, #F59E0B 0%, #F97316 100%)',
-          bgColor: '#FFFBEB',
-          borderColor: '#F59E0B',
-          iconColor: '#F59E0B',
-          progressColor: '#F59E0B'
-        };
-      case 'info':
-        return {
-          icon: Info,
-          gradient: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
-          bgColor: '#EFF6FF',
-          borderColor: '#3B82F6',
-          iconColor: '#3B82F6',
-          progressColor: '#3B82F6'
-        };
-      default:
-        return {
-          icon: Info,
-          gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          bgColor: '#F3F4F6',
-          borderColor: '#667eea',
-          iconColor: '#667eea',
-          progressColor: '#667eea'
-        };
-    }
-  };
-
-  const config = getConfig();
+function ToastItemComponent({ toast, onClose }: { toast: ToastItem; onClose: () => void }) {
+  const [isClosing, setIsClosing] = useState(false);
+  const config = toastConfigs[toast.type];
   const Icon = config.icon;
 
+  const handleClose = useCallback(() => {
+    setIsClosing(true);
+    setTimeout(onClose, 300);
+  }, [onClose]);
+
+  useEffect(() => {
+    const timer = setTimeout(handleClose, 4700);
+    return () => clearTimeout(timer);
+  }, [handleClose]);
+
   return (
-    <div
-      style={{
-        background: 'white',
-        borderRadius: '12px',
-        boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15)',
-        overflow: 'hidden',
-        animation: 'slideIn 0.3s ease-out',
-        border: `2px solid ${config.borderColor}`,
-        position: 'relative',
-        pointerEvents: 'auto'
-      }}
-    >
-      {/* Progress Bar */}
-      <div style={{
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        height: '4px',
-        width: `${progress}%`,
-        background: config.gradient,
-        transition: 'width 0.1s linear'
-      }} />
-
-      <div style={{
-        display: 'flex',
-        gap: '12px',
-        padding: '16px',
-        alignItems: 'flex-start'
-      }}>
-        {/* Icon */}
-        <div style={{
-          width: '40px',
-          height: '40px',
-          borderRadius: '10px',
-          background: config.bgColor,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexShrink: 0
-        }}>
-          <Icon size={22} color={config.iconColor} />
-        </div>
-
-        {/* Content */}
-        <div style={{ flex: 1, paddingTop: '2px' }}>
-          <h4 style={{
-            margin: '0 0 4px 0',
-            fontSize: '1rem',
-            fontWeight: '700',
-            color: '#1a1a1a',
-            lineHeight: '1.3'
-          }}>
-            {toast.title}
-          </h4>
-          <p style={{
-            margin: 0,
-            fontSize: '0.875rem',
-            color: '#666',
-            lineHeight: '1.5'
-          }}>
-            {toast.message}
-          </p>
-        </div>
-
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          style={{
-            background: 'transparent',
-            border: 'none',
-            cursor: 'pointer',
-            padding: '4px',
-            borderRadius: '6px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 0.2s ease',
-            flexShrink: 0
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#f5f5f5';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'transparent';
-          }}
-        >
-          <X size={18} color="#666" />
-        </button>
+    <div className={`toast-item ${isClosing ? 'closing' : ''}`}>
+      <div className="toast-icon-wrapper" style={{ background: config.bgColor, color: config.color }}>
+        <Icon size={22} />
+      </div>
+      
+      <div className="toast-body">
+        <h4 className="toast-title">{toast.title}</h4>
+        <p className="toast-message">{toast.message}</p>
       </div>
 
-      <style jsx>{`
+      <button onClick={handleClose} className="toast-close-btn">
+        <X size={18} />
+      </button>
+
+      <style>{`
+        .toast-item {
+          background: white;
+          border-radius: 12px;
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+          display: flex;
+          align-items: flex-start;
+          gap: 12px;
+          padding: 16px;
+          border-left: 5px solid ${config.color};
+          animation: slideIn 0.3s ease-out;
+          pointer-events: auto;
+          transition: all 0.3s ease;
+        }
+
+        .toast-item.closing {
+          opacity: 0;
+          transform: translateX(20px);
+          scale: 0.95;
+        }
+
+        .toast-icon-wrapper {
+          width: 40px;
+          height: 40px;
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .toast-body {
+          flex: 1;
+        }
+
+        .toast-title {
+          margin: 0 0 4px 0;
+          font-size: 1rem;
+          font-weight: 700;
+          color: #1a1a1a;
+        }
+
+        .toast-message {
+          margin: 0;
+          font-size: 0.875rem;
+          color: #666;
+          line-height: 1.5;
+        }
+
+        .toast-close-btn {
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          color: #999;
+          padding: 4px;
+          border-radius: 6px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background 0.2s;
+        }
+
+        .toast-close-btn:hover {
+          background: #f5f5f5;
+        }
+
         @keyframes slideIn {
-          from {
-            opacity: 0;
-            transform: translateX(100%);
+          from { opacity: 0; transform: translateX(30px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideDown {
+          from { opacity: 0; transform: translateY(-30px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 640px) {
+          .toast-item {
+            animation: slideDown 0.3s ease-out;
+            padding: 12px;
           }
-          to {
-            opacity: 1;
-            transform: translateX(0);
+          .toast-item.closing {
+            transform: translateY(-20px);
           }
+          .toast-title { font-size: 0.95rem; }
+          .toast-message { font-size: 0.8125rem; }
         }
       `}</style>
     </div>

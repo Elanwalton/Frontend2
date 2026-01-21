@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { ShoppingCart, Heart, Star, Zap, Shield, Leaf } from 'lucide-react';
 import styles from '@/styles/ProductCard.module.css';
 import useCartStore from '@/store/UseCartStore';
@@ -115,9 +116,12 @@ const ProductCard: React.FC<{ product: ProductCardProps }> = ({ product }) => {
       <div className={`${styles.productImage} ${colorTheme === 'green' ? styles.bgGradientGreen : styles.bgGradientBlue}`}>
         <div className={`${styles.productImageInner} ${isHovered ? styles.productImageHovered : ''}`}>
           <div className={`${styles.productIcon} ${colorTheme === 'green' ? styles.gradientGreen : styles.gradientBlue}`}>
-            <img 
+            <Image 
               src={product.image} 
-              alt={product.title} 
+              alt={`${product.title} - ${product.category} in Kenya`}
+              width={200}
+              height={200}
+              loading="lazy"
               className={styles.productImg}
             />
           </div>

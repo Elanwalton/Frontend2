@@ -35,17 +35,32 @@ export default function HomePage() {
   const [initialLoad, setInitialLoad] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
 
-  const RAW_API = process.env.NEXT_PUBLIC_API_URL || "";
-  const API_BASE = RAW_API.replace(/\/?api\/?$/i, "");
+  // API configuration handled by getApiUrl
 
   useEffect(() => {
     let cancelled = false;
 
     async function load() {
       try {
+        // Get recently viewed products from localStorage
+        let viewedIds: number[] = [];
+        if (typeof window !== 'undefined') {
+          try {
+            const viewedStr = localStorage.getItem('recentlyViewed');
+            viewedIds = viewedStr ? JSON.parse(viewedStr) : [];
+          } catch (e) {
+            console.error('Error reading localStorage:', e);
+          }
+        }
+
         const [res1, res2] = await Promise.all([
           fetch(`${getApiUrl('/api/getTopDeals')}?limit=8&type=auto`, { credentials: "include" }),
-          fetch(`${getApiUrl('/api/getProductsClients')}?page=1&limit=8`, { credentials: "include" }),
+          fetch(`${getApiUrl('/api/getRecommendedProducts')}?limit=8`, { 
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: "include",
+            body: JSON.stringify({ viewedIds })
+          }),
         ]);
         const [data1, data2] = await Promise.all([res1.json(), res2.json()]);
 
@@ -89,7 +104,7 @@ export default function HomePage() {
     return () => {
       cancelled = true;
     };
-  }, [API_BASE]);
+  }, []);
 
   useEffect(() => {
     const media = window.matchMedia('(max-width: 768px)');
@@ -163,21 +178,21 @@ export default function HomePage() {
         <FetchedCategorySection
           title="Solar Outdoor Lights"
           viewAllLink="/categories?category=Solar%20Outdoor%20Lights"
-          fetchUrl={`${API_BASE}/api/getProductsClients.php?page=1&limit=8&category=Solar%20Outdoor%20Lights`}
+          fetchUrl={`${getApiUrl('/api/getProductsClients')}?page=1&limit=8&category=Solar%20Outdoor%20Lights`}
         />
 
         {/* Lithium Batteries - Dynamic banners from admin */}
         <FetchedCategorySection
           title="Lithium Batteries"
           viewAllLink="/categories?category=Batteries"
-          fetchUrl={`${API_BASE}/api/getProductsClients.php?page=1&limit=8&q=lithium%20battery`}
+          fetchUrl={`${getApiUrl('/api/getProductsClients')}?page=1&limit=8&q=lithium%20battery`}
         />
 
         {/* Inverters - Dynamic banners from admin */}
         <FetchedCategorySection
           title="Inverters"
           viewAllLink="/categories?category=Inverters"
-          fetchUrl={`${API_BASE}/api/getProductsClients.php?page=1&limit=8&q=inverter`}
+          fetchUrl={`${getApiUrl('/api/getProductsClients')}?page=1&limit=8&q=inverter`}
         />
 
         <div style={{ display: isMobile ? 'none' : 'block' }}>
@@ -186,6 +201,7 @@ export default function HomePage() {
       </CategoryProvider>
 
       <div className="md:hidden">
+        <div style={{ height: '80px' }} /> {/* Spacer for MobileBottomNav */}
         <MobileBottomNav />
       </div>
     </>

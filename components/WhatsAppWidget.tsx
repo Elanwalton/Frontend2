@@ -1,12 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { MessageCircle, X, Phone, Clock } from 'lucide-react';
 
 export default function WhatsAppWidget() {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
   const whatsappNumber = '254712616546'; //
   const message = 'Hi there! I would like to inquire about your solar products.';
+
+  // Only show on home page
+  if (pathname !== '/') {
+    return null;
+  }
 
   const handleWhatsAppClick = () => {
     const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
