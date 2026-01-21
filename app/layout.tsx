@@ -73,7 +73,7 @@ return (
         <link rel="icon" type="image/svg+xml" href="/images/remove background.svg" />
         
         {/* Theme Color for Mobile Browsers */}
-        <meta name="theme-color" content="#63B23D" />
+        <meta name="theme-color" content="#f7c843" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         
