@@ -83,7 +83,26 @@ const Sidebar = () => {
   }, []);
 
   const toggleMenu = (menu: string) => {
-    setOpenMenus((prev) => ({ ...prev, [menu]: !prev[menu] }));
+    setOpenMenus((prev) => {
+      // If the clicked menu is already open, close it.
+      // If it's closed, open it and close ALL others.
+      const isOpen = prev[menu];
+      
+      const newMenus: { [key: string]: boolean } = {
+        userManagement: false,
+        products: false,
+        payment: false,
+        orders: false,
+        content: false,
+        inventory: false,
+      };
+
+      if (!isOpen) {
+        newMenus[menu] = true;
+      }
+
+      return newMenus;
+    });
   };
 
   const isActive = (path: string) => pathname === path;
@@ -190,9 +209,6 @@ const Sidebar = () => {
             </Link>
             <Link href="/admin-dashboard/payment/quotes" className={`${styles.subMenuItem} ${isActive('/admin-dashboard/payment/quotes') ? styles.active : ''}`}>
               Quotes
-            </Link>
-            <Link href="/admin-dashboard/payment/invoices" className={`${styles.subMenuItem} ${isActive('/admin-dashboard/payment/invoices') ? styles.active : ''}`}>
-              Invoices
             </Link>
           </div>
         )}

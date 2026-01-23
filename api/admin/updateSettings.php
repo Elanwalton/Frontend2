@@ -1,7 +1,7 @@
 <?php
 /**
- * updateSettings.php
- * Update site settings
+ * Update Admin Settings
+ * Update admin settings including AI toggle and other system settings
  */
 
 require_once __DIR__ . '/../ApiHelper.php';
@@ -11,75 +11,71 @@ $conn = getDbConnection();
 $auth = $GLOBALS['_AUTH_USER'] ?? null;
 
 if (!$auth) {
-    http_response_code(401);
-    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
-    exit;
+    sendError(401, 'Unauthorized');
 }
 
-// Get request body
-$input = json_decode(file_get_contents('php://input'), true);
-$settings = $input['settings'] ?? [];
+if (($auth['role'] ?? '') !== 'admin') {
+    sendError(403, 'Forbidden');
+}
 
-if (empty($settings)) {
-    http_response_code(400);
-    echo json_encode(['error' => 'No settings provided']);
-    exit;
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    sendError(405, 'Method not allowed');
 }
 
 try {
-    $conn->begin_transaction();
-    
+    $input = getJsonInput();
+    $settings = $input['settings'] ?? [];
+
+    if (empty($settings) || !is_array($settings)) {
+        sendError(400, 'Settings object is required');
+    }
+
+    $userId = (int)($auth['id'] ?? 0);
+    $updated = [];
+
+    // Prepare statement for bulk insert/update
     $stmt = $conn->prepare("
-        UPDATE site_settings 
-        SET setting_value = ?, updated_by = ? 
-        WHERE setting_key = ?
+        INSERT INTO admin_settings (setting_key, setting_value, updated_by) 
+        VALUES (?, ?, ?)
+        ON DUPLICATE KEY UPDATE 
+            setting_value = VALUES(setting_value),
+            updated_by = VALUES(updated_by),
+            updated_at = CURRENT_TIMESTAMP
     ");
-    
-    $userId = (int)$userData['user_id'];
-    $updatedCount = 0;
-    
+
+    if (!$stmt) {
+        throw new Exception('Failed to prepare update statement');
+    }
+
+    // Process each setting
     foreach ($settings as $key => $value) {
-        // Convert value to string for storage
+        // Convert boolean to string
         if (is_bool($value)) {
             $value = $value ? 'true' : 'false';
-        } elseif (is_array($value)) {
-            $value = json_encode($value);
-        } else {
-            $value = (string)$value;
         }
         
-        $stmt->bind_param('sis', $value, $userId, $key);
-        $stmt->execute();
+        $settingValue = (string)$value;
         
-        if ($stmt->affected_rows > 0) {
-            $updatedCount++;
+        $stmt->bind_param('ssi', $key, $settingValue, $userId);
+        
+        if ($stmt->execute()) {
+            $updated[] = $key;
+        } else {
+            error_log("Failed to update setting: $key");
         }
     }
-    
-    // Log activity
-    $logStmt = $conn->prepare("
-        INSERT INTO admin_activity_log 
-        (user_id, action, entity_type, description, ip_address) 
-        VALUES (?, 'settings_update', 'settings', ?, ?)
-    ");
-    $description = "Updated {$updatedCount} settings";
-    $ipAddress = $_SERVER['REMOTE_ADDR'] ?? null;
-    $logStmt->bind_param('iss', $userId, $description, $ipAddress);
-    $logStmt->execute();
-    
-    $conn->commit();
-    
-    echo json_encode([
-        'success' => true,
-        'message' => "{$updatedCount} settings updated successfully"
+
+    $stmt->close();
+
+    sendSuccess([
+        'data' => [
+            'updated_count' => count($updated),
+            'updated_settings' => $updated,
+            'message' => 'Settings updated successfully'
+        ]
     ]);
-    
-} catch (Exception $e) {
-    $conn->rollback();
-    http_response_code(500);
-    echo json_encode([
-        'success' => false,
-        'error' => 'Failed to update settings',
-        'message' => $e->getMessage()
-    ]);
+
+} catch (Throwable $e) {
+    error_log('updateSettings error: ' . $e->getMessage());
+    sendError(500, 'Failed to update settings');
 }

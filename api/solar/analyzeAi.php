@@ -12,14 +12,7 @@ try {
     $input = getJsonInput();
 
     $appliances = trim((string)($input['appliances'] ?? ''));
-    $backupDays = (int)($input['backupDays'] ?? 1);
-
-    if ($backupDays < 1) {
-        $backupDays = 1;
-    }
-    if ($backupDays > 3) {
-        $backupDays = 3;
-    }
+    $backupDays = 1; // Fixed to 1 day - focusing on complete solar system
 
     if ($appliances === '') {
         sendError(400, 'Appliances input is required');

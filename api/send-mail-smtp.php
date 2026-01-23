@@ -572,4 +572,97 @@ function sendContactFormEmailSMTP($name, $userEmail, $phone, $userMessage) {
         return false;
     }
 }
+function sendCartRecoveryEmailSMTP($to, $customerName, $cartUrl) {
+    $mail = new PHPMailer(true);
+    
+    try {
+        // Server settings from environment variables
+        $mail->isSMTP();
+        $mail->Host       = $_ENV['MAIL_HOST'] ?? 'smtp.gmail.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = $_ENV['MAIL_USERNAME'] ?? '';
+        $mail->Password   = $_ENV['MAIL_PASSWORD'] ?? '';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = (int)($_ENV['MAIL_PORT'] ?? 587);
+        $mail->SMTPDebug  = 0;
+        $mail->Debugoutput = 'error_log';
+        
+        // Sender
+        $fromEmail = $_ENV['MAIL_FROM_EMAIL'] ?? 'noreply@sunleaftechnologies.co.ke';
+        $fromName  = $_ENV['MAIL_FROM_NAME'] ?? 'Sunleaf Tech';
+        $replyTo   = $_ENV['MAIL_REPLY_TO_EMAIL'] ?? 'support@sunleaftechnologies.co.ke';
+        $mail->setFrom($fromEmail, $fromName);
+        $mail->addAddress($to, $customerName);
+        $mail->addReplyTo($replyTo, $fromName . ' Support');
+        
+        // Content
+        $mail->isHTML(true);
+        $mail->Subject = 'Complete Your Purchase - Items Waiting in Cart';
+        
+        $mail->Body = "
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                .header { background-color: #081e31; color: white; padding: 20px; text-align: center; }
+                .button {
+                    display: inline-block; 
+                    padding: 14px 28px; 
+                    margin: 25px 0; 
+                    background-color: #ef4444; 
+                    color: white; 
+                    text-decoration: none; 
+                    border-radius: 5px;
+                    font-weight: bold;
+                    font-size: 16px;
+                }
+                .cart-reminder {
+                    background-color: #fef2f2;
+                    border: 1px solid #fee2e2;
+                    padding: 15px;
+                    border-radius: 8px;
+                    margin: 20px 0;
+                }
+                .footer { 
+                    margin-top: 30px; 
+                    font-size: 12px; 
+                    color: #666; 
+                    text-align: center;
+                }
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <div class='header'>
+                    <h1>Sunleaf Tech</h1>
+                </div>
+                <h2>You left something behind!</h2>
+                <p>Hello $customerName,</p>
+                <p>We noticed you added some great items to your cart but didn't finish checking out.</p>
+                <p>Don't worry, we've saved your cart for you! Stock is limited, so we recommend completing your purchase soon to avoid missing out.</p>
+                
+                <div style='text-align: center;'>
+                    <a href='$cartUrl' class='button'>Return to Cart & Checkout</a>
+                </div>
+
+                <p>If you have any questions or need assistance, simply reply to this email.</p>
+                
+                <div class='footer'>
+                    <p>© " . date('Y') . " Sunleaf Tech. All rights reserved.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        ";
+        
+        $mail->send();
+        return true;
+        
+    } catch (Exception $e) {
+        error_log("PHPMailer Error (Recovery): " . $mail->ErrorInfo);
+        return false;
+    }
+}
 ?>

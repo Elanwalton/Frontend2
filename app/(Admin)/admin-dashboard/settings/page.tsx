@@ -81,6 +81,9 @@ export default function SettingsPage() {
     currency: 'KES',
     timezone: 'Africa/Nairobi',
     
+    // Quote Settings
+    aiQuoteGeneration: true,
+    
     // Notifications
     emailNotifications: true,
     orderNotifications: true,
@@ -123,6 +126,9 @@ export default function SettingsPage() {
              storeAddress: s.store_address?.value || prev.storeAddress,
              currency: s.currency?.value || prev.currency,
              timezone: s.timezone?.value || prev.timezone,
+             
+             // Quote Settings
+             aiQuoteGeneration: s.ai_quote_generation_enabled?.value === 'true' || s.ai_quote_generation_enabled?.value === true,
              
              // Notifications
              emailNotifications: s.email_notifications?.value === 'true' || s.email_notifications?.value === true,
@@ -181,6 +187,8 @@ export default function SettingsPage() {
            store_address: settings.storeAddress,
            currency: settings.currency,
            timezone: settings.timezone,
+           
+           ai_quote_generation_enabled: settings.aiQuoteGeneration,
            
            email_notifications: settings.emailNotifications,
            order_notifications: settings.orderNotifications,
@@ -353,6 +361,31 @@ export default function SettingsPage() {
                 />
               </Grid>
             </Grid>
+
+            <Divider sx={{ my: 3 }} />
+
+            <Typography variant="h6" fontWeight="bold" gutterBottom>
+              Quote Settings
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              Configure how quotes are generated and managed
+            </Typography>
+
+            <Stack spacing={2}>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={settings.aiQuoteGeneration}
+                    onChange={(e) => handleChange('aiQuoteGeneration', e.target.checked)}
+                  />
+                }
+                label="Enable AI Quote Generation"
+              />
+              <Typography variant="caption" color="text.secondary" sx={{ ml: 4, mt: -1 }}>
+                When enabled, AI will automatically generate preliminary quotes from client requests. 
+                Admins can review and edit these quotes before sending to clients.
+              </Typography>
+            </Stack>
 
             <Divider sx={{ my: 3 }} />
 

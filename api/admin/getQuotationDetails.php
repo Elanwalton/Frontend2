@@ -80,7 +80,7 @@ try {
 
     $itemsStmt->close();
 
-    $vatRate = 16.0;
+    $vatRate = 0.0; // VAT set to 0% as per requirements
     $vatAmount = round(($subtotal * $vatRate) / 100, 2);
     $total = round($subtotal + $vatAmount, 2);
 

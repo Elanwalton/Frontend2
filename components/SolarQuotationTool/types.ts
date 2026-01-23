@@ -12,7 +12,6 @@ export interface AnalysisSummary {
   recommendedInverterKW: number;
   recommendedBatteryKWh: number;
   recommendedSolarKW: number;
-  backupDays: number;
   sunHoursPerDay: number;
 }
 
@@ -22,6 +21,9 @@ export interface AnalysisResult {
   assumptions: string;
   analysisId: string;
   timestamp?: string;
+  customerName?: string;
+  customerEmail?: string;
+  customerPhone?: string;
 }
 
 export interface SolarQuoteItem {
@@ -46,4 +48,15 @@ export interface SolarQuoteResult {
   created_at?: string;
   expiry_date?: string;
   status?: 'pending' | 'accepted' | 'expired' | 'rejected';
+  is_ai_generated?: boolean;
+}
+
+export interface QuoteRequestData {
+  request_id: number;
+  request_number: string;
+  status: string;
+  ai_enabled: boolean;
+  ai_quote_generated: boolean;
+  ai_quote_id: string | null;
+  message: string;
 }

@@ -235,6 +235,24 @@ export default function DataTable({
                     })}
                     {hasActions && (
                       <TableCell align="center">
+                        {/* Direct Edit Button for Debugging */}
+                        {onEdit && (
+                          <Tooltip title="Direct Edit">
+                            <IconButton
+                              size="small"
+                              color="primary"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                console.log('Direct Edit clicked', row);
+                                alert('Direct Edit Clicked!');
+                                onEdit(row);
+                              }}
+                              sx={{ mr: 1 }}
+                            >
+                              <EditIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        )}
                         <Tooltip title="Actions">
                           <IconButton
                             size="small"
@@ -279,6 +297,8 @@ export default function DataTable({
             onClick={() => {
               const r = actionMenuRow;
               closeActionMenu();
+              console.log('DataTable: Edit menu item clicked', r);
+              alert('Menu item clicked');
               if (r) onEdit(r);
             }}
           >

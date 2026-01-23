@@ -56,7 +56,7 @@ import {
   Group as UsersIcon,
   Inventory as PackageIcon
 } from '@mui/icons-material';
-import { PageHeader, DataTable, StatusBadge, MetricCard, Column } from '@/components/admin';
+import { PageHeader, DataTable, StatusBadge, MetricCard, Column, QuoteEditorModal } from '@/components/admin';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import AdminErrorState from '@/components/admin/AdminErrorState';
 import { 
@@ -134,6 +134,13 @@ export default function QuotesPage() {
 
   const [statusMenuAnchorEl, setStatusMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [statusMenuQuote, setStatusMenuQuote] = useState<Quote | null>(null);
+
+  const [editorModal, setEditorModal] = useState({
+    open: false,
+    quoteNumber: '',
+    clientName: '',
+    clientEmail: '',
+  });
 
   const apiBaseUrl = getApiBaseUrl().replace(/\/+$/, '');
 
@@ -452,6 +459,12 @@ export default function QuotesPage() {
 
   const handleEditQuote = (row: Quote) => {
     console.log('Editing quote:', row);
+    setEditorModal({
+      open: true,
+      quoteNumber: row.quoteNumber,
+      clientName: row.client.name,
+      clientEmail: row.client.email,
+    });
   };
 
   const handleDeleteQuote = (quoteId: string) => {
@@ -897,6 +910,19 @@ export default function QuotesPage() {
           }}
         />
       )}
+      
+      {/* Editor Modal */}
+      <QuoteEditorModal
+        open={editorModal.open}
+        onClose={() => setEditorModal({ ...editorModal, open: false })}
+        quoteNumber={editorModal.quoteNumber}
+        customerName={editorModal.clientName}
+        customerEmail={editorModal.clientEmail}
+        onSave={() => {
+          loadQuotes();
+          setSnackbar({ open: true, severity: 'success', message: 'Quote saved successfully' });
+        }}
+      />
     </Box>
   );
 }

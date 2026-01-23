@@ -144,7 +144,46 @@ export default function DashboardOverview() {
     amount: number;
     status: string;
     date: string;
+    amount: number;
+    status: string;
+    date: string;
   }>>([]);
+
+  const [sendingRecovery, setSendingRecovery] = useState(false);
+
+  const handleSendRecovery = async () => {
+    try {
+      setSendingRecovery(true);
+      // Use apiPost from utils if available, or fetch direct
+      // Here using fetch for simplicity since we need the full response handling
+      const url = getApiUrl('/api/admin/sendRecoveryEmails');
+      const response = await fetch(url, {
+        method: 'POST',
+        credentials: 'include',
+      });
+      
+      const res = await response.json();
+      
+      if (res.success) {
+        const sent = res.data?.sent ?? 0;
+        const failed = res.data?.failed ?? 0;
+        const found = res.data?.found ?? 0;
+        
+        if (found === 0) {
+          alert('No pending orders found to recover (older than 1h, newer than 7d).');
+        } else {
+          alert(`Process Complete!\n\nFound: ${found}\nSent: ${sent}\nFailed: ${failed}`);
+        }
+      } else {
+        alert('Failed to send: ' + (res.message || 'Unknown error'));
+      }
+    } catch (e: any) {
+      console.error(e);
+      alert('Network error sending recovery emails');
+    } finally {
+      setSendingRecovery(false);
+    }
+  };
 
   // Fetch real analytics data
   useEffect(() => {
@@ -928,6 +967,8 @@ export default function DashboardOverview() {
                 <Button 
                   variant="contained" 
                   fullWidth
+                  onClick={handleSendRecovery}
+                  disabled={sendingRecovery}
                   sx={{ 
                     bgcolor: '#081e31',
                     '&:hover': { bgcolor: '#0a2740' },
@@ -935,7 +976,7 @@ export default function DashboardOverview() {
                     fontWeight: 600
                   }}
                 >
-                  Send Recovery Emails
+                  {sendingRecovery ? 'Sending...' : 'Send Recovery Emails'}
                 </Button>
               </Stack>
             </CardContent>

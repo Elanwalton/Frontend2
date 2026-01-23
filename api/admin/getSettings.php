@@ -1,7 +1,7 @@
 <?php
 /**
- * getSettings.php
- * Get site settings by category
+ * Get Admin Settings
+ * Fetch admin settings including AI toggle
  */
 
 require_once __DIR__ . '/../ApiHelper.php';
@@ -11,61 +11,51 @@ $conn = getDbConnection();
 $auth = $GLOBALS['_AUTH_USER'] ?? null;
 
 if (!$auth) {
-    http_response_code(401);
-    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
-    exit;
+    sendError(401, 'Unauthorized');
 }
 
-$category = $_GET['category'] ?? 'all';
+if (($auth['role'] ?? '') !== 'admin') {
+    sendError(403, 'Forbidden');
+}
+
+if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+    sendError(405, 'Method not allowed');
+}
 
 try {
-    $query = "SELECT setting_key, setting_value, setting_type, category, description FROM site_settings";
-    
-    if ($category !== 'all') {
-        $query .= " WHERE category = ?";
-        $stmt = $conn->prepare($query);
-        $stmt->bind_param('s', $category);
-        $stmt->execute();
-        $result = $stmt->get_result();
-    } else {
-        $result = $conn->query($query);
+    // Fetch all settings
+    $stmt = $conn->prepare("SELECT setting_key, setting_value, description, updated_at FROM admin_settings");
+    if (!$stmt) {
+        throw new Exception('Failed to prepare settings query');
     }
-    
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+
     $settings = [];
     while ($row = $result->fetch_assoc()) {
-        $value = $row['setting_value'];
-        
-        // Convert value based on type
-        switch ($row['setting_type']) {
-            case 'number':
-                $value = is_numeric($value) ? (float)$value : 0;
-                break;
-            case 'boolean':
-                $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
-                break;
-            case 'json':
-                $value = json_decode($value, true);
-                break;
-        }
-        
         $settings[$row['setting_key']] = [
-            'value' => $value,
-            'type' => $row['setting_type'],
-            'category' => $row['category'],
-            'description' => $row['description']
+            'value' => $row['setting_value'],
+            'description' => $row['description'],
+            'updated_at' => $row['updated_at'],
         ];
     }
-    
-    echo json_encode([
-        'success' => true,
+    $stmt->close();
+
+    // Ensure AI setting exists with default
+    if (!isset($settings['ai_quote_generation_enabled'])) {
+        $settings['ai_quote_generation_enabled'] = [
+            'value' => 'true',
+            'description' => 'Enable or disable AI-powered quote generation from client requests',
+            'updated_at' => null,
+        ];
+    }
+
+    sendSuccess([
         'data' => $settings
     ]);
-    
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode([
-        'success' => false,
-        'error' => 'Failed to fetch settings',
-        'message' => $e->getMessage()
-    ]);
+
+} catch (Throwable $e) {
+    error_log('getSettings error: ' . $e->getMessage());
+    sendError(500, 'Failed to fetch settings');
 }

@@ -1,33 +1,31 @@
 <?php
+/**
+ * Quote Generation Helper Functions
+ * Shared functions for generating solar quotes
+ */
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../ApiHelper.php';
-
-try {
-    $conn = getDbConnection();
-    $input = getJsonInput();
-
-    $analysisData = $input['analysisData'] ?? null;
-    if (!is_array($analysisData)) {
-        sendError(400, 'Analysis data is required');
-    }
-
+/**
+ * Generate quote from analysis data
+ * Can be called from API endpoint or internally
+ */
+function generateQuoteFromAnalysis(
+    mysqli $conn,
+    array $analysisData,
+    string $customerName,
+    string $customerEmail,
+    ?int $requestId = null,
+    bool $isAiGenerated = true
+): array {
     $summary = $analysisData['summary'] ?? null;
     if (!is_array($summary)) {
-        sendError(400, 'Invalid analysis summary');
-    }
-
-    $customerName = (string)($input['customerName'] ?? '');
-    $customerEmail = (string)($input['customerEmail'] ?? '');
-
-    if ($customerName === '' || $customerEmail === '') {
-        sendError(400, 'Customer name and email are required');
+        throw new Exception('Invalid analysis summary');
     }
 
     $matchedItems = matchSolarProducts($conn, $summary);
     if (count($matchedItems) === 0) {
-        sendError(400, 'No matching products found for this recommendation');
+        throw new Exception('No matching products found for this recommendation');
     }
 
     $vatRate = 0.0; // VAT set to 0% as per requirements
@@ -40,8 +38,7 @@ try {
     $taxAmount = (($subtotal) * $vatRate) / 100.0;
     $total = $subtotal + $taxAmount;
 
-    // Persist via existing quotations tables + generate PDF
-    // Insert using quote_number as primary key (daily sequential: YYYYMMDD-###)
+    // Generate quote number
     $attempts = 0;
     $maxAttempts = 5;
     $quoteNumber = '';
@@ -68,11 +65,13 @@ try {
     while (true) {
         $quoteNumber = $prefix . str_pad((string)$seq, 3, '0', STR_PAD_LEFT);
 
-        $stmt = $conn->prepare("INSERT INTO quotations (quote_number, customer_name, customer_email, file_path) VALUES (?, ?, ?, '')");
+        $filePath = '';
+        $stmt = $conn->prepare("INSERT INTO quotations (quote_number, customer_name, customer_email, file_path, is_ai_generated, request_id) VALUES (?, ?, ?, ?, ?, ?)");
         if (!$stmt) {
             throw new Exception('Failed to prepare quotation insert');
         }
-        $stmt->bind_param('sss', $quoteNumber, $customerName, $customerEmail);
+        $isAiInt = $isAiGenerated ? 1 : 0;
+        $stmt->bind_param('sssiii', $quoteNumber, $customerName, $customerEmail, $filePath, $isAiInt, $requestId);
         $ok = $stmt->execute();
         $errno = $stmt->errno;
         $stmt->close();
@@ -85,25 +84,216 @@ try {
         if ($errno === 1062 && $attempts < $maxAttempts) {
             usleep(200000);
             $seq++;
+            $attempts++;
             continue;
         }
 
         throw new Exception('Failed to create quotation');
     }
 
+    // Insert quote items
     $itemStmt = $conn->prepare("INSERT INTO quote_items (quote_id, product_id, quantity, unit_price, total_price) VALUES (?, ?, ?, ?, ?)");
+    if (!$itemStmt) {
+        throw new Exception('Failed to prepare quote items insert');
+    }
+    
     foreach ($matchedItems as $item) {
         $productId = (int)($item['product_id'] ?? 0);
         $quantity = (int)$item['quantity'];
         $unitPrice = (float)$item['price'];
         $totalPrice = $quantity * $unitPrice;
-        // quote_id(string), product_id(int), quantity(int), unit_price(double), total_price(double)
         $itemStmt->bind_param('siidd', $quoteNumber, $productId, $quantity, $unitPrice, $totalPrice);
-        $itemStmt->execute();
+        if (!$itemStmt->execute()) {
+            throw new Exception('Failed to insert quote item');
+        }
     }
     $itemStmt->close();
 
-    // Premium-styled HTML for PDF (Dompdf renders CSS better when inline and simple)
+    // Generate PDF
+    $pdfPathRelative = generateQuotePDF($quoteNumber, $customerName, $customerEmail, $matchedItems, $subtotal, $vatRate, $taxAmount, $total);
+    
+    if ($pdfPathRelative) {
+        $updateStmt = $conn->prepare('UPDATE quotations SET file_path = ? WHERE quote_number = ?');
+        if ($updateStmt) {
+            $updateStmt->bind_param('ss', $pdfPathRelative, $quoteNumber);
+            $updateStmt->execute();
+            $updateStmt->close();
+        }
+    }
+
+    return [
+        'quote_id' => $quoteNumber,
+        'quote_number' => $quoteNumber,
+        'customer_name' => $customerName,
+        'customer_email' => $customerEmail,
+        'items' => $matchedItems,
+        'subtotal' => round($subtotal, 2),
+        'vat_rate' => $vatRate,
+        'vat_amount' => round($taxAmount, 2),
+        'total' => round($total, 2),
+        'file_path' => $pdfPathRelative,
+        'is_ai_generated' => $isAiGenerated,
+    ];
+}
+
+/**
+ * Match solar products based on analysis summary
+ */
+function matchSolarProducts(mysqli $conn, array $summary): array
+{
+    $items = [];
+
+    $invKw = (int)($summary['recommendedInverterKW'] ?? 0);
+    $batKwh = (int)($summary['recommendedBatteryKWh'] ?? 0);
+    $solarKw = (int)($summary['recommendedSolarKW'] ?? 0);
+
+    // Inverter
+    $inverter = findProductByKeyword($conn, ['inverter'], ['inverter', (string)$invKw . 'kw', (string)$invKw . ' kw']);
+    if ($inverter) {
+        $items[] = [
+            'product_id' => (int)$inverter['id'],
+            'name' => (string)$inverter['name'],
+            'description' => 'Inverter recommendation: ' . $invKw . ' kW',
+            'quantity' => 1,
+            'price' => (float)$inverter['price'],
+        ];
+    }
+
+    // Lithium battery
+    $battery = findProductByKeyword($conn, ['battery', 'batteries', 'lithium battery', 'lithium'], ['lithium', 'lifepo4', 'battery', (string)$batKwh . 'kwh', (string)$batKwh . ' kwh']);
+    if ($battery) {
+        $items[] = [
+            'product_id' => (int)$battery['id'],
+            'name' => (string)$battery['name'],
+            'description' => 'Lithium battery storage recommendation: ' . $batKwh . ' kWh',
+            'quantity' => 1,
+            'price' => (float)$battery['price'],
+        ];
+    }
+
+    // Solar panels
+    $panel = findProductByKeyword($conn, ['solar panel', 'panel', 'panels'], ['panel', 'solar', 'pv', '450w', '550w']);
+    if ($panel) {
+        $panelQty = (int)ceil((max(1, $solarKw) * 1000) / 450);
+        $items[] = [
+            'product_id' => (int)$panel['id'],
+            'name' => (string)$panel['name'],
+            'description' => 'Solar PV recommendation: ' . $solarKw . ' kW (approx. ' . $panelQty . ' panels)',
+            'quantity' => $panelQty,
+            'price' => (float)$panel['price'],
+        ];
+    }
+
+    // Mounting accessories
+    $mounting = findProductByKeyword($conn, ['mounting', 'mount', 'bracket'], ['mount', 'bracket', 'rail', 'structure']);
+    if ($mounting) {
+        $items[] = [
+            'product_id' => (int)$mounting['id'],
+            'name' => (string)$mounting['name'],
+            'description' => 'Mounting structure for solar panels',
+            'quantity' => 1,
+            'price' => (float)$mounting['price'],
+        ];
+    }
+
+    // Cables and connectors
+    $cable = findProductByKeyword($conn, ['cable', 'wire'], ['solar cable', 'pv cable', 'mc4', 'connector']);
+    if ($cable) {
+        $items[] = [
+            'product_id' => (int)$cable['id'],
+            'name' => (string)$cable['name'],
+            'description' => 'Solar cables and connectors',
+            'quantity' => 1,
+            'price' => (float)$cable['price'],
+        ];
+    }
+
+    // Breakers and protection
+    $breaker = findProductByKeyword($conn, ['breaker', 'protection', 'fuse'], ['breaker', 'mcb', 'fuse', 'surge protector']);
+    if ($breaker) {
+        $items[] = [
+            'product_id' => (int)$breaker['id'],
+            'name' => (string)$breaker['name'],
+            'description' => 'Circuit protection and safety equipment',
+            'quantity' => 1,
+            'price' => (float)$breaker['price'],
+        ];
+    }
+
+    return $items;
+}
+
+/**
+ * Find product by keyword search
+ */
+function findProductByKeyword(mysqli $conn, array $categoryHints, array $keywords): ?array
+{
+    $where = [];
+    $params = [];
+    $types = '';
+
+    // category hint match (optional)
+    if (count($categoryHints) > 0) {
+        $catLike = [];
+        foreach ($categoryHints as $hint) {
+            $catLike[] = 'LOWER(category) LIKE ?';
+            $params[] = '%' . strtolower($hint) . '%';
+            $types .= 's';
+        }
+        $where[] = '(' . implode(' OR ', $catLike) . ')';
+    }
+
+    // keyword match across name/description/specifications
+    $kwLike = [];
+    foreach ($keywords as $kw) {
+        $kwLike[] = '(LOWER(name) LIKE ? OR LOWER(description) LIKE ? OR LOWER(specifications) LIKE ?)';
+        $params[] = '%' . strtolower($kw) . '%';
+        $params[] = '%' . strtolower($kw) . '%';
+        $params[] = '%' . strtolower($kw) . '%';
+        $types .= 'sss';
+    }
+    $where[] = '(' . implode(' OR ', $kwLike) . ')';
+
+    $sql = 'SELECT id, name, price, category, description, specifications, stock_quantity FROM products WHERE ' . implode(' AND ', $where) . ' ORDER BY stock_quantity DESC, id DESC LIMIT 1';
+
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        return null;
+    }
+
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result ? $result->fetch_assoc() : null;
+    $stmt->close();
+
+    return $row ?: null;
+}
+
+/**
+ * Generate PDF for quote
+ */
+function generateQuotePDF(
+    string $quoteNumber,
+    string $customerName,
+    string $customerEmail,
+    array $items,
+    float $subtotal,
+    float $vatRate,
+    float $taxAmount,
+    float $total
+): string {
+    $autoload = __DIR__ . '/../vendor/autoload.php';
+    if (!file_exists($autoload)) {
+        error_log('Dompdf not available for PDF generation');
+        return '';
+    }
+
+    require_once $autoload;
+    if (!class_exists('Dompdf\\Dompdf')) {
+        return '';
+    }
+
     $companyName = 'SUNLEAF TECHNOLOGIES';
     $companyTagline = 'Solar Energy Solutions';
     $companyEmail = 'novagrouke@gmail.com';
@@ -114,7 +304,7 @@ try {
     $referenceDate = date('d/m/Y');
 
     $rowsHtml = '';
-    foreach ($matchedItems as $item) {
+    foreach ($items as $item) {
         $lineTotal = $item['quantity'] * $item['price'];
         $rowsHtml .= '<tr>';
         $rowsHtml .= '<td>';
@@ -231,155 +421,18 @@ try {
     $html .= '</div>';
     $html .= '</body></html>';
 
-    // Use dompdf if available (existing createQuote uses it)
-    $pdfPathRelative = '';
-    $autoload = __DIR__ . '/../vendor/autoload.php';
-    if (file_exists($autoload)) {
-        require_once $autoload;
-        if (class_exists('Dompdf\\Dompdf')) {
-            $dompdf = new Dompdf\Dompdf();
-            $dompdf->loadHtml($html);
-            $dompdf->setPaper('A4', 'portrait');
-            $dompdf->render();
+    $dompdf = new Dompdf\Dompdf();
+    $dompdf->loadHtml($html);
+    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->render();
 
-            $filename = "solar_quote_{$quoteNumber}.pdf";
-            $folder = __DIR__ . '/../../quotes/';
-            if (!is_dir($folder)) {
-                mkdir($folder, 0755, true);
-            }
-            $pdfPath = $folder . $filename;
-            file_put_contents($pdfPath, $dompdf->output());
-
-            $pdfPathRelative = 'quotes/' . $filename;
-            $updateStmt = $conn->prepare('UPDATE quotations SET file_path = ? WHERE quote_number = ?');
-            $updateStmt->bind_param('ss', $pdfPathRelative, $quoteNumber);
-            $updateStmt->execute();
-            $updateStmt->close();
-        }
+    $filename = "solar_quote_{$quoteNumber}.pdf";
+    $folder = __DIR__ . '/../../quotes/';
+    if (!is_dir($folder)) {
+        mkdir($folder, 0755, true);
     }
+    $pdfPath = $folder . $filename;
+    file_put_contents($pdfPath, $dompdf->output());
 
-    sendSuccess([
-        'data' => [
-            'quote_id' => $quoteNumber,
-            'quote_number' => $quoteNumber,
-            'customer_name' => $customerName,
-            'customer_email' => $customerEmail,
-            'items' => $matchedItems,
-            'subtotal' => round($subtotal, 2),
-            'vat_rate' => $vatRate,
-            'vat_amount' => round($taxAmount, 2),
-            'total' => round($total, 2),
-            'file_path' => $pdfPathRelative,
-        ]
-    ]);
-} catch (Exception $e) {
-    sendError(400, $e->getMessage());
-}
-
-function matchSolarProducts(mysqli $conn, array $summary): array
-{
-    // NOTE: Your products schema doesn't have capacity fields.
-    // We'll do best-effort matching using category + keyword search in name/description/specifications.
-
-    $items = [];
-
-    $invKw = (int)($summary['recommendedInverterKW'] ?? 0);
-    $batKwh = (int)($summary['recommendedBatteryKWh'] ?? 0);
-    $solarKw = (int)($summary['recommendedSolarKW'] ?? 0);
-
-    // Inverter
-    $inverter = findProductByKeyword($conn, ['inverter'], ['inverter', (string)$invKw . 'kw', (string)$invKw . ' kw']);
-    if ($inverter) {
-        $items[] = [
-            'product_id' => (int)$inverter['id'],
-            'name' => (string)$inverter['name'],
-            'description' => 'Inverter recommendation: ' . $invKw . ' kW',
-            'quantity' => 1,
-            'price' => (float)$inverter['price'],
-        ];
-    }
-
-    // Lithium battery
-    $battery = findProductByKeyword($conn, ['battery', 'batteries', 'lithium battery', 'lithium'], ['lithium', 'lifepo4', 'battery', (string)$batKwh . 'kwh', (string)$batKwh . ' kwh']);
-    if ($battery) {
-        $items[] = [
-            'product_id' => (int)$battery['id'],
-            'name' => (string)$battery['name'],
-            'description' => 'Lithium battery storage recommendation: ' . $batKwh . ' kWh',
-            'quantity' => 1,
-            'price' => (float)$battery['price'],
-        ];
-    }
-
-    // Solar panels
-    $panel = findProductByKeyword($conn, ['solar panel', 'panel', 'panels'], ['panel', 'solar', 'pv', '450w', '550w']);
-    if ($panel) {
-        // crude quantity: assume 450W per panel
-        $panelQty = (int)ceil((max(1, $solarKw) * 1000) / 450);
-        $items[] = [
-            'product_id' => (int)$panel['id'],
-            'name' => (string)$panel['name'],
-            'description' => 'Solar PV recommendation: ' . $solarKw . ' kW (approx. ' . $panelQty . ' panels)',
-            'quantity' => $panelQty,
-            'price' => (float)$panel['price'],
-        ];
-    }
-
-    // Basic accessories (optional best-effort)
-    $accessory = findProductByKeyword($conn, ['accessory', 'mounting', 'cable', 'breaker'], ['mount', 'cable', 'mc4', 'breaker', 'combiner']);
-    if ($accessory) {
-        $items[] = [
-            'product_id' => (int)$accessory['id'],
-            'name' => (string)$accessory['name'],
-            'description' => 'Basic installation accessory',
-            'quantity' => 1,
-            'price' => (float)$accessory['price'],
-        ];
-    }
-
-    return $items;
-}
-
-function findProductByKeyword(mysqli $conn, array $categoryHints, array $keywords): ?array
-{
-    $where = [];
-    $params = [];
-    $types = '';
-
-    // category hint match (optional)
-    if (count($categoryHints) > 0) {
-        $catLike = [];
-        foreach ($categoryHints as $hint) {
-            $catLike[] = 'LOWER(category) LIKE ?';
-            $params[] = '%' . strtolower($hint) . '%';
-            $types .= 's';
-        }
-        $where[] = '(' . implode(' OR ', $catLike) . ')';
-    }
-
-    // keyword match across name/description/specifications
-    $kwLike = [];
-    foreach ($keywords as $kw) {
-        $kwLike[] = '(LOWER(name) LIKE ? OR LOWER(description) LIKE ? OR LOWER(specifications) LIKE ?)';
-        $params[] = '%' . strtolower($kw) . '%';
-        $params[] = '%' . strtolower($kw) . '%';
-        $params[] = '%' . strtolower($kw) . '%';
-        $types .= 'sss';
-    }
-    $where[] = '(' . implode(' OR ', $kwLike) . ')';
-
-    $sql = 'SELECT id, name, price, category, description, specifications, stock_quantity FROM products WHERE ' . implode(' AND ', $where) . ' ORDER BY stock_quantity DESC, id DESC LIMIT 1';
-
-    $stmt = $conn->prepare($sql);
-    if (!$stmt) {
-        return null;
-    }
-
-    $stmt->bind_param($types, ...$params);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result ? $result->fetch_assoc() : null;
-    $stmt->close();
-
-    return $row ?: null;
+    return 'quotes/' . $filename;
 }
