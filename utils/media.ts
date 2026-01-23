@@ -38,8 +38,8 @@ export const buildMediaUrl = (rawPath?: string | null, fallback: string = '/imag
     return `${candidateBase}/${finalPath}`;
   }
 
-  // Hardcoded fallback for production - always use API domain with /public
-  const productionFallback = 'https://api.sunleaftechnologies.co.ke/public';
+  // Hardcoded fallback for production - always use API domain
+  const productionFallback = 'https://api.sunleaftechnologies.co.ke';
   
   if (typeof window !== 'undefined') {
     // Check if we're in production (on Vercel)

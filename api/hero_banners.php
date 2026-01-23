@@ -99,6 +99,11 @@ function createBanner($conn) {
     $display_order = intval($data['display_order'] ?? 0);
     $position = $data['position'] ?? 'main';
     
+    // Map 'secondary' (from UI) to 'side' (for DB)
+    if ($position === 'secondary') {
+        $position = 'side';
+    }
+    
     if (empty($image_url) || empty($title)) {
         http_response_code(400);
         echo json_encode(['error' => 'Image URL and title are required']);
@@ -132,6 +137,11 @@ function updateBanner($conn) {
     $status = $data['status'] ?? 'active';
     $display_order = intval($data['display_order'] ?? 0);
     $position = $data['position'] ?? 'main';
+    
+    // Map 'secondary' (from UI) to 'side' (for DB)
+    if ($position === 'secondary') {
+        $position = 'side';
+    }
     
     if ($id <= 0) {
         http_response_code(400);
