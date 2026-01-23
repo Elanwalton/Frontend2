@@ -72,11 +72,12 @@ $sql = "UPDATE products SET
     status = ?,
     price = ?,
     quantity = ?,
+    stock_quantity = ?,
     revenue = ?,
     rating = ?";
 
-$params = [$name, $description, $category, $status, $price, $quantity, $revenue, $rating];
-$types = "ssssdddd";
+$params = [$name, $description, $category, $status, $price, $quantity, $quantity, $revenue, $rating];
+$types = "ssssdiddd";
 
 // Add optional fields if provided
 if ($brand !== '') {

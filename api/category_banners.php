@@ -225,8 +225,8 @@ function uploadImage() {
         return;
     }
     
-    // Use absolute path from document root
-    $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/sunleaf-tech/images/category_banners/';
+    // Use relative path from API directory
+    $uploadDir = __DIR__ . '/../images/category_banners/';
     
     // Create directory if it doesn't exist
     if (!file_exists($uploadDir)) {
@@ -286,7 +286,7 @@ function uploadImage() {
         echo json_encode([
             'success' => true,
             'message' => 'Image uploaded successfully',
-            'image_url' => '/images/category_banners/' . $filename
+            'image_url' => 'images/category_banners/' . $filename
         ]);
     } else {
         http_response_code(500);

@@ -20,7 +20,7 @@ $category = isset($_GET['category']) ? $_GET['category'] : '';
 $status = isset($_GET['status']) ? $_GET['status'] : '';
 
 // Build the query with filters
-$query = "SELECT id, name, category, price, original_price as originalPrice, discount_percentage as discount, rating, review_count as reviewCount, thumbnail_urls as images, description, highlights, status, stock_quantity as stockCount, colors, sizes, specifications, reviews, badges, created_at, updated_at FROM products WHERE 1=1";
+$query = "SELECT id, name, category, price, original_price as originalPrice, discount_percentage as discount, rating, review_count as reviewCount, thumbnail_urls as images, main_image_url, description, highlights, status, quantity, stock_quantity, colors, sizes, specifications, reviews, badges, created_at, updated_at FROM products WHERE 1=1";
 $params = [];
 $types = "";
 
@@ -75,7 +75,8 @@ while ($row = $result->fetch_assoc()) {
     $row['discount'] = !empty($row['discount']) ? (float)$row['discount'] : null;
     $row['rating'] = (float)$row['rating'];
     $row['reviewCount'] = (int)$row['reviewCount'];
-    $row['stockCount'] = (int)$row['stockCount'];
+    $row['quantity'] = (int)$row['quantity'];
+    $row['stock_quantity'] = (int)$row['stock_quantity'];
     
     // Add revenue field (calculated from sales if needed, for now 0)
     $row['revenue'] = 0;

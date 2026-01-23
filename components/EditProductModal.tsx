@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import { getApiUrl } from '@/utils/apiUrl';
 import styles from '@/styles/CreateProduct.module.css';
+import { buildMediaUrl } from '@/utils/media';
 
 const DEFAULT_CATEGORIES = [
   "Batteries",
@@ -41,7 +42,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ product, onClose, o
   const [category, setCategory] = useState(product.category);
   const [description, setDescription] = useState(product.description);
   const [price, setPrice] = useState(product.price);
-  const initialStock = product.stock_quantity ?? product.quantity;
+  const initialStock = product.stock_quantity ?? product.quantity ?? 0;
   const [quantity, setQuantity] = useState(initialStock);
   const [status, setStatus] = useState(product.status);
   const [mainImage, setMainImage] = useState<string | null>(product.main_image_url || null);
@@ -252,7 +253,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ product, onClose, o
                   {mainImage && (
                     <div className={styles.thumbnailContainer}>
                       <img 
-                        src={`${process.env.NEXT_PUBLIC_MEDIA_BASE_URL?.replace(/\/?public\/?$/i, "") || 'https://api.sunleaftechnologies.co.ke'}/public/${mainImage}`} 
+                        src={buildMediaUrl(mainImage)} 
                         alt="Main" 
                         className={styles.thumbnail} 
                       />
@@ -269,7 +270,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ product, onClose, o
                   {thumbnails.map((url, i) => (
                     <div key={i} className={styles.thumbnailContainer}>
                       <img 
-                        src={`${process.env.NEXT_PUBLIC_MEDIA_BASE_URL?.replace(/\/?public\/?$/i, "") || 'https://api.sunleaftechnologies.co.ke'}/public/${url}`} 
+                        src={buildMediaUrl(url)} 
                         alt={`Thumb ${i}`} 
                         className={styles.thumbnail} 
                       />

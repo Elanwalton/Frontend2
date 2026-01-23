@@ -194,8 +194,8 @@ function uploadImage() {
         return;
     }
     
-    // Use absolute path from document root
-    $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/sunleaf-tech/images/hero/';
+    // Use relative path from API directory
+    $uploadDir = __DIR__ . '/../images/hero/';
     
     // Create directory if it doesn't exist
     if (!file_exists($uploadDir)) {
@@ -255,7 +255,7 @@ function uploadImage() {
         echo json_encode([
             'success' => true,
             'message' => 'Image uploaded successfully',
-            'image_url' => '/images/hero/' . $filename
+            'image_url' => 'images/hero/' . $filename
         ]);
     } else {
         http_response_code(500);
