@@ -25,7 +25,10 @@ export const buildMediaUrl = (rawPath?: string | null, fallback: string = '/imag
   // For images, always prefer the API domain - don't strip /api from it
   const candidateBase = mediaBase || apiRoot;
 
-  if (candidateBase) {
+// Smart check: Only use candidateBase if the path looks like backend media
+  const isBackendMedia = /^(products\/|images\/(hero|category_banners|profiles)\/|profiles\/)/i.test(normalized);
+
+  if (candidateBase && isBackendMedia) {
     return `${candidateBase}/${normalized}`;
   }
 

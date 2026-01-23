@@ -80,7 +80,7 @@ const Header: React.FC = () => {
       {/* Logo */}
       <Link href="/" className={styles.logoContainer}>
         <Image 
-          src={buildMediaUrl("remove-background.svg")} 
+          src="/remove-background.svg" 
           alt="Sunleaf Tech Logo" 
           width={45} 
           height={45}
@@ -146,7 +146,7 @@ const Header: React.FC = () => {
               {/* @ts-ignore - profile_picture may not be in User type yet */}
               {user?.profile_picture ? (
                 <img 
-                  src={`/images/${user.profile_picture}`} 
+                  src={buildMediaUrl(user.profile_picture)} 
                   alt="Profile" 
                   style={{
                     width: '32px',
