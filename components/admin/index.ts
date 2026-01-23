@@ -5,5 +5,9 @@ export { default as MetricCard } from './MetricCard';
 export { default as QuoteEditorModal } from './QuoteEditorModal';
 export { default as SendQuoteModal } from './SendQuoteModal';
 export { default as RequestDetailsModal } from './RequestDetailsModal';
+export { default as OrderDetailsModal } from './OrderDetailsModal';
+export { default as OrderEditModal } from './OrderEditModal';
+export { default as ConfirmDialog } from './ConfirmDialog';
+export { default as DateRangePicker } from './DateRangePicker';
 
 export type { Column } from './DataTable';
