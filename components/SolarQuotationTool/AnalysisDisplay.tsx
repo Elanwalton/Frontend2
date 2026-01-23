@@ -29,12 +29,6 @@ export default function AnalysisDisplay({ data, onGenerateQuotation, onStartOver
           </div>
         </div>
 
-        <div className={styles.card}>
-          <div className={styles.cardContent}>
-            <span className={styles.cardLabel}>Backup Days</span>
-            <span className={styles.cardValue}>{data.summary.backupDays}</span>
-          </div>
-        </div>
       </div>
 
       <div className={styles.recommendation}>
