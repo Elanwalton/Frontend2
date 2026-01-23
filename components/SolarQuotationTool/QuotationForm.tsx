@@ -111,7 +111,7 @@ export default function QuotationForm({ onSubmitSuccess }: QuotationFormProps) {
             id="customer-name"
             value={customerName}
             onChange={(e) => setCustomerName(e.target.value)}
-            placeholder="John Doe"
+            placeholder="Cooper Collen"
             disabled={loading}
             className={styles.input}
             required

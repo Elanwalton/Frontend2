@@ -739,7 +739,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                           <input 
                             type="text" 
                             required 
-                            placeholder="e.g. John Doe"
+                            placeholder="e.g. Cooper Collen"
                             value={reviewForm.author} 
                             onChange={e => setReviewForm({...reviewForm, author: e.target.value})}
                           />

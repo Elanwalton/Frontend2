@@ -242,7 +242,7 @@ function CheckoutPageContent() {
                       <input
                         type="text"
                         required
-                        placeholder="John Doe"
+                        placeholder="Cooper Collen"
                         value={customerInfo.name}
                         onChange={(e) => handleInputChange('name', e.target.value)}
                         onBlur={(e) => validateField('name', e.target.value)}

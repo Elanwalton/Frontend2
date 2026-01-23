@@ -9,7 +9,7 @@ USE `sunleaftechnologies`;
 -- SAMPLE ORDERS
 -- ============================================================
 INSERT INTO `orders` (`order_number`, `user_id`, `customer_name`, `customer_email`, `customer_phone`, `shipping_address`, `subtotal`, `tax`, `shipping_cost`, `total_amount`, `status`, `payment_status`, `payment_method`, `tracking_number`, `carrier`, `estimated_delivery`, `created_at`) VALUES
-('ORD-2024-001', 1, 'John Doe', 'john@example.com', '+1234567890', '123 Main St, City, State 12345', 450.00, 36.00, 15.00, 501.00, 'pending', 'paid', 'Card', NULL, NULL, '2024-11-15', DATE_SUB(NOW(), INTERVAL 2 DAY)),
+('ORD-2024-001', 1, 'Cooper Collen', 'john@example.com', '+1234567890', '123 Main St, City, State 12345', 450.00, 36.00, 15.00, 501.00, 'pending', 'paid', 'Card', NULL, NULL, '2024-11-15', DATE_SUB(NOW(), INTERVAL 2 DAY)),
 ('ORD-2024-002', 2, 'Jane Smith', 'jane@example.com', '+1234567891', '456 Oak Ave, Town, State 67890', 1250.00, 100.00, 25.00, 1375.00, 'processing', 'paid', 'PayPal', NULL, NULL, '2024-11-16', DATE_SUB(NOW(), INTERVAL 1 DAY)),
 ('ORD-2024-003', NULL, 'Bob Johnson', 'bob@example.com', '+1234567892', '789 Pine Rd, Village, State 11111', 850.00, 68.00, 20.00, 938.00, 'shipped', 'paid', 'Mpesa', 'TRK123456', 'FedEx', '2024-11-12', DATE_SUB(NOW(), INTERVAL 5 DAY)),
 ('ORD-2024-004', 1, 'Alice Williams', 'alice@example.com', '+1234567893', '321 Elm St, City, State 22222', 2100.00, 168.00, 30.00, 2298.00, 'completed', 'paid', 'Card', 'TRK789012', 'UPS', '2024-11-05', DATE_SUB(NOW(), INTERVAL 10 DAY)),
@@ -37,7 +37,7 @@ INSERT INTO `order_items` (`order_id`, `product_id`, `product_name`, `quantity`,
 -- SAMPLE PAYMENTS
 -- ============================================================
 INSERT INTO `payments` (`transaction_id`, `order_id`, `user_id`, `amount`, `currency`, `payment_method`, `status`, `customer_email`, `customer_name`, `processed_at`, `created_at`) VALUES
-('TXN-MP-001', 1, 1, 501.00, 'USD', 'Card', 'success', 'john@example.com', 'John Doe', DATE_SUB(NOW(), INTERVAL 2 DAY), DATE_SUB(NOW(), INTERVAL 2 DAY)),
+('TXN-MP-001', 1, 1, 501.00, 'USD', 'Card', 'success', 'john@example.com', 'Cooper Collen', DATE_SUB(NOW(), INTERVAL 2 DAY), DATE_SUB(NOW(), INTERVAL 2 DAY)),
 ('TXN-PP-002', 2, 2, 1375.00, 'USD', 'PayPal', 'success', 'jane@example.com', 'Jane Smith', DATE_SUB(NOW(), INTERVAL 1 DAY), DATE_SUB(NOW(), INTERVAL 1 DAY)),
 ('TXN-MP-003', 3, NULL, 938.00, 'USD', 'Mpesa', 'success', 'bob@example.com', 'Bob Johnson', DATE_SUB(NOW(), INTERVAL 5 DAY), DATE_SUB(NOW(), INTERVAL 5 DAY)),
 ('TXN-CC-004', 4, 1, 2298.00, 'USD', 'Card', 'success', 'alice@example.com', 'Alice Williams', DATE_SUB(NOW(), INTERVAL 10 DAY), DATE_SUB(NOW(), INTERVAL 10 DAY)),
@@ -50,7 +50,7 @@ INSERT INTO `payments` (`transaction_id`, `order_id`, `user_id`, `amount`, `curr
 -- SAMPLE REVIEWS
 -- ============================================================
 INSERT INTO `reviews` (`product_id`, `user_id`, `customer_name`, `customer_email`, `rating`, `title`, `comment`, `status`, `verified_purchase`, `helpful_count`, `created_at`) VALUES
-(1, 1, 'John Doe', 'john@example.com', 5.00, 'Excellent product!', 'Works great and easy to install. Highly recommend!', 'approved', 1, 12, DATE_SUB(NOW(), INTERVAL 5 DAY)),
+(1, 1, 'Cooper Collen', 'john@example.com', 5.00, 'Excellent product!', 'Works great and easy to install. Highly recommend!', 'approved', 1, 12, DATE_SUB(NOW(), INTERVAL 5 DAY)),
 (2, 2, 'Jane Smith', 'jane@example.com', 4.00, 'Good battery', 'Good battery, but shipping took longer than expected.', 'approved', 1, 8, DATE_SUB(NOW(), INTERVAL 3 DAY)),
 (1, NULL, 'Bob Johnson', 'bob@example.com', 5.00, 'Amazing quality', 'Best solar panels I have purchased. Very efficient.', 'pending', 1, 0, DATE_SUB(NOW(), INTERVAL 1 DAY)),
 (3, 1, 'Alice Williams', 'alice@example.com', 4.50, 'Great inverter', 'Works perfectly with my solar setup. Good value.', 'approved', 1, 15, DATE_SUB(NOW(), INTERVAL 8 DAY)),
