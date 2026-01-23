@@ -144,10 +144,8 @@ export default function DashboardOverview() {
     amount: number;
     status: string;
     date: string;
-    amount: number;
-    status: string;
-    date: string;
   }>>([]);
+
 
   const [sendingRecovery, setSendingRecovery] = useState(false);
 
