@@ -11,3 +11,4 @@ export { default as ConfirmDialog } from './ConfirmDialog';
 export { default as DateRangePicker } from './DateRangePicker';
 
 export type { Column } from './DataTable';
+export type { DateRange } from './DateRangePicker';
