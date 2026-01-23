@@ -12,6 +12,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/effect-fade';
+import { buildMediaUrl } from '@/utils/media';
 
 interface HeroBanner {
   id: number;
@@ -208,7 +209,7 @@ export default function HeroSection() {
                   <Link href={banner.link_url || '#'} className={styles.heroLink}>
                     <div className={styles.imageWrapper}>
                       <img
-                        src={banner.image_url || undefined}
+                        src={buildMediaUrl(banner.image_url)} 
                         alt={banner.title}
                         className={styles.heroImg}
                         onError={(e) => {
@@ -291,7 +292,7 @@ export default function HeroSection() {
               >
                 <Link href={banner.link_url || '#'} className={styles.banner}>
                   <img
-                    src={banner.image_url}
+                    src={buildMediaUrl(banner.image_url)}
                     alt={banner.title}
                     className={styles.heroImg}
                   />

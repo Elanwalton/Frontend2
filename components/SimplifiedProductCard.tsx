@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Eye, Star, Zap, Award, TrendingUp } from 'lucide-react';
+import Image from 'next/image';
+import { buildMediaUrl } from '@/utils/media';
 import styles from '@/styles/SimplifiedProductCard.module.css';
 
 interface SimplifiedProductCardProps {
@@ -61,10 +63,12 @@ const SimplifiedProductCard: React.FC<SimplifiedProductCardProps> = ({
         
         {/* Product Image */}
         <div className={`${styles.imageWrapper} ${isHovered ? styles.imageHovered : ''}`}>
-          <img 
-            src={image} 
+          <Image 
+            src={buildMediaUrl(image)} 
             alt={title}
+            fill
             className={styles.productImage}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </div>
 

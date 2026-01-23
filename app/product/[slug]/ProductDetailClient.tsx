@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import useCartStore from '@/store/UseCartStore';
 import styles from './product.module.css';
+import { buildMediaUrl } from '@/utils/media';
 
 interface Product {
   id: string;
@@ -263,7 +264,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
               <>
                 <div className={styles.mainImageWrapper}>
                   <Image
-                    src={productImages[currentImageIndex]}
+                    src={buildMediaUrl(productImages[currentImageIndex])}
                     alt={`${product.name} - ${product.category} Solar Product in Kenya`}
                     width={600}
                     height={600}
@@ -294,7 +295,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                         onClick={() => setCurrentImageIndex(idx)}
                       >
                         <Image 
-                          src={img} 
+                          src={buildMediaUrl(img)} 
                           alt={`${product.name} - View ${idx + 1}`} 
                           width={100}
                           height={100}

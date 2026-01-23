@@ -29,7 +29,13 @@ export const buildMediaUrl = (rawPath?: string | null, fallback: string = '/imag
   const isBackendMedia = /^(products\/|images\/(hero|category_banners|profiles)\/|profiles\/)/i.test(normalized);
 
   if (candidateBase && isBackendMedia) {
-    return `${candidateBase}/${normalized}`;
+    // If the base URL ends with /images and the path starts with images/, 
+    // remove the redundant images/ prefix from the path
+    let finalPath = normalized;
+    if (candidateBase.endsWith('/images') && normalized.startsWith('images/')) {
+      finalPath = normalized.replace(/^images\//, '');
+    }
+    return `${candidateBase}/${finalPath}`;
   }
 
   // Hardcoded fallback for production - always use API domain with /public
