@@ -132,8 +132,10 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
         
         if (response.ok) {
           const data = await response.json();
-          if (data.success && data.data.reviews) {
-            setReviews(data.data.reviews);
+          // Backend sendSuccess() flattens the structure, so reviews might be at data.reviews or data.data.reviews
+          const reviewList = data.data?.reviews || data.reviews;
+          if (data.success && Array.isArray(reviewList)) {
+            setReviews(reviewList);
           }
         }
       } catch (error) {
@@ -894,7 +896,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
             exit={{ opacity: 0 }}
             onClick={() => setLightboxOpen(false)}
           >
-            <img src={product.images[currentImageIndex]} alt={product.name} />
+            <img src={buildMediaUrl(product.images[currentImageIndex])} alt={product.name} />
             <button className={styles.closeLightbox} onClick={() => setLightboxOpen(false)}>
               <X size={24} />
             </button>

@@ -20,6 +20,7 @@ import {
   AlertCircle,
   Loader2
 } from "lucide-react";
+import { buildMediaUrl } from '@/utils/media';
 import OrdersSection from '@/components/Orders';
 import LogoutSection from '@/components/LogoutSection';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -265,7 +266,7 @@ function AccountPageContent() {
                 <div className={styles.avatarSection}>
                   <div className={styles.avatarWrapper}>
                     <img
-                      src={profilePicture ? `/images/${profilePicture}` : "https://via.placeholder.com/120"}
+                      src={profilePicture ? buildMediaUrl(profilePicture) : "https://via.placeholder.com/120"}
                       alt="Profile"
                       className={styles.avatar}
                     />

@@ -9,6 +9,7 @@ import useCartStore from '@/store/UseCartStore';
 import ServiceHighlights from '@/components/ServicesHighlights';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import RelatedProducts from '@/components/RelatedProducts';
+import { buildMediaUrl } from '@/utils/media';
 
 const CartPageContent = () => {
   const router = useRouter();
@@ -78,7 +79,7 @@ const CartPageContent = () => {
                 >
                   <div className={styles.itemImage}>
                     <Image
-                      src={item.image}
+                      src={buildMediaUrl(item.image)}
                       alt={item.name}
                       width={120}
                       height={120}

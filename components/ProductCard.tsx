@@ -8,6 +8,7 @@ import useCartStore from '@/store/UseCartStore';
 import useWishlistStore from '@/store/UseWishlistStore';
 import { toast } from 'react-toastify';
 import { useProductTracking } from '../hooks/useProductTracking';
+import { buildMediaUrl } from '@/utils/media';
 
 interface ProductCardProps {
   id: number;
@@ -117,7 +118,7 @@ const ProductCard: React.FC<{ product: ProductCardProps }> = ({ product }) => {
         <div className={`${styles.productImageInner} ${isHovered ? styles.productImageHovered : ''}`}>
           <div className={`${styles.productIcon} ${colorTheme === 'green' ? styles.gradientGreen : styles.gradientBlue}`}>
             <Image 
-              src={product.image} 
+              src={buildMediaUrl(product.image)} 
               alt={`${product.title} - ${product.category} in Kenya`}
               width={200}
               height={200}
