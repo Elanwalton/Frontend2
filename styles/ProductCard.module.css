@@ -119,12 +119,13 @@
 /* Product Image */
 .productImage {
   position: relative;
-  height: 180px;
+  height: 280px; /* Increased total image area height */
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   transition: all 0.5s ease;
+  padding: 0; /* Removed container margin as requested */
 }
 
 .productImageInner {
@@ -136,16 +137,16 @@
 }
 
 .productIcon {
-  width: 140px;
-  height: 140px;
-  border-radius: 16px;
-  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.5);
+  width: 260px; /* Increased significantly from 190px to fill horizontal space */
+  height: 260px; /* Match width for square aspect */
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -10px rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   overflow: hidden;
-  padding: 0.75rem;
+  padding: 0; /* Removed padding entirely to maximize image size */
 }
 
 .gradientGreen {
@@ -432,12 +433,12 @@
   }
   
   .productImage {
-    height: 160px;
+    height: 180px; 
   }
   
   .productIcon {
-    width: 120px;
-    height: 120px;
+    width: 160px; /* Larger mobile icon */
+    height: 160px;
   }
 }
 
@@ -447,12 +448,13 @@
     width: 100%;
     max-width: 100%;
     min-width: 0;
+    margin: 0 -4px; /* Slight negative margin to maximize edge-to-edge if needed */
   }
 
   /* Mobile: match compact card height by tightening content (do not change image height) */
   .content {
-    padding: 0.65rem;
-    gap: 0.5rem;
+    padding: 0.4rem; /* Further reduced from 0.65rem */
+    gap: 0.35rem; /* Tighter gap */
   }
 
   .rating {

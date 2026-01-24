@@ -267,9 +267,9 @@
     /* Turn the grid into a horizontal scrolling row on tablet/mobile */
     display: flex;
     flex-wrap: nowrap;
-    gap: 1.25rem;
+    gap: 0.85rem; /* Reduced from 1.25rem */
     overflow-x: auto;
-    padding: 0.25rem 0 0.75rem;
+    padding: 0.25rem 0 0.5rem;
     margin: 0; /* avoid pushing beyond container width */
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
@@ -323,8 +323,8 @@
   }
 
   .categoryCard {
-    padding: 0.5rem;
-    min-width: 130px;
+    padding: 0.35rem; /* Reduced from 0.5rem */
+    min-width: 120px; /* Slightly narrower to fit more */
     scroll-snap-align: center;
   }
 

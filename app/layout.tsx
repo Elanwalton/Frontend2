@@ -59,7 +59,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1.0,
-  themeColor: "#f77f00",
+  themeColor: "#facc15",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -74,9 +74,9 @@ return (
         <link rel="icon" type="image/svg+xml" href="/images/remove background.svg" />
         
         {/* Theme Color for Mobile Browsers */}
-        <meta name="theme-color" content="#f77f00" />
+        <meta name="theme-color" content="#facc15" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         
         {/* Resource Hints for Performance */}
         <link rel="preconnect" href="https://www.googletagmanager.com" />

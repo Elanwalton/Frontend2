@@ -44,11 +44,15 @@ export const buildMediaUrl = (rawPath?: string | null, fallback: string = '/imag
   const normalizedLower = normalized.toLowerCase();
   const indicators = [
     'products/',
-    'images/',
     'profiles/',
     'hero/',
     'category_banners/',
-    'uploads/'
+    'uploads/',
+    'images/products/',
+    'images/hero/',
+    'images/category_banners/',
+    'images/profiles/',
+    'images/uploads/',
   ];
   
   const isBackendMedia = indicators.some(ind => normalizedLower.includes(ind)) || 
