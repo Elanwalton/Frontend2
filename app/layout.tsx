@@ -75,7 +75,7 @@ return (
         
         {/* Theme Color for Mobile Browsers */}
         <meta name="theme-color" content="#facc15" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         
         {/* Resource Hints for Performance */}
