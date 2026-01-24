@@ -148,6 +148,25 @@ function sendError(int $code, string $message): void
     ]);
     exit;
 }
+/**
+ * Get the Frontend URL robustly
+ */
+function getFrontendUrl(): string
+{
+    $url = $_ENV['NEXT_PUBLIC_BASE_URL'] ?? $_ENV['SPA_ORIGIN'] ?? null;
+    
+    if (!$url) {
+        $host = $_SERVER['HTTP_HOST'] ?? '';
+        // Production fallback for Sunleaf
+        if (strpos($host, 'api.sunleaftechnologies.co.ke') !== false || 
+            strpos($host, 'sunleaftechnologies.co.ke') !== false) {
+            return 'https://sunleaftechnologies.co.ke';
+        }
+        return 'http://localhost:3000';
+    }
+    
+    return rtrim($url, '/');
+}
 
 /*
 |--------------------------------------------------------------------------

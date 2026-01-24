@@ -103,7 +103,7 @@ try {
     error_log("Verification token created");
     
     // Send verification email with dynamic domain
-    $baseUrl = $_ENV['NEXT_PUBLIC_BASE_URL'] ?? 'http://localhost:3000';
+    $baseUrl = getFrontendUrl();
     $verificationLink = $baseUrl . "/verify-email?token=" . $verificationToken;
     error_log("Verification link: " . $verificationLink);
     

@@ -433,12 +433,12 @@
   }
   
   .productImage {
-    height: 180px; 
+    height: 160px;
   }
   
   .productIcon {
-    width: 160px; /* Larger mobile icon */
-    height: 160px;
+    width: 120px;
+    height: 120px;
   }
 }
 
@@ -448,13 +448,12 @@
     width: 100%;
     max-width: 100%;
     min-width: 0;
-    margin: 0 -4px; /* Slight negative margin to maximize edge-to-edge if needed */
   }
 
   /* Mobile: match compact card height by tightening content (do not change image height) */
   .content {
-    padding: 0.4rem; /* Further reduced from 0.65rem */
-    gap: 0.35rem; /* Tighter gap */
+    padding: 0.65rem;
+    gap: 0.5rem;
   }
 
   .rating {

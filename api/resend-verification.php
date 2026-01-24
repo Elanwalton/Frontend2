@@ -70,7 +70,7 @@ try {
     
     // Send verification email
     // Use the same Next.js verification page URL as SignUp.php
-    $verificationLink = "http://localhost:3000/verify-email?token=" . $verificationToken;
+    $verificationLink = getFrontendUrl() . "/verify-email?token=" . $verificationToken;
     $to = $email;
     $subject = "Verify Your Email Address";
     $message = "
