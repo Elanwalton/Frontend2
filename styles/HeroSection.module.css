@@ -262,7 +262,7 @@
 /* Text styles */
 .heroText {
   position: absolute;
-  bottom: 3.25rem; /* Pushed up from 1.25rem for mobile visibility */
+  bottom: 2rem; /* Lowered from 3.25rem for better balance */
   left: 1.25rem;
   right: 1.25rem;
   z-index: 2;
@@ -454,13 +454,17 @@
   }
 
   .heroText {
-    bottom: 42px; /* Pushed up from 18px */
+    bottom: 24px; 
     left: 15px;
   }
 
   .heroText h2 {
     font-size: 1.4rem;
-    margin-bottom: 0.6rem;
+    margin-bottom: 1.8rem; /* Pushed title higher relative to buttons */
+  }
+
+  .subtitle {
+    margin-bottom: 1.2rem; /* Extra space for subtitle too */
   }
 
   .buyBtn {
@@ -733,19 +737,20 @@
 .swiperWrapper :global(.swiper-button-next),
 .swiperWrapper :global(.swiper-button-prev) {
   color: #f7c843 !important;
-  background: rgba(255, 255, 255, 0.95);
+  background: transparent !important;
   width: 45px;
   height: 45px;
   border-radius: 50%;
   transition: all 0.28s ease;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  box-shadow: none !important;
 }
 
 .swiperWrapper :global(.swiper-button-next):hover,
 .swiperWrapper :global(.swiper-button-prev):hover {
-  background: #f7c843;
-  color: #081e31 !important;
-  transform: scale(1.06);
+  background: transparent !important;
+  color: #f7c843 !important;
+  transform: scale(1.15);
+  opacity: 0.8;
 }
 
 .swiperWrapper :global(.swiper-button-next):after,
