@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import axios from 'axios';
+import axiosClient from '@/utils/axiosClient';
 import { getApiUrl } from '@/utils/apiUrl';
+import { buildMediaUrl } from '@/utils/media';
 import styles from '@/styles/CreateProduct.module.css';
 const DEFAULT_CATEGORIES = [
   "Batteries",
@@ -57,7 +58,7 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ onClose, onProd
     fd.append("main_image", file);
     try {
       setIsUploading(true);
-      const res = await axios.post<{ success: boolean; urls: string[]; message?: string }>(getApiUrl("/api/upload_images.php"), fd, { withCredentials: true });
+      const res = await axiosClient.post<{ success: boolean; urls: string[]; message?: string }>(getApiUrl("/api/upload_images.php"), fd);
       if (!res.data.success) throw new Error(res.data.message);
       setMainImage(res.data.urls[0]);
     } catch (err) {
@@ -74,7 +75,7 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ onClose, onProd
     files.forEach(f => fd.append("thumbnails[]", f));
     try {
       setIsUploading(true);
-      const res = await axios.post<{ success: boolean; urls: string[]; message?: string }>(getApiUrl("/api/upload_images.php"), fd, { withCredentials: true });
+      const res = await axiosClient.post<{ success: boolean; urls: string[]; message?: string }>(getApiUrl("/api/upload_images.php"), fd);
       if (!res.data.success) throw new Error(res.data.message);
       setThumbnails(res.data.urls);
     } catch (err) {
@@ -95,11 +96,12 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ onClose, onProd
     const payload = { name, brand, category, description, status: visibility, price, quantity,revenue: price * quantity,
   rating: 0, main_image_url: mainImage, thumbnails };
     try {
-      const res = await axios.post<{ success: boolean; message?: string }>(getApiUrl("/api/addproduct.php"), payload);
+      const res = await axiosClient.post<{ success: boolean; message?: string }>(getApiUrl("/api/addproduct.php"), payload);
       if (!res.data.success) throw new Error(res.data.message);
       await onProductAdded(payload);
       onClose();
     } catch (err) {
+      // The error message here will be caught and likely handled by the interceptor if it's a 401
       alert((err as Error).message || "Could not save product.");
     } finally {
       setIsSubmitting(false);
@@ -180,13 +182,13 @@ const CreateProductModal: React.FC<CreateProductModalProps> = ({ onClose, onProd
                 <div className={styles.thumbnailGrid}>
                   {mainImage && (
                     <div className={styles.thumbnailContainer}>
-                      <img src={`${process.env.NEXT_PUBLIC_MEDIA_BASE_URL?.replace(/\/?public\/?$/i, "") || 'https://api.sunleaftechnologies.co.ke'}/public/${mainImage}`} alt="Main" className={styles.thumbnail} />
+                      <img src={buildMediaUrl(mainImage)} alt="Main" className={styles.thumbnail} />
                       <button type="button" className={styles.removeThumbnailButton} onClick={() => setMainImage(null)} disabled={isUploading}>×</button>
                     </div>
                   )}
                   {thumbnails.map((url, i) => (
                     <div key={i} className={styles.thumbnailContainer}>
-                      <img src={`${process.env.NEXT_PUBLIC_MEDIA_BASE_URL?.replace(/\/?public\/?$/i, "") || 'https://api.sunleaftechnologies.co.ke'}/public/${url}`} alt={`Thumb ${i}`} className={styles.thumbnail} />
+                      <img src={buildMediaUrl(url)} alt={`Thumb ${i}`} className={styles.thumbnail} />
                       <button type="button" className={styles.removeThumbnailButton} onClick={() => setThumbnails(prev => prev.filter((_, idx) => idx !== i))} disabled={isUploading}>×</button>
                     </div>
                   ))}

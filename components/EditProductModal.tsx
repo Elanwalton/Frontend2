@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios';
+import axiosClient from '@/utils/axiosClient';
 import { getApiUrl } from '@/utils/apiUrl';
 import styles from '@/styles/CreateProduct.module.css';
 import { buildMediaUrl } from '@/utils/media';
@@ -57,10 +57,9 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ product, onClose, o
     fd.append("main_image", file);
     try {
       setIsUploading(true);
-      const res = await axios.post<{ success: boolean; urls: string[]; message?: string }>(
+      const res = await axiosClient.post<{ success: boolean; urls: string[]; message?: string }>(
         getApiUrl('/api/upload_images'),
-        fd,
-        { withCredentials: true }
+        fd
       );
       if (!res.data.success) throw new Error(res.data.message);
       setMainImage(res.data.urls[0]);
@@ -78,10 +77,9 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ product, onClose, o
     files.forEach(f => fd.append("thumbnails[]", f));
     try {
       setIsUploading(true);
-      const res = await axios.post<{ success: boolean; urls: string[]; message?: string }>(
+      const res = await axiosClient.post<{ success: boolean; urls: string[]; message?: string }>(
         getApiUrl('/api/upload_images'),
-        fd,
-        { withCredentials: true }
+        fd
       );
       if (!res.data.success) throw new Error(res.data.message);
       setThumbnails(prev => [...prev, ...res.data.urls]);
@@ -117,10 +115,9 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ product, onClose, o
     };
 
     try {
-      const res = await axios.post<{ success: boolean; message?: string }>(
+      const res = await axiosClient.post<{ success: boolean; message?: string }>(
         getApiUrl('/api/updateProduct'),
-        payload,
-        { withCredentials: true }
+        payload
       );
       if (!res.data.success) throw new Error(res.data.message);
       onProductUpdated({ ...product, ...payload });

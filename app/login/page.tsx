@@ -171,7 +171,7 @@ function LoginContent() {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter your email"
-                autoComplete="username"
+                autoComplete="email"
                 required
               />
             </div>
