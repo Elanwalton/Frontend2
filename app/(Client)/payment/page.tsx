@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Smartphone, CreditCard, ArrowLeft, ArrowRight, CheckCircle, AlertCircle, Loader2, Shield, Clock, Home, ChevronRight, ShoppingBag, Package } from 'lucide-react';
+import { Smartphone, CreditCard, ArrowLeft, ArrowRight, CheckCircle, AlertCircle, Loader2, Shield, Clock, Home, ChevronRight, ShoppingBag, Package, User } from 'lucide-react';
 import { getApiUrl } from '@/utils/apiUrl';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -41,6 +41,7 @@ function PaymentPageContent() {
   const [paymentMethod, setPaymentMethod] = useState<'mpesa' | 'card'>('mpesa');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isNavigating, setIsNavigating] = useState<string | null>(null);
   const [paymentStatus, setPaymentStatus] = useState<'idle' | 'processing' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const [transactionId, setTransactionId] = useState('');
@@ -116,19 +117,22 @@ function PaymentPageContent() {
       const result = await response.json();
 
       if (result.success) {
+        // Get the real CheckoutRequestID from Safaricom response
+        const mpesaCheckoutId = result.data.checkout_request_id;
+        
         // Store order data with transaction info
         localStorage.setItem('orderData', JSON.stringify({
           orderId: orderId,
           orderNumber: orderNumber,
-          transactionId: txId,
+          transactionId: mpesaCheckoutId, // Store the real ID
           amount: checkoutData?.total,
           status: 'pending',
           phone: phoneNumber,
           timestamp: new Date().toISOString()
         }));
         
-        // Start polling for payment status
-        pollPaymentStatus(txId, orderId);
+        // Start polling for payment status using the correct ID
+        pollPaymentStatus(mpesaCheckoutId, orderId);
       } else {
         throw new Error(result.message || 'Payment initiation failed');
       }
@@ -232,19 +236,45 @@ function PaymentPageContent() {
             <p className={styles.subtitle}>Choose your preferred payment method and complete your order</p>
             
             <div className={styles.progressBar}>
-              <div className={styles.progressStep}>
+              <button 
+                type="button"
+                className={`${styles.progressStep} ${styles.clickable}`}
+                onClick={() => {
+                  setIsNavigating('cart');
+                  router.push('/Cart');
+                }}
+                disabled={!!isNavigating}
+                title="Back to Cart"
+              >
                 <div className={`${styles.stepNumber} ${styles.completed}`}>
-                  <CheckCircle size={20} />
+                  {isNavigating === 'cart' ? (
+                    <Loader2 size={20} className={styles.spinnerIcon} />
+                  ) : (
+                    <ShoppingBag size={20} />
+                  )}
                 </div>
                 <span>Cart</span>
-              </div>
+              </button>
               <div className={`${styles.progressLine} ${styles.completed}`}></div>
-              <div className={styles.progressStep}>
+              <button 
+                type="button"
+                className={`${styles.progressStep} ${styles.clickable}`}
+                onClick={() => {
+                  setIsNavigating('checkout');
+                  router.push('/checkout');
+                }}
+                disabled={!!isNavigating}
+                title="Back to Checkout"
+              >
                 <div className={`${styles.stepNumber} ${styles.completed}`}>
-                  <CheckCircle size={20} />
+                  {isNavigating === 'checkout' ? (
+                    <Loader2 size={20} className={styles.spinnerIcon} />
+                  ) : (
+                    <User size={20} />
+                  )}
                 </div>
                 <span>Checkout</span>
-              </div>
+              </button>
               <div className={`${styles.progressLine} ${styles.completed}`}></div>
               <div className={`${styles.progressStep} ${styles.active}`}>
                 <div className={styles.stepNumber}>3</div>

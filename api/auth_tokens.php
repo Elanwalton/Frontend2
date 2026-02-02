@@ -9,7 +9,7 @@ use Firebase\JWT\Key;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-const ACCESS_TTL  = 900;           // 15 minutes
+const ACCESS_TTL  = 3600;          // 1 hour (increased from 15 min)
 const REFRESH_TTL = 60 * 60 * 24 * 30; // 30 days
 
 function getJwtSecret(): string {
@@ -43,18 +43,3 @@ function validateAccessToken(string $jwt): array {
     return json_decode(json_encode($decoded), true);
 }
 
-/**
- * Set access token cookie
- */
-function setAccessCookie(string $token): void {
-    $cookieOptions = [
-        'expires' => time() + ACCESS_TTL,
-        'path' => '/',
-        'domain' => $_SERVER['HTTP_HOST'] ?? '',
-        'secure' => false, // Set to true in production with HTTPS
-        'httponly' => true,
-        'samesite' => 'Lax'
-    ];
-    
-    setcookie('access_token', $token, $cookieOptions);
-}

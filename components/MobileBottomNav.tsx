@@ -2,26 +2,19 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Home, ShoppingCart, ShoppingBag, User, LogOut, LogIn } from 'lucide-react';
+import { Home, ShoppingCart, ShoppingBag, User, LogOut, LogIn, Loader2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import useCartStore from '@/store/UseCartStore';
 
 export default function MobileBottomNav() {
   const { user, logout } = useAuth();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState('home');
-  const [cartCount, setCartCount] = useState(0);
+  const cartItems = useCartStore((state) => state.cartItems);
+  const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const [isNavigating, setIsNavigating] = useState<string | null>(null);
 
   useEffect(() => {
-    // Get cart count from localStorage
-    const cartItems = localStorage.getItem('cartItems');
-    if (cartItems) {
-      try {
-        const items = JSON.parse(cartItems);
-        setCartCount(items.length || 0);
-      } catch (error) {
-        setCartCount(0);
-      }
-    }
 
     // Set active tab based on current path
     const path = window.location.pathname;
@@ -44,12 +37,15 @@ export default function MobileBottomNav() {
         router.push('/');
         break;
       case 'shop':
+        setIsNavigating('shop');
         router.push('/categories');
         break;
       case 'cart':
+        setIsNavigating('cart');
         router.push('/Cart');
         break;
       case 'account':
+        setIsNavigating('account');
         router.push('/Account');
         break;
       case 'logout':
@@ -169,6 +165,12 @@ export default function MobileBottomNav() {
                       objectFit: 'cover'
                     }}
                   />
+                ) : isNavigating === item.id ? (
+                  <Loader2
+                    size={22}
+                    color="white"
+                    className="spinner"
+                  />
                 ) : (
                   <Icon
                     size={22}
@@ -182,24 +184,23 @@ export default function MobileBottomNav() {
                 {item.badge && item.badge > 0 && (
                   <div style={{
                     position: 'absolute',
-                    top: '-4px',
-                    right: '-4px',
-                    background: 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
+                    top: '0',
+                    right: '0',
+                    background: '#10B981', // Brand green instead of red
                     color: 'white',
-                    fontSize: '0.7rem',
+                    fontSize: '0.6rem',
                     fontWeight: '700',
-                    borderRadius: '10px',
-                    padding: '0.15rem 0.4rem',
-                    minWidth: '18px',
-                    height: '18px',
+                    borderRadius: '50%',
+                    minWidth: '15px',
+                    height: '15px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    border: '2px solid #0f172a',
-                    boxShadow: '0 2px 8px rgba(239, 68, 68, 0.4)',
-                    animation: item.id === 'cart' ? 'pulse 2s infinite' : 'none'
+                    border: '2px solid #0f172a', // Matches nav background to create "cutout" look
+                    boxShadow: 'none',
+                    zIndex: 10
                   }}>
-                    {item.badge > 99 ? '99+' : item.badge}
+                    {item.badge > 9 ? '9+' : item.badge}
                   </div>
                 )}
               </div>
@@ -242,6 +243,19 @@ export default function MobileBottomNav() {
           50% {
             transform: scale(1.1);
           }
+        }
+
+        @keyframes rotate {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
+        :global(.spinner) {
+          animation: rotate 1s linear infinite;
         }
 
         @keyframes glow {

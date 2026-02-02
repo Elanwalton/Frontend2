@@ -21,11 +21,13 @@ import {
   X,
   MessageSquare,
   ThumbsUp,
-  AlertCircle
+  AlertCircle,
+  Loader2
 } from 'lucide-react';
 import useCartStore from '@/store/UseCartStore';
 import styles from './product.module.css';
 import { buildMediaUrl } from '@/utils/media';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 interface Product {
   id: string;
@@ -59,11 +61,17 @@ interface Product {
   badges?: string[];
 }
 
-interface ProductDetailClientProps {
-  product: Product;
+interface BreadcrumbItem {
+  label: string;
+  href?: string;
 }
 
-export default function ProductDetailClient({ product }: ProductDetailClientProps) {
+interface ProductDetailClientProps {
+  product: Product;
+  breadcrumbItems: BreadcrumbItem[];
+}
+
+export default function ProductDetailClient({ product, breadcrumbItems }: ProductDetailClientProps) {
   const router = useRouter();
   const addToCart = useCartStore(state => state.addToCart);
   
@@ -76,6 +84,8 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
   const [activeTab, setActiveTab] = useState<'description' | 'specs' | 'reviews' | 'shipping'>('description');
   
   // Review Modal State
@@ -195,6 +205,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
   };
 
   const handleAddToCart = () => {
+    setIsAddingToCart(true);
     addToCart({
       id: Number(product.id),
       name: product.name,
@@ -204,10 +215,14 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
     });
     setToastMessage('Added to cart!');
     setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+    setTimeout(() => {
+      setShowToast(false);
+      setIsAddingToCart(false);
+    }, 3000);
   };
 
   const handleBuyNow = () => {
+    setIsNavigating(true);
     handleAddToCart();
     router.push('/checkout');
   };
@@ -248,6 +263,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
 
   return (
     <div className={styles.container}>
+      <Breadcrumbs items={breadcrumbItems} />
       <div className={styles.wrapper}>
         <div className={styles.productGrid}>
           {/* Image Section */}
@@ -435,21 +451,28 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
               <motion.button
                 className={styles.addToCartBtn}
                 onClick={handleAddToCart}
-                disabled={!product.inStock}
+                disabled={!product.inStock || isAddingToCart}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <ShoppingCart size={20} />
-                {product.inStock ? 'Add to Cart' : 'Out of Stock'}
+                {isAddingToCart ? (
+                  <Loader2 size={20} className={styles.spinnerIcon} />
+                ) : (
+                  <ShoppingCart size={20} />
+                )}
+                {isAddingToCart ? 'Adding...' : product.inStock ? 'Add to Cart' : 'Out of Stock'}
               </motion.button>
               <motion.button
                 className={styles.buyNowBtn}
                 onClick={handleBuyNow}
-                disabled={!product.inStock}
+                disabled={!product.inStock || isNavigating}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                Buy Now
+                {isNavigating ? (
+                  <Loader2 size={20} className={styles.spinnerIcon} />
+                ) : null}
+                {isNavigating ? 'Processing...' : 'Buy Now'}
               </motion.button>
               <button
                 className={`${styles.iconBtn} ${isWishlisted ? styles.wishlisted : ''}`}

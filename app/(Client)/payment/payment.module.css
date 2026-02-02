@@ -143,51 +143,70 @@
 }
 
 .progressStep.active span {
-  color: white;
+  color: #84cc16;
+}
+
+.progressStep.clickable {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: all 0.3s ease;
+}
+
+.progressStep.clickable:hover span {
+  color: #84cc16;
+}
+
+.progressStep.clickable:hover .stepNumber {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(87, 181, 0, 0.4);
+  border-color: #84cc16;
 }
 
 .stepNumber {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
   backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(87, 181, 0, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.5);
   transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .stepNumber.completed {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(180deg, #84cc16 0%, #57b500 100%);
   color: white;
-  border-color: rgba(255, 255, 255, 0.5);
-  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 6px 15px rgba(87, 181, 0, 0.3);
 }
 
 .progressStep.active .stepNumber {
-  background: linear-gradient(135deg, var(--energy-blue-strong) 0%, var(--pulse-accent) 100%);
+  background: linear-gradient(180deg, #84cc16 0%, #57b500 100%);
   color: white;
-  border-color: rgba(255, 255, 255, 0.5);
-  box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
-  transform: scale(1.1);
+  border-color: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 10px 20px -5px rgba(87, 181, 0, 0.5);
+  transform: scale(1.1) translateY(-2px);
 }
 
 .progressLine {
   flex: 1;
   height: 2px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(87, 181, 0, 0.15);
   position: relative;
   min-width: 40px;
   transition: background 0.3s ease;
 }
 
 .progressLine.completed {
-  background: linear-gradient(90deg, #10b981, #059669);
-  box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+  background: linear-gradient(90deg, #57b500, #84cc16);
+  box-shadow: 0 0 15px rgba(87, 181, 0, 0.3);
 }
 
 .content {
@@ -271,10 +290,10 @@
 }
 
 .tabButton.active {
-  background: linear-gradient(135deg, #0f172a, #1e3a8a);
+  background: linear-gradient(180deg, #84cc16 0%, #57b500 100%);
   border-color: transparent;
   color: white;
-  box-shadow: 0 4px 15px rgba(15, 23, 42, 0.3);
+  box-shadow: 0 6px 15px rgba(87, 181, 0, 0.3);
   transform: translateY(-2px);
 }
 
@@ -359,7 +378,7 @@
 }
 
 .packageIcon {
-  color: var(--energy-blue-strong);
+  color: #57b500;
   width: 24px;
   height: 24px;
 }
@@ -448,19 +467,19 @@
 .submitBtn {
   width: 100%;
   padding: 1.25rem 2rem;
-  background: linear-gradient(135deg, #0f172a, #1e3a8a);
-  color: white;
+  background: linear-gradient(135deg, var(--cta-yellow-500) 0%, var(--cta-orange-500) 100%);
+  color: #081e31; /* Use deep navy for better contrast on orange */
   border: none;
   border-radius: 12px;
   font-size: 1.125rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.35);
+  box-shadow: 0 8px 30px rgba(247, 127, 0, 0.35);
   position: relative;
   overflow: hidden;
   z-index: 1;
@@ -473,7 +492,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #1e3a8a, #0f172a);
+  background: linear-gradient(135deg, var(--cta-orange-500) 0%, var(--cta-yellow-500) 100%);
   opacity: 0;
   transition: opacity 0.3s ease;
   z-index: -1;
@@ -485,12 +504,12 @@
 
 .submitBtn:hover:not(:disabled) {
   transform: translateY(-4px);
-  box-shadow: 0 10px 40px rgba(15, 23, 42, 0.4);
+  box-shadow: 0 10px 40px rgba(247, 127, 0, 0.5);
 }
 
 .submitBtn:active:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(15, 23, 42, 0.4);
+  box-shadow: 0 6px 25px rgba(247, 127, 0, 0.4);
 }
 
 .submitBtn:disabled {
@@ -512,6 +531,10 @@
   border-top-color: white;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
+}
+
+.spinnerIcon {
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
@@ -878,21 +901,25 @@
   justify-content: center;
   gap: 0.75rem;
   padding: 1rem;
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  background: linear-gradient(135deg, rgba(87, 181, 0, 0.85) 0%, rgba(132, 204, 22, 0.85) 100%);
+  backdrop-filter: blur(8px);
   border-radius: 10px;
   font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--energy-blue-strong);
+  font-weight: 700;
+  color: white;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(87, 181, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 :global(.dark) .securityBadge {
-  background: linear-gradient(135deg, rgba(14, 165, 233, 0.2) 0%, rgba(14, 165, 233, 0.1) 100%);
+  background: linear-gradient(135deg, rgba(87, 181, 0, 0.3) 0%, rgba(132, 204, 22, 0.2) 100%);
 }
 
 .securityBadge:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(14, 165, 233, 0.2);
+  box-shadow: 0 6px 15px rgba(87, 181, 0, 0.25);
+  filter: brightness(1.05);
 }
 
 .securityBadge svg {

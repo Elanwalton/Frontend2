@@ -2,6 +2,7 @@
 .container {
   min-height: 100vh;
   background: linear-gradient(to bottom, #f9fafb 0%, #ffffff 100%);
+  padding-top: 4rem; /* Offset for desktop fixed navbar */
 }
 
 /* Categories Bar */
@@ -9,7 +10,7 @@
   background: white;
   border-bottom: 2px solid #e5e7eb;
   position: sticky;
-  top: 0;
+  top: 4rem; /* Sticks below desktop fixed navbar */
   z-index: 50;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
@@ -470,7 +471,7 @@
 
 .productTitle {
   font-weight: 700;
-  color: #111827;
+  color: #0a2540; /* Updated to brand navy */
   font-size: 1.125rem;
   line-height: 1.4;
   margin-bottom: 0.75rem;
@@ -483,7 +484,7 @@
 }
 
 .productCard:hover .productTitle {
-  color: #3b82f6;
+  color: #1a3a52; /* Lighter navy hover */
 }
 
 .categoryTag {
@@ -506,17 +507,14 @@
 .price {
   font-size: 1.875rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #111827 0%, #374151 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #0a2540; /* Solid brand navy for clarity */
 }
 
 /* Add to Cart Button */
 .addToCartButton {
   width: 100%;
   padding: 0.875rem 1.5rem;
-  background: #081e31;
+  background: #0a2540; /* Brand navy */
   color: white;
   font-weight: 700;
   border-radius: 12px;
@@ -535,7 +533,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, #0a2540 0%, #1a3a52 100%);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -645,6 +643,14 @@
 }
 
 @media (max-width: 768px) {
+  .container {
+    padding-top: 3.5rem; /* Offset for mobile fixed navbar */
+  }
+
+  .categoriesBar {
+    top: 3.5rem; /* Sticks below mobile fixed navbar */
+  }
+
   .categoriesWrapper {
     padding: 1rem;
     flex-direction: column;

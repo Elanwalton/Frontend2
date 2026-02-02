@@ -1,9 +1,19 @@
 .container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 2rem 1rem;
+  background: linear-gradient(135deg, #081e31 0%, #0a2640 100%);
+  padding: 4rem 1rem;
   display: flex;
   align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 30%, rgba(87, 181, 0, 0.15) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 .wrapper {
@@ -13,11 +23,13 @@
 }
 
 .successCard {
-  background: white;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: 24px;
   padding: 3rem 2rem;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-  animation: slideUp 0.6s ease-out;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .checkmarkWrapper {
@@ -30,12 +42,12 @@
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  background: linear-gradient(180deg, #84cc16 0%, #57b500 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 10px 40px rgba(72, 187, 120, 0.4);
-  animation: scaleIn 0.5s ease-out 0.2s both;
+  box-shadow: 0 10px 30px rgba(87, 181, 0, 0.4);
+  animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
 }
 
 .checkmark {
@@ -63,11 +75,11 @@
 }
 
 .orderInfo {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  background: linear-gradient(180deg, rgba(87, 181, 0, 0.08) 0%, rgba(87, 181, 0, 0.03) 100%);
   border-radius: 16px;
   padding: 1.5rem;
   margin-bottom: 2rem;
-  border: 2px solid #e2e8f0;
+  border: 1px solid rgba(87, 181, 0, 0.15);
   animation: fadeIn 0.5s ease-out 0.5s both;
 }
 
@@ -131,17 +143,54 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
-.itemLeft {
+.infoRow {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.25rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  border: 1px solid rgba(87, 181, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.infoRow:hover {
+  background: rgba(87, 181, 0, 0.05);
+  transform: translateX(5px);
+}
+
+.infoIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #84cc16 0%, #57b500 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 4px 12px rgba(87, 181, 0, 0.3);
+  flex-shrink: 0;
+}
+
+.infoContent h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 0.25rem 0;
+}
+
+.infoContent p {
+  font-size: 0.875rem;
+  color: #718096;
+  margin: 0;
 }
 
 .itemEmoji {
   font-size: 2rem;
   width: 50px;
   height: 50px;
-  background: #edf2f7;
+  background: rgba(87, 181, 0, 0.05);
+  border: 1px solid rgba(87, 181, 0, 0.1);
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -161,20 +210,20 @@
 
 .itemPrice {
   font-weight: 700;
-  color: #667eea;
+  color: #57b500;
   font-size: 1.125rem;
 }
 
 .totalRow {
   display: flex;
   justify-content: space-between;
-  padding: 1rem;
-  background: white;
+  padding: 1.25rem 1rem;
+  background: rgba(87, 181, 0, 0.03);
   border-radius: 12px;
   font-size: 1.25rem;
   font-weight: 700;
   color: #1a202c;
-  border: 2px solid #667eea;
+  border: 2px solid #57b500;
 }
 
 .deliveryInfo {
@@ -239,11 +288,11 @@
 .primaryBtn {
   flex: 1;
   padding: 1rem 1.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--cta-yellow-500) 0%, var(--cta-orange-500) 100%);
+  color: #081e31;
   border: none;
   border-radius: 12px;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -251,7 +300,13 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 8px 25px rgba(247, 127, 0, 0.3);
+}
+
+.primaryBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(247, 127, 0, 0.45);
+  background: linear-gradient(135deg, var(--cta-orange-500) 0%, var(--cta-yellow-500) 100%);
 }
 
 .primaryBtn:hover {

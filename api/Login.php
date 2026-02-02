@@ -140,8 +140,12 @@ try {
 
     // Generate and set access token
     require_once __DIR__ . '/auth_tokens.php';
+    require_once __DIR__ . '/auth_cookies.php';
+    require_once __DIR__ . '/refresh_tokens.php';
+    
     $accessToken = generateAccessToken($user);
-    setAccessCookie($accessToken);
+    setAccessCookieEnhanced($accessToken);
+    issueRefreshToken($conn, (int)$user['id']);
 
     // Send success response
     http_response_code(200);

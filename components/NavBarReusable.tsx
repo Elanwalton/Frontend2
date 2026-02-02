@@ -6,7 +6,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import styles from '@/styles/Header.module.css';
 import { FaShoppingCart } from "react-icons/fa";
-import { UserCircle, Search, X } from "lucide-react";
+import { UserCircle, Search, X, Loader2 } from "lucide-react";
 import LogoutButton from '@/components/LogoutButton';
 import { useAuth } from '@/context/AuthContext';
 import { buildMediaUrl } from '@/utils/media';
@@ -15,6 +15,7 @@ import useCartStore from '@/store/UseCartStore';
 const Header: React.FC = () => {
   const router = useRouter();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isNavigatingToCart, setIsNavigatingToCart] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const { user } = useAuth();
   const userRole = user?.role;
@@ -112,9 +113,29 @@ const Header: React.FC = () => {
             </form>
           </li>
           <li>
-            <Link href="/Cart" style={{ position: 'relative', display: 'inline-block' }}>
-              <FaShoppingCart size={24} />
-              {cartCount > 0 && (
+            <button 
+              onClick={() => {
+                setIsNavigatingToCart(true);
+                router.push('/Cart');
+              }}
+              className={styles.cartTrigger}
+              title="View Shopping Cart"
+              disabled={isNavigatingToCart}
+              style={{ 
+                position: 'relative', 
+                display: 'inline-block',
+                background: 'none',
+                border: 'none',
+                padding: 0,
+                cursor: isNavigatingToCart ? 'wait' : 'pointer'
+              }}
+            >
+              {isNavigatingToCart ? (
+                <Loader2 size={24} className={styles.spinner} />
+              ) : (
+                <FaShoppingCart size={24} />
+              )}
+              {cartCount > 0 && !isNavigatingToCart && (
                 <span
                   style={{
                     position: 'absolute',
@@ -139,7 +160,7 @@ const Header: React.FC = () => {
                   {cartCount > 99 ? '99+' : cartCount}
                 </span>
               )}
-            </Link>
+            </button>
           </li>
           <li>
             <Link href="/Account" style={{ position: 'relative', display: 'inline-block' }}>

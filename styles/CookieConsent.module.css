@@ -1,0 +1,139 @@
+.banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease-out;
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+.banner.visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.content {
+  background: linear-gradient(180deg, #ffffff 0%, rgba(249, 250, 251, 0.95) 100%);
+  border-top: 3px solid #57b500; /* Vibrant green from footer */
+  box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(12px);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.flexWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Medium screens and up */
+@media (min-width: 768px) {
+  .flexWrapper {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .container {
+    padding: 1rem 1rem; /* Smaller padding on larger screens like original */
+  }
+}
+
+.textSection {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.iconWrapper {
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+}
+
+.icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: #57b500; /* Matches footer green */
+}
+
+.title {
+  font-weight: 600;
+  color: #111827; /* gray-900 */
+  margin-bottom: 0.25rem;
+  font-size: 1rem;
+}
+
+.description {
+  font-size: 0.875rem;
+  color: #4b5563; /* gray-600 */
+  line-height: 1.5;
+}
+
+.link {
+  color: #57b500;
+  text-decoration: underline;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.link:hover {
+  color: #84cc16;
+}
+
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .buttonGroup {
+    flex-direction: row;
+    width: auto;
+    flex-shrink: 0;
+  }
+}
+
+.button {
+  padding: 0.625rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.buttonDecline {
+  background-color: #f3f4f6; /* gray-100 */
+  color: #374151; /* gray-700 */
+  border: 1px solid #d1d5db; /* gray-300 */
+}
+
+.buttonDecline:hover {
+  background-color: #e5e7eb; /* gray-200 */
+}
+
+.buttonAccept {
+  background: linear-gradient(135deg, #57b500 0%, #84cc16 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 12px rgba(87, 181, 0, 0.3);
+}
+
+.buttonAccept:hover {
+  background: linear-gradient(135deg, #84cc16 0%, #57b500 100%);
+  box-shadow: 0 6px 18px rgba(87, 181, 0, 0.4);
+  transform: translateY(-1px);
+}

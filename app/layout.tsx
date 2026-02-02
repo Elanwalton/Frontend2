@@ -3,7 +3,9 @@ import "./globals.css";
 import { ReactNode } from "react";
 import type { Metadata, Viewport } from "next";
 import RootProviders from '@/components/RootProviders';
+import CookieConsent from '@/components/CookieConsent';
 import Script from "next/script";
+
 
 export const metadata: Metadata = {
   title: "Sunleaf Technologies Kenya | Solar Panels, Inverters & Lithium Batteries",
@@ -158,6 +160,7 @@ return (
       </head>
     <body suppressHydrationWarning>
       <RootProviders>{children}</RootProviders>
+      <CookieConsent />
     </body>
   </html>
 );

@@ -359,3 +359,43 @@
     font-size: 0.9rem;
   }
 }
+
+/* Small iPhones (iPhone SE, etc.) */
+@media (max-width: 375px) {
+  .categoriesSection {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .header {
+    margin-bottom: 1.5rem;
+  }
+
+  .title {
+    font-size: 1.45rem;
+  }
+
+  .subtitle {
+    font-size: 0.85rem;
+  }
+
+  .iconBadge {
+    width: 30px;
+    height: 30px;
+    top: -6px;
+    right: -6px;
+  }
+
+  .iconBadge svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .octagonWrapper {
+    width: 90px;
+    height: 90px;
+  }
+
+  .categoryCard {
+    min-width: 110px;
+  }
+}

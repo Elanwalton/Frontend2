@@ -66,8 +66,12 @@ try {
     $payment = $result->fetch_assoc();
     
     // Update payment record based on result
-    $status = ($result_code === '0') ? 'success' : 'failed';
+    // Ensure strict string values for ENUM
+    $status = ((string)$result_code === '0' || $result_code === 0) ? 'success' : 'failed';
     $processed_at = date('Y-m-d H:i:s');
+    
+    // Log the determined status to debug truncation errors
+    error_log("Processing M-Pesa Callback. ResultCode: " . json_encode($result_code) . ", Determined Status: '$status'");
     
     $update_sql = "UPDATE payments SET 
         status = ?, 
@@ -80,59 +84,62 @@ try {
         WHERE id = ?";
     
     $update_stmt = $conn->prepare($update_sql);
+    
+    // Fix 1: Assign JSON to variable for bind_param (passed by reference)
+    $jsonCallbackData = json_encode($callback_data);
+    
     $update_stmt->bind_param(
         "ssssssi",
         $status,
         $result_code,
         $result_desc,
         $mpesa_receipt_number,
-        json_encode($callback_data),
+        $jsonCallbackData,
         $processed_at,
         $payment['id']
     );
     
     if (!$update_stmt->execute()) {
-        throw new Exception("Failed to update payment record");
+        throw new Exception("Failed to update payment record (" . $update_stmt->error . ")");
     }
     
     $update_stmt->close();
     $stmt->close();
     
-    // If payment was successful, you might want to:
-    // 1. Update order status
-    // 2. Send confirmation email to customer
-    // 3. Trigger any post-payment workflows
+    // Unset statements so finally block doesn't try to close them
+    unset($update_stmt);
+    unset($stmt);
     
-    if ($result_code === '0') {
+    // If payment was successful
+    if ($status === 'success') {
         // Payment successful - update order status
         $order_update_sql = "UPDATE orders SET status = 'paid', payment_status = 'completed', updated_at = NOW() WHERE id = ?";
         $order_stmt = $conn->prepare($order_update_sql);
         $order_stmt->bind_param("i", $payment['order_id']);
         $order_stmt->execute();
         $order_stmt->close();
+        unset($order_stmt); 
         
-        // Log successful payment
         error_log("M-Pesa payment successful: Receipt $mpesa_receipt_number, Amount $amount, Order ID {$payment['order_id']}");
         
-        // You could also send a confirmation email here
-        // sendPaymentConfirmationEmail($payment['customer_email'], $payment['order_id'], $mpesa_receipt_number, $amount);
-        
     } else {
-        // Payment failed
         error_log("M-Pesa payment failed: $result_desc, Order ID {$payment['order_id']}");
     }
     
-    // Return success response to M-Pesa
     echo json_encode(["ResultCode" => 0, "ResultDesc" => "Callback processed successfully"]);
     
 } catch (Exception $e) {
     error_log("M-Pesa Callback Error: " . $e->getMessage());
-    
     echo json_encode(["ResultCode" => 1, "ResultDesc" => "Internal server error"]);
 } finally {
-    if (isset($stmt)) $stmt->close();
-    if (isset($update_stmt)) $update_stmt->close();
-    if (isset($order_stmt)) $order_stmt->close();
-    $conn->close();
+    // Robustly close statements if they exist and aren't already closed
+    try {
+        if (isset($stmt) && $stmt instanceof mysqli_stmt) @$stmt->close();
+        if (isset($update_stmt) && $update_stmt instanceof mysqli_stmt) @$update_stmt->close();
+        if (isset($order_stmt) && $order_stmt instanceof mysqli_stmt) @$order_stmt->close();
+        if (isset($conn) && $conn instanceof mysqli) @$conn->close();
+    } catch (Throwable $e) {
+        // Ignore closing errors
+    }
 }
 ?>

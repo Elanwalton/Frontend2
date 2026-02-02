@@ -3,7 +3,7 @@
 .container {
   min-height: 100vh;
   background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 50%, #f8f9fa 100%);
-  padding: 6rem 2rem 3rem;
+  padding: 4rem 2rem 3rem; /* adjusted from 6rem to match 4rem navbar offset */
 }
 
 /* Header */
@@ -45,13 +45,13 @@
 .iconBadge {
   width: 70px;
   height: 70px;
-  background: linear-gradient(135deg, #081e31 0%, #0a2640 100%);
+  background: linear-gradient(135deg, #f7c843 0%, #f77f00 100%);
   border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  box-shadow: 0 10px 30px rgba(8, 30, 49, 0.3);
+  box-shadow: 0 10px 30px rgba(247, 127, 0, 0.25);
 }
 
 .title {
@@ -300,12 +300,13 @@
   width: 120px;
   height: 120px;
   margin: 0 auto 2rem;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+  background: linear-gradient(135deg, rgba(247, 200, 67, 0.15) 0%, rgba(247, 127, 0, 0.1) 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #6b7280;
+  color: #f77f00;
+  border: 4px solid rgba(247, 127, 0, 0.1);
 }
 
 .emptyCart h3 {
@@ -372,12 +373,13 @@
 .summaryBadge {
   width: 48px;
   height: 48px;
-  background: linear-gradient(135deg, #081e31 0%, #0a2640 100%);
+  background: linear-gradient(135deg, #f7c843 0%, #f77f00 100%);
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
+  box-shadow: 0 4px 15px rgba(247, 127, 0, 0.2);
 }
 
 .summaryContent {
@@ -495,7 +497,7 @@
 }
 
 .badge svg {
-  color: #10b981;
+  color: #f77f00;
 }
 
 .badge span {
@@ -518,7 +520,7 @@
 
 @media (max-width: 768px) {
   .container {
-    padding: 5rem 1rem 2rem;
+    padding: 3.5rem 1rem 2rem; /* adjusted for mobile navbar offset */
   }
 
   .header {
@@ -603,6 +605,6 @@
   }
   
   .container {
-    padding: 6rem 1rem 3rem;
+    padding: 3.5rem 1rem 3rem; /* consistent mobile offset */
   }
 }

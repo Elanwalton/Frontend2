@@ -474,7 +474,7 @@
   }
 
   .bannerImageWrapper {
-    padding-top: 70%;
+    padding-top: 77%; /* Increased by 10% for mobile */
   }
 
   .subheading {

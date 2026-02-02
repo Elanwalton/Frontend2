@@ -154,14 +154,20 @@ function sendError(int $code, string $message): void
 function getFrontendUrl(): string
 {
     $url = $_ENV['NEXT_PUBLIC_BASE_URL'] ?? $_ENV['SPA_ORIGIN'] ?? null;
+    $host = $_SERVER['HTTP_HOST'] ?? '';
     
-    if (!$url) {
-        $host = $_SERVER['HTTP_HOST'] ?? '';
-        // Production fallback for Sunleaf
-        if (strpos($host, 'api.sunleaftechnologies.co.ke') !== false || 
-            strpos($host, 'sunleaftechnologies.co.ke') !== false) {
+    // If we are on a production domain, but the URL is localhost, missing, or pointing to API, force main domain
+    $isProdHost = (strpos($host, 'api.sunleaftechnologies.co.ke') !== false || 
+                   strpos($host, 'sunleaftechnologies.co.ke') !== false);
+                   
+    // EXCEPTION: Links MUST go to the UI, not the API. Strip 'api.' if it exists in the URL
+    if ($isProdHost) {
+        if (!$url || strpos($url, 'localhost') !== false || strpos($url, 'api.') !== false) {
             return 'https://sunleaftechnologies.co.ke';
         }
+    }
+    
+    if (!$url) {
         return 'http://localhost:3000';
     }
     
@@ -213,7 +219,7 @@ function getAuthToken(): string
 
 /*
 |--------------------------------------------------------------------------
-| User Authentication
+| User Authentication (JWT-based)
 |--------------------------------------------------------------------------
 */
 function validateToken(mysqli $conn, string $token): array
@@ -222,39 +228,56 @@ function validateToken(mysqli $conn, string $token): array
         sendError(401, 'Unauthorized');
     }
 
-    $now = time();
+    try {
+        // Load JWT validation if not already loaded
+        if (!function_exists('validateAccessToken')) {
+            require_once __DIR__ . '/auth_tokens.php';
+        }
+        
+        // Validate JWT token
+        $payload = validateAccessToken($token);
+        $userId  = (int)($payload['sub'] ?? 0);
+        $role    = $payload['role'] ?? 'client';
 
-    $stmt = $conn->prepare(
-        'SELECT user_id, role 
-         FROM session_tokens 
-         WHERE token = ? AND expires_at > ? 
-         LIMIT 1'
-    );
+        if ($userId <= 0) {
+            sendError(401, 'Invalid token');
+        }
 
-    if (!$stmt) {
-        error_log('Auth query prepare failed: ' . $conn->error);
-        sendError(500, 'Authentication failure');
-    }
+        // Optionally fetch fresh user data from database
+        $stmt = $conn->prepare('SELECT id, email, role FROM users WHERE id = ? LIMIT 1');
+        if ($stmt) {
+            $stmt->bind_param('i', $userId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $user = $result->fetch_assoc();
+            $stmt->close();
+            
+            if ($user) {
+                return [
+                    'user_id' => (int)$user['id'],
+                    'email'   => $user['email'],
+                    'role'    => $user['role']
+                ];
+            }
+        }
 
-    $stmt->bind_param('si', $token, $now);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $user = $result ? $result->fetch_assoc() : null;
-    $stmt->close();
-
-    if (!$user) {
+        // Fallback to token payload if DB fetch fails
+        return [
+            'user_id' => $userId,
+            'email'   => $payload['email'] ?? '',
+            'role'    => $role
+        ];
+        
+    } catch (Throwable $e) {
+        error_log('Token validation error: ' . $e->getMessage());
         sendError(401, 'Unauthorized');
     }
-
-    return [
-        'user_id' => (int) $user['user_id'],
-        'role'    => $user['role']
-    ];
 }
+
 
 /*
 |--------------------------------------------------------------------------
-| Admin Authentication
+| Admin Authentication (JWT-based)
 |--------------------------------------------------------------------------
 */
 function validateAdminToken(mysqli $conn, string $token): array
@@ -263,36 +286,55 @@ function validateAdminToken(mysqli $conn, string $token): array
         sendError(401, 'Unauthorized');
     }
 
-    $now = time();
+    try {
+        // Load JWT validation if not already loaded
+        if (!function_exists('validateAccessToken')) {
+            require_once __DIR__ . '/auth_tokens.php';
+        }
+        
+        // Validate JWT token
+        $payload = validateAccessToken($token);
+        $userId  = (int)($payload['sub'] ?? 0);
+        $role    = $payload['role'] ?? 'client';
 
-    $stmt = $conn->prepare(
-        'SELECT user_id, role 
-         FROM session_tokens 
-         WHERE token = ? AND expires_at > ? 
-         LIMIT 1'
-    );
+        if ($userId <= 0) {
+            sendError(401, 'Invalid token');
+        }
 
-    if (!$stmt) {
-        error_log('Auth query prepare failed');
-        sendError(500, 'Authentication failure');
-    }
+        // Check admin role from token
+        if ($role !== 'admin') {
+            sendError(403, 'Forbidden');
+        }
 
-    $stmt->bind_param('si', $token, $now);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $user   = $result ? $result->fetch_assoc() : null;
-    $stmt->close();
+        // Optionally fetch fresh user data from database
+        $stmt = $conn->prepare('SELECT id, email, role FROM users WHERE id = ? AND role = ? LIMIT 1');
+        if ($stmt) {
+            $adminRole = 'admin';
+            $stmt->bind_param('is', $userId, $adminRole);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $user = $result->fetch_assoc();
+            $stmt->close();
+            
+            if ($user) {
+                return [
+                    'user_id' => (int)$user['id'],
+                    'email'   => $user['email'],
+                    'role'    => $user['role']
+                ];
+            }
+        }
 
-    if (!$user) {
+        // Fallback to token payload if DB fetch fails
+        return [
+            'user_id' => $userId,
+            'email'   => $payload['email'] ?? '',
+            'role'    => $role
+        ];
+        
+    } catch (Throwable $e) {
+        error_log('Admin token validation error: ' . $e->getMessage());
         sendError(401, 'Unauthorized');
     }
-
-    if ($user['role'] !== 'admin') {
-        sendError(403, 'Forbidden');
-    }
-
-    return [
-        'user_id' => (int) $user['user_id'],
-        'role'    => $user['role']
-    ];
 }
+

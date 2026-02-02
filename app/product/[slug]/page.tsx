@@ -1,6 +1,11 @@
 import { notFound, redirect } from 'next/navigation';
 import ProductDetailClient from './ProductDetailClient';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import Header from '@/components/NavBarReusable';
+import Footer from '@/components/Footer';
+import MobileBottomNav from '@/components/MobileBottomNav';
+import WhatsAppWidget from '@/components/WhatsAppWidget';
+import { CategoryProvider } from '@/context/CategoryContext';
 import { Metadata } from 'next';
 
 interface Product {
@@ -166,26 +171,32 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   } : null;
 
   return (
-    <>
-      {/* Inject Enhanced Schema.org JSON-LD */}
-      {enhancedSchema && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(enhancedSchema) }}
-        />
-      )}
+    <CategoryProvider>
+      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        <Header />
+        <main style={{ flex: 1 }}>
+          {/* Inject Enhanced Schema.org JSON-LD */}
+          {enhancedSchema && (
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(enhancedSchema) }}
+            />
+          )}
 
-      <Breadcrumbs
-        items={[
-          { label: 'Home', href: '/' },
-          { label: 'Shop', href: '/categories' }, 
-          { label: product.category, href: `/category/${product.slug || product.id}` }, // Fixed category link logic if possible, but keeping consistent
-          { label: product.name, href: `/product/${product.slug}` }
-        ]}
-      />
-      
-      {/* Reuse existing Client Component */}
-      <ProductDetailClient product={product} />
-    </>
+          <ProductDetailClient 
+            product={product} 
+            breadcrumbItems={[
+              { label: 'Home', href: '/' },
+              { label: 'Shop', href: '/categories' }, 
+              { label: product.category, href: `/category/${product.slug || product.id}` }, 
+              { label: product.name, href: `/product/${product.slug}` }
+            ]}
+          />
+        </main>
+        <Footer />
+        <MobileBottomNav />
+        <WhatsAppWidget />
+      </div>
+    </CategoryProvider>
   );
 }

@@ -19,6 +19,35 @@
   box-shadow: 0 20px 40px -12px rgba(16, 185, 129, 0.2);
 }
 
+/* Loading State */
+.cardLoading {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.cardLoading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  margin-top: -20px;
+  margin-left: -20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #10b981;
+  border-radius: 50%;
+  animation: cardSpin 0.8s linear infinite;
+  z-index: 100;
+}
+
+@keyframes cardSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .gradientOverlay {
   position: absolute;
   inset: 0;
@@ -278,7 +307,7 @@
 .title {
   font-size: 1.1rem;
   font-weight: 700;
-  color: white;
+  color: #0a2540; /* Updated to brand navy */
   margin-bottom: 0.25rem;
   line-height: 1.3;
   overflow: hidden;
@@ -396,7 +425,7 @@
 }
 
 .buttonBlue {
-  background: linear-gradient(to right, #081e31, #2563eb);
+  background: linear-gradient(135deg, #0a2540 0%, #1a3a52 100%);
 }
 
 .ctaButton:hover:not(:disabled) {
@@ -407,6 +436,15 @@
 .ctaButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.spinnerIcon {
+  animation: buttonRotate 1s linear infinite;
+}
+
+@keyframes buttonRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* Footer */

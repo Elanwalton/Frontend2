@@ -507,6 +507,31 @@
   }
 }
 
+/* Small iPhones (iPhone SE, etc.) */
+@media (max-width: 375px) {
+  .hero {
+    margin-top: 3.8rem; /* Bring hero higher on the page */
+    margin-bottom: 1.5rem;
+    padding: 0.4rem;
+  }
+
+  .heroText h2 {
+    font-size: 1.35rem; /* Smaller hero title */
+    margin-bottom: 0.75rem;
+  }
+
+  .heroLeft {
+    height: 220px; /* More compact hero banner */
+  }
+
+  .trendingBadge {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.75rem;
+    top: 0.75rem;
+    right: 0.75rem;
+  }
+}
+
 /* Fallback for very small screens - switch to single column */
 @media (max-width: 320px) {
   .heroRight {

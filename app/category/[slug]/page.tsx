@@ -2,6 +2,11 @@ import React from 'react';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import CategoryProducts from '@/components/CategoryProducts';
+import Header from '@/components/NavBarReusable';
+import Footer from '@/components/Footer';
+import MobileBottomNav from '@/components/MobileBottomNav';
+import WhatsAppWidget from '@/components/WhatsAppWidget';
+import { CategoryProvider } from '@/context/CategoryContext';
 
 // Interface for Category API Response
 interface CategoryData {
@@ -87,17 +92,25 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   const internalId = CATEGORY_ID_MAP[category.slug] || category.name; 
 
   return (
-    <>
-      {/* Inject Schema.org JSON-LD */}
-      {category.schema_markup && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(category.schema_markup) }}
-        />
-      )}
-      
-      {/* Render existing component with pre-selected category */}
-      <CategoryProducts initialCategory={internalId} />
-    </>
+    <CategoryProvider>
+      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        <Header />
+        <main style={{ flex: 1 }}>
+          {/* Inject Schema.org JSON-LD */}
+          {category.schema_markup && (
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(category.schema_markup) }}
+            />
+          )}
+          
+          {/* Render existing component with pre-selected category */}
+          <CategoryProducts initialCategory={internalId} />
+        </main>
+        <Footer />
+        <MobileBottomNav />
+        <WhatsAppWidget />
+      </div>
+    </CategoryProvider>
   );
 }

@@ -16,14 +16,12 @@ const CartPageContent = () => {
   const { cartItems, updateQuantity, removeFromCart, clearCart } = useCartStore();
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  const shipping = subtotal > 5000 ? 0 : 500;
   const tax = subtotal * 0.16;
-  const total = subtotal + shipping + tax;
+  const total = subtotal + tax;
 
   return (
-    <>
-    <Breadcrumbs items={[{ label: 'Shopping Cart' }]} />
     <div className={styles.container}>
+      <Breadcrumbs items={[{ label: 'Shopping Cart' }]} />
       {/* Header Section */}
       <motion.div 
         className={styles.header}
@@ -161,18 +159,6 @@ const CartPageContent = () => {
               <span>Ksh {subtotal.toLocaleString()}</span>
             </div>
             <div className={styles.summaryRow}>
-              <span>Shipping</span>
-              <span className={shipping === 0 ? styles.freeShipping : ''}>
-                {shipping === 0 ? 'FREE' : `Ksh ${shipping.toLocaleString()}`}
-              </span>
-            </div>
-            {shipping > 0 && (
-              <div className={styles.shippingNote}>
-                <Truck size={16} />
-                <span>Free shipping on orders over Ksh 5,000</span>
-              </div>
-            )}
-            <div className={styles.summaryRow}>
               <span>Tax (16%)</span>
               <span>Ksh {tax.toLocaleString(undefined, {maximumFractionDigits: 2})}</span>
             </div>
@@ -210,7 +196,6 @@ const CartPageContent = () => {
       {cartItems.length > 0 && <ServiceHighlights />}
       <RelatedProducts limit={6} title="You Might Also Like" />
     </div>
-    </>
   );
 };
 

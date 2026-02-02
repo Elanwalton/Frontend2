@@ -480,3 +480,12 @@
   box-shadow: 0 4px 12px rgba(247, 200, 67, 0.3);
 }
 
+.spinner {
+  animation: rotate 1s linear infinite;
+  color: #f7c843; /* Match brand yellow */
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

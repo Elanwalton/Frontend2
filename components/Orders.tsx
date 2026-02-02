@@ -15,7 +15,9 @@ import {
   MapPin,
   X,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  List,
+  Layers
 } from "lucide-react";
 import { getApiEndpoint } from '@/utils/apiClient';
 import styles from '@/styles/ClientOrders.module.css';
@@ -256,32 +258,47 @@ const OrdersSection = () => {
         <button 
           className={`${styles.filterTab} ${filter === 'all' ? styles.active : ''}`}
           onClick={() => setFilter('all')}
+          title="All Orders"
         >
-          All ({orderStats.total})
+          <Layers size={18} />
+          <span className={styles.tabLabel}>All</span>
+          <span className={styles.tabCount}>{orderStats.total}</span>
         </button>
         <button 
           className={`${styles.filterTab} ${filter === 'pending' ? styles.active : ''}`}
           onClick={() => setFilter('pending')}
+          title="Pending"
         >
-          Pending ({orderStats.pending})
+          <Clock size={18} />
+          <span className={styles.tabLabel}>Pending</span>
+          <span className={styles.tabCount}>{orderStats.pending}</span>
         </button>
         <button 
           className={`${styles.filterTab} ${filter === 'processing' ? styles.active : ''}`}
           onClick={() => setFilter('processing')}
+          title="Processing"
         >
-          Processing ({orderStats.processing})
+          <Loader2 size={18} />
+          <span className={styles.tabLabel}>Processing</span>
+          <span className={styles.tabCount}>{orderStats.processing}</span>
         </button>
         <button 
           className={`${styles.filterTab} ${filter === 'shipped' ? styles.active : ''}`}
           onClick={() => setFilter('shipped')}
+          title="Shipped"
         >
-          Shipped ({orderStats.shipped})
+          <Truck size={18} />
+          <span className={styles.tabLabel}>Shipped</span>
+          <span className={styles.tabCount}>{orderStats.shipped}</span>
         </button>
         <button 
           className={`${styles.filterTab} ${filter === 'delivered' ? styles.active : ''}`}
           onClick={() => setFilter('delivered')}
+          title="Delivered"
         >
-          Delivered ({orderStats.delivered})
+          <CheckCircle size={18} />
+          <span className={styles.tabLabel}>Delivered</span>
+          <span className={styles.tabCount}>{orderStats.delivered}</span>
         </button>
       </div>
 

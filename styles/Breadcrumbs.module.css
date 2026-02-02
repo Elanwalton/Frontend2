@@ -1,8 +1,10 @@
 /* Breadcrumbs Container */
 .breadcrumbs {
-  background: linear-gradient(135deg, #081e31 0%, #0a2640 100%);
-  border-bottom: 1px solid rgba(14, 165, 233, 0.2);
-  padding: 1rem 0;
+  background: transparent;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 1.25rem 0;
+  position: relative;
+  z-index: 10;
 }
 
 .breadcrumbList {
@@ -27,7 +29,7 @@
   display: flex;
   align-items: center;
   gap: 0.375rem;
-  color: rgba(248, 250, 252, 0.8);
+  color: #64748b; /* Professional slate gray */
   font-size: 0.875rem;
   font-weight: 500;
   text-decoration: none;
@@ -37,21 +39,21 @@
 }
 
 .breadcrumbLink:hover {
-  color: var(--brand-blue-500);
-  background: rgba(255, 255, 255, 0.06);
+  color: #0ea5e9; /* Brand blue */
+  background: rgba(14, 165, 233, 0.05);
 }
 
 .homeIcon {
-  color: rgba(248, 250, 252, 0.7);
+  color: #94a3b8;
   transition: color 0.2s ease;
 }
 
 .breadcrumbLink:hover .homeIcon {
-  color: var(--brand-blue-500);
+  color: #0ea5e9;
 }
 
 .breadcrumbCurrent {
-  color: #f8fafc;
+  color: #081e31; /* Deep navy from brand */
   font-size: 0.875rem;
   font-weight: 600;
   padding: 0.25rem 0.5rem;
@@ -61,7 +63,7 @@
 .separator {
   display: flex;
   align-items: center;
-  color: rgba(248, 250, 252, 0.4);
+  color: #cbd5e1;
 }
 
 /* Responsive */
@@ -104,4 +106,19 @@
   }
 }
 
-/* Dark mode support - Removed to prevent default dark mode */
+/* Dark mode support */
+:global(.dark) .breadcrumbLink {
+  color: #94a3b8;
+}
+
+:global(.dark) .breadcrumbCurrent {
+  color: #f8fafc;
+}
+
+:global(.dark) .breadcrumbs {
+  border-bottom-color: rgba(255, 255, 255, 0.05);
+}
+
+:global(.dark) .separator {
+  color: #475569;
+}

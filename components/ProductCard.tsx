@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { ShoppingCart, Heart, Star, Zap, Shield, Leaf } from 'lucide-react';
+import { ShoppingCart, Heart, Star, Zap, Shield, Leaf, Loader2 } from 'lucide-react';
 import styles from '@/styles/ProductCard.module.css';
 import useCartStore from '@/store/UseCartStore';
 import useWishlistStore from '@/store/UseWishlistStore';
@@ -32,11 +32,14 @@ const ProductCard: React.FC<{ product: ProductCardProps }> = ({ product }) => {
   
   const [isHovered, setIsHovered] = useState(false);
   const [colorTheme, setColorTheme] = useState<'green' | 'blue'>('green');
+  const [isNavigating, setIsNavigating] = useState(false);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
 
   const inWishlist = isInWishlist(product.id);
 
   const handleAddToCart = () => {
     if (product.stock === 0) return;
+    setIsAddingToCart(true);
     addToCart({
       id: product.id,
       name: product.title,
@@ -46,6 +49,7 @@ const ProductCard: React.FC<{ product: ProductCardProps }> = ({ product }) => {
     });
     trackEvent(product.id, 'add_to_cart');
     toast.success('Added to cart!');
+    setTimeout(() => setIsAddingToCart(false), 2000);
   };
 
   const handleWishlistToggle = () => {
@@ -72,16 +76,17 @@ const ProductCard: React.FC<{ product: ProductCardProps }> = ({ product }) => {
   };
 
   const handleCardClick = () => {
+    setIsNavigating(true);
     router.push(`/product/${product.id}`);
   };
 
   return (
     <div 
-      className={styles.card}
+      className={`${styles.card} ${isNavigating ? styles.cardLoading : ''}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleCardClick}
-      style={{ cursor: 'pointer' }}
+      style={{ cursor: isNavigating ? 'wait' : 'pointer' }}
     >
       {/* Animated gradient overlay */}
       <div className={`${styles.gradientOverlay} ${colorTheme === 'green' ? styles.bgGradientGreen : styles.bgGradientBlue}`} />
@@ -187,10 +192,14 @@ const ProductCard: React.FC<{ product: ProductCardProps }> = ({ product }) => {
         <button 
           className={`${styles.ctaButton} ${colorTheme === 'green' ? styles.buttonGreen : styles.buttonBlue}`}
           onClick={(e) => { e.stopPropagation(); handleAddToCart(); }}
-          disabled={product.stock === 0}
+          disabled={product.stock === 0 || isAddingToCart}
         >
-          <ShoppingCart size={20} />
-          {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
+          {isAddingToCart ? (
+            <Loader2 size={20} className={styles.spinnerIcon} />
+          ) : (
+            <ShoppingCart size={20} />
+          )}
+          {isAddingToCart ? 'Adding...' : product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
         </button>
 
         {/* Bottom info */}

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, MapPin, Tag, ArrowRight, ShoppingBag, Shield, Truck, Check, AlertCircle, X, Package } from 'lucide-react';
+import { User, MapPin, Tag, ArrowRight, ShoppingBag, Shield, Truck, Check, AlertCircle, X, Package, Loader2 } from 'lucide-react';
 import useCartStore from '@/store/UseCartStore';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -24,6 +24,7 @@ function CheckoutPageContent() {
   const [appliedCoupon, setAppliedCoupon] = useState<{code: string, discount: number} | null>(null);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
   const [showCouponHelp, setShowCouponHelp] = useState(false);
 
   // Redirect if cart is empty
@@ -34,9 +35,8 @@ function CheckoutPageContent() {
   }, [cartItems, router]);
 
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const shipping = subtotal > 5000 ? 0 : 500;
   const discount = appliedCoupon ? subtotal * (appliedCoupon.discount / 100) : 0;
-  const total = subtotal + shipping - discount;
+  const total = subtotal - discount;
 
   const validateField = (name: string, value: string) => {
     const newErrors = { ...errors };
@@ -134,7 +134,7 @@ function CheckoutPageContent() {
         cartItems, 
         appliedCoupon,
         subtotal,
-        shipping,
+        shipping: 0,
         discount
       };
       
@@ -167,12 +167,25 @@ function CheckoutPageContent() {
             <p className={styles.subtitle}>Complete your order in just a few steps</p>
             
             <div className={styles.progressBar}>
-              <div className={`${styles.progressStep} ${styles.active}`}>
+              <button 
+                type="button"
+                className={`${styles.progressStep} ${styles.active} ${styles.clickable}`}
+                onClick={() => {
+                  setIsNavigating(true);
+                  router.push('/Cart');
+                }}
+                disabled={isNavigating}
+                title="Back to Cart"
+              >
                 <div className={styles.stepNumber}>
-                  <ShoppingBag size={20} />
+                  {isNavigating ? (
+                    <Loader2 size={20} className={styles.spinnerIcon} />
+                  ) : (
+                    <ShoppingBag size={20} />
+                  )}
                 </div>
                 <span>Cart</span>
-              </div>
+              </button>
               <div className={`${styles.progressLine} ${styles.active}`}></div>
               <div className={`${styles.progressStep} ${styles.active}`}>
                 <div className={styles.stepNumber}>2</div>
@@ -523,18 +536,6 @@ function CheckoutPageContent() {
                     <span>Subtotal</span>
                     <span>KSh {subtotal.toLocaleString()}</span>
                   </div>
-                  <div className={styles.summaryRow}>
-                    <span>Shipping</span>
-                    <span className={shipping === 0 ? styles.freeShipping : ''}>
-                      {shipping === 0 ? 'FREE' : `KSh ${shipping.toLocaleString()}`}
-                    </span>
-                  </div>
-                  {shipping > 0 && (
-                    <div className={styles.shippingNote}>
-                      <Truck size={16} />
-                      <span>Free shipping on orders over KSh 5,000</span>
-                    </div>
-                  )}
                   {appliedCoupon && (
                     <motion.div 
                       className={`${styles.summaryRow} ${styles.discount}`}

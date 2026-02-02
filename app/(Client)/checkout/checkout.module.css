@@ -138,44 +138,62 @@
 }
 
 .progressStep.active span {
-  color: white;
+  color: #84cc16; /* Use light green for active text */
+}
+
+.progressStep.clickable {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.progressStep.clickable:hover span {
+  color: #84cc16;
+}
+
+.progressStep.clickable:hover .stepNumber {
+  transform: scale(1.15);
+  box-shadow: 0 0 20px rgba(87, 181, 0, 0.5);
+  border-color: #84cc16;
 }
 
 .stepNumber {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
   backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(87, 181, 0, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.5);
   transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .progressStep.active .stepNumber {
-  background: linear-gradient(135deg, var(--energy-blue-strong) 0%, var(--pulse-accent) 100%);
+  background: linear-gradient(180deg, #84cc16 0%, #57b500 100%);
   color: white;
-  border-color: rgba(255, 255, 255, 0.5);
-  box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
-  transform: scale(1.1);
+  border-color: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 10px 20px -5px rgba(87, 181, 0, 0.5);
+  transform: scale(1.1) translateY(-2px);
 }
 
 .progressLine {
   flex: 1;
   height: 2px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(87, 181, 0, 0.15);
   position: relative;
   min-width: 40px;
   transition: background 0.3s ease;
 }
 
 .progressLine.active {
-  background: linear-gradient(90deg, var(--energy-blue-strong), var(--pulse-accent));
-  box-shadow: 0 0 10px rgba(14, 165, 233, 0.3);
+  background: linear-gradient(90deg, #57b500, #84cc16);
+  box-shadow: 0 0 15px rgba(87, 181, 0, 0.3);
 }
 
 .grid {
@@ -229,18 +247,21 @@
   width: 45px;
   height: 45px;
   border-radius: 12px;
-  background: linear-gradient(135deg, var(--energy-blue-strong) 0%, var(--pulse-accent) 100%);
+  background: linear-gradient(180deg, #84cc16 0%, #57b500 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 4px 15px rgba(14, 165, 233, 0.2);
+  box-shadow: 0 6px 15px -3px rgba(87, 181, 0, 0.5);
   transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 .iconWrapper:hover {
-  transform: rotate(5deg) scale(1.05);
-  box-shadow: 0 6px 20px rgba(14, 165, 233, 0.3);
+  transform: rotate(5deg) scale(1.1);
+  box-shadow: 0 10px 20px -5px rgba(87, 181, 0, 0.6);
+  background: linear-gradient(180deg, #a3e635 0%, #65a30d 100%);
 }
 
 .icon {
@@ -638,7 +659,7 @@
 }
 
 .packageIcon {
-  color: #667eea;
+  color: #57b500;
   width: 24px;
   height: 24px;
 }
@@ -721,11 +742,13 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   animation: pulse 2s infinite;
 }
+.spinnerIcon {
+  animation: spin 1s linear infinite;
+}
 
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .itemDetails {
@@ -844,17 +867,21 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 0.75rem;
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  background: linear-gradient(135deg, rgba(87, 181, 0, 0.85) 0%, rgba(132, 204, 22, 0.85) 100%);
+  backdrop-filter: blur(8px);
   border-radius: 10px;
   font-size: 0.875rem;
-  font-weight: 600;
-  color: #667eea;
+  font-weight: 700;
+  color: white;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(87, 181, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .badge:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+  box-shadow: 0 6px 20px rgba(87, 181, 0, 0.4);
+  filter: brightness(1.05);
 }
 
 .badge svg {

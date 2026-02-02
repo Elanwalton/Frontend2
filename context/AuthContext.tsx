@@ -36,6 +36,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { toast } = useToast();
 
+  // Attempt to refresh the access token using the refresh token
+  const refreshAccessToken = async (): Promise<boolean> => {
+    try {
+      const response = await fetch(getApiEndpoint('/auth/refresh'), {
+        method: 'POST',
+        credentials: 'include'
+      });
+      
+      if (!response.ok) {
+        return false;
+      }
+      
+      const data = await response.json();
+      if (data.success && data.user) {
+        // Token refreshed successfully, update user state
+        const userData = {
+          id: data.user.id,
+          email: data.user.email,
+          first_name: data.user.first_name || '',
+          second_name: data.user.second_name || '',
+          phone: data.user.phone || '',
+          profile_picture: data.user.profile_picture || '',
+          role: data.user.role,
+          is_verified: true
+        };
+        setUser(userData);
+        setUserRole(userData.role);
+        console.log('AuthContext: Token refreshed successfully');
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Token refresh failed:', error);
+      return false;
+    }
+  };
+
   const checkAuth = async () => {
     try {
       const response = await fetch(getApiEndpoint('/check-auth'), {
@@ -59,6 +96,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUserRole(userData.role);
         console.log('AuthContext: User authenticated:', userData.email);
       } else {
+        // Check if this is an expired token error - try to refresh
+        const errorCode = data.code || data.error?.code;
+        if (errorCode === 'ACCESS_EXPIRED' || data.message?.includes('expired')) {
+          console.log('AuthContext: Access token expired, attempting refresh...');
+          const refreshed = await refreshAccessToken();
+          if (refreshed) {
+            // Successfully refreshed, we're done
+            return;
+          }
+        }
+        
         // Don't log error for expected "unauthenticated" states
         const suppressedMessages = ['Missing access token', 'Not authenticated'];
         if (!suppressedMessages.includes(data.message)) {

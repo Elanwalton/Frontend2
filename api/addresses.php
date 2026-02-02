@@ -7,26 +7,8 @@ $token = getAuthToken();
 $userData = validateToken($conn, $token);
 $userId = $userData['user_id'];
 
-// Create addresses table if not exists
-$createTableSql = "CREATE TABLE IF NOT EXISTS user_addresses (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    label VARCHAR(100) NOT NULL,
-    address_line1 VARCHAR(255) NOT NULL,
-    address_line2 VARCHAR(255),
-    city VARCHAR(100) NOT NULL,
-    state VARCHAR(100),
-    postal_code VARCHAR(20),
-    country VARCHAR(100) NOT NULL,
-    phone VARCHAR(20),
-    is_default BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    INDEX idx_user_id (user_id)
-)";
-
-$conn->query($createTableSql);
+// Table creation removed to prevent runtime errors.
+// Please ensure the 'user_addresses' table exists in your database.
 
 $method = $_SERVER['REQUEST_METHOD'];
 

@@ -10,9 +10,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-// GET request to check payment status
+// Handle both GET (query params) and POST (JSON body)
 $payment_id = $_GET['payment_id'] ?? '';
 $checkout_request_id = $_GET['checkout_request_id'] ?? '';
+
+// If POST request, check JSON body
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $input = json_decode(file_get_contents('php://input'), true);
+    if (!empty($input['payment_id'])) {
+        $payment_id = $input['payment_id'];
+    }
+    if (!empty($input['checkout_request_id'])) {
+        $checkout_request_id = $input['checkout_request_id'];
+    }
+}
 
 if (empty($payment_id) && empty($checkout_request_id)) {
     http_response_code(400);
