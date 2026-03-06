@@ -168,7 +168,7 @@ const StockAdjustments: React.FC = () => {
   };
 
   const submitAdjustments = async () => {
-    if (adjustments.length === 0) return;
+    if (adjustments.length === 0 || submitting) return;
 
     try {
       setSubmitting(true);
