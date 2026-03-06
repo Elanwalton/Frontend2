@@ -93,13 +93,13 @@ if (isset($input['adjustments']) && is_array($input['adjustments'])) {
                     throw new Exception('Insufficient stock available');
                 }
                 
-                $sql = "UPDATE products SET stock_quantity = stock_quantity - ?, quantity = quantity - ? WHERE id = ?";
+                $sql = "UPDATE products SET stock_quantity = stock_quantity - ? WHERE id = ?";
             } else {
-                $sql = "UPDATE products SET stock_quantity = stock_quantity + ?, quantity = quantity + ? WHERE id = ?";
+                $sql = "UPDATE products SET stock_quantity = stock_quantity + ? WHERE id = ?";
             }
             
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param('iii', $adjustment['quantity'], $adjustment['quantity'], $adjustment['product_id']);
+            $stmt->bind_param('ii', $adjustment['quantity'], $adjustment['product_id']);
             $stmt->execute();
             
             $results[] = [
@@ -215,19 +215,13 @@ try {
             throw new Exception('Insufficient stock available');
         }
         
-        $sql = "UPDATE products 
-                SET stock_quantity = stock_quantity - ?, 
-                    quantity = quantity - ? 
-                WHERE id = ?";
+        $sql = "UPDATE products SET stock_quantity = stock_quantity - ? WHERE id = ?";
     } else {
-        $sql = "UPDATE products 
-                SET stock_quantity = stock_quantity + ?, 
-                    quantity = quantity + ? 
-                WHERE id = ?";
+        $sql = "UPDATE products SET stock_quantity = stock_quantity + ? WHERE id = ?";
     }
     
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param('iii', $input['quantity'], $input['quantity'], $input['product_id']);
+    $stmt->bind_param('ii', $input['quantity'], $input['product_id']);
     $stmt->execute();
     
     // Get updated product info

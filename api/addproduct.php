@@ -35,13 +35,38 @@ $sizes = isset($data['sizes']) ? json_encode($data['sizes']) : null;
 $specifications = isset($data['specifications']) ? json_encode($data['specifications']) : null;
 $reviews = isset($data['reviews']) ? json_encode($data['reviews']) : null;
 
+// Check for duplicate product name (case-insensitive)
+$checkStmt = $conn->prepare("SELECT id, name FROM products WHERE LOWER(name) = LOWER(?) LIMIT 1");
+$checkStmt->bind_param('s', $name);
+$checkStmt->execute();
+$result = $checkStmt->get_result();
+
+if ($result->num_rows > 0) {
+    $existing = $result->fetch_assoc();
+    header('Content-Type: application/json');
+    http_response_code(409); // Conflict
+    echo json_encode([
+        "success" => false,
+        "message" => "A product with this name already exists",
+        "existingProduct" => [
+            "id" => $existing['id'],
+            "name" => $existing['name']
+        ]
+    ]);
+    $checkStmt->close();
+    $conn->close();
+    exit;
+}
+$checkStmt->close();
+
+
 // Insert
 $stmt = $conn->prepare(
     "INSERT INTO products
-     (name,description,category,status,price,quantity,main_image_url,thumbnail_urls,highlights,sizes,specifications,reviews,created_at)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?, NOW())"
+     (name,description,category,status,price,quantity,stock_quantity,main_image_url,thumbnail_urls,highlights,sizes,specifications,reviews,created_at)
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?, NOW())"
 );
-$stmt->bind_param("ssssdissssss", $name,$desc,$cat,$status,$price,$qty,$main,$thumbs,$highlights,$sizes,$specifications,$reviews);
+$stmt->bind_param("ssssdiissssss", $name,$desc,$cat,$status,$price,$qty,$qty,$main,$thumbs,$highlights,$sizes,$specifications,$reviews);
 if ($stmt->execute()) {
     header('Content-Type: application/json');
     echo json_encode(["success"=>true, "message"=>"Product added successfully"]);

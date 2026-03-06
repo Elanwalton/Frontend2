@@ -19,7 +19,7 @@ $category = $input['category'] ?? null;
 $price = $input['price'] ?? null;
 $originalPrice = $input['originalPrice'] ?? null;
 $discountPercentage = $input['discountPercentage'] ?? 0;
-$stockQuantity = $input['stockQuantity'] ?? 0;
+$stockQuantity = $input['stockQuantity'] ?? $input['quantity'] ?? 0;
 $status = $input['status'] ?? 'active';
 
 if (!$name || !$category || $price === null) {
@@ -28,18 +28,51 @@ if (!$name || !$category || $price === null) {
     exit;
 }
 
+// Check for duplicate product name (case-insensitive)
+try {
+    $checkStmt = $conn->prepare("SELECT id, name FROM products WHERE LOWER(name) = LOWER(?) LIMIT 1");
+    $checkStmt->bind_param('s', $name);
+    $checkStmt->execute();
+    $result = $checkStmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        $existing = $result->fetch_assoc();
+        http_response_code(409); // Conflict
+        echo json_encode([
+            'success' => false,
+            'message' => 'A product with this name already exists',
+            'existingProduct' => [
+                'id' => $existing['id'],
+                'name' => $existing['name']
+            ]
+        ]);
+        $checkStmt->close();
+        exit;
+    }
+    $checkStmt->close();
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Failed to check for duplicates',
+        'error' => $e->getMessage()
+    ]);
+    exit;
+}
+
+
 try {
     $query = "INSERT INTO products (
         name, description, category, price, original_price, discount_percentage,
-        status, stock_quantity, rating, review_count, created_at, updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+        status, stock_quantity, quantity, rating, review_count, created_at, updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
 
     $stmt = $conn->prepare($query);
     $rating = 0;
     $reviewCount = 0;
     
     $stmt->bind_param(
-        'sssdddsiii',
+        'sssdddsiiii',
         $name,
         $description,
         $category,
@@ -48,6 +81,7 @@ try {
         $discountPercentage,
         $status,
         $stockQuantity,
+        $stockQuantity,  // Set quantity to same value as stock_quantity for inventory sync
         $rating,
         $reviewCount
     );
